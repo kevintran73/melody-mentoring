@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import TokenContext from './context/TokenContext';
 import Login from './pages/Login';
+import LoginSub from './pages/LoginSub';
 
 const App = () => {
   // Get the token from localStorage if it exists, otherwise null
@@ -24,6 +25,7 @@ const App = () => {
           <Route path='/' element={<Navigate to='/login' />} />
           {/* <Route path='/register' element={<Register />} /> */}
           <Route path='/login' element={<Login />} />
+          <Route path='/login-sub' element={<LoginSub />} />
           {/* <Route path='/dashboard' element={<Dashboard />} /> */}
         </Routes>
       </BrowserRouter>

@@ -11,24 +11,26 @@ const StyledContainer = styled('div')({
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
+  height: '100vh',
+  padding: '0 6vw',
 });
 
-const ImgRight = styled('img')({
-  marginTop: '5vh',
-  marginRight: '6vw',
+const ImgContainer = styled('div')({
   width: '40vw',
-  height: 'auto',
-  borderRadius: '10%',
+  height: '90vh',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
 });
 
-const LoginForm = styled('div')({
+const LeftContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   gap: '20px',
-  marginLeft: '6vw',
-  height: '90vh',
+  height: '100vh',
   width: '40vw',
   alignItems: 'center',
+  justifyContent: 'center',
 
   // '@media (max-width: 950px)': {
   //   paddingLeft: '20%',
@@ -37,9 +39,16 @@ const LoginForm = styled('div')({
   // },
 });
 
+const ImgRight = styled('img')({
+  width: '100%',
+  height: '100%',
+  borderRadius: '10%',
+});
+
 const StyledHeading1 = styled('h1')({
   fontSize: '3rem',
   marginBottom: '0',
+  marginTop: '0',
 });
 
 const StyledHeading2 = styled('h2')({
@@ -85,12 +94,12 @@ const Login = () => {
   };
 
   const navLogin = () => {
-    return navigate('/login');
+    return navigate('/login-sub');
   };
 
   return (
     <StyledContainer>
-      <LoginForm>
+      <LeftContainer>
         <StyledHeading1>Melody Mentoring</StyledHeading1>
         <StyledHeading2>Catchy Slogan</StyledHeading2>
         <StyledButton variant='contained' type='button' id='nav-login-main' onClick={navLogin}>
@@ -106,8 +115,11 @@ const Login = () => {
         >
           Register
         </StyledButton>
-      </LoginForm>
-      <ImgRight id='login-img' src={loginImage} />
+      </LeftContainer>
+
+      <ImgContainer>
+        <ImgRight id='login-img' src={loginImage} />
+      </ImgContainer>
     </StyledContainer>
   );
 };
