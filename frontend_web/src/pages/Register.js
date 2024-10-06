@@ -80,7 +80,7 @@ const Register = () => {
 
       // Set the token and navigate to dashboard
       // setTokenLocalStorage(response.data.token);
-      return navigate('/dashboard');
+      return navigate('/songs');
     } catch (err) {
       showErrorMessage(err.response.data.error);
     }

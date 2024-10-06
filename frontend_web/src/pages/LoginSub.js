@@ -34,12 +34,6 @@ const LoginForm = styled('form')({
   height: '75vh',
   border: '1px solid #D9D9D9',
   borderRadius: '1rem',
-
-  //   '@media (max-width: 950px)': {
-  //     paddingLeft: '20%',
-  //     paddingRight: '20%',
-  //     width: '60%',
-  //   },
 });
 
 const StyledTextField = styled(TextField)({
@@ -59,9 +53,9 @@ const StyledLink = styled(Link)({
 });
 
 /**
- * Login page
+ * Login sub-page
  */
-const Login = () => {
+const LoginSub = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const { token, setTokenLocalStorage } = React.useContext(TokenContext);
@@ -85,7 +79,7 @@ const Login = () => {
 
       // Set the token and navigate to dashboard
       // setTokenLocalStorage(response.data.token);
-      return navigate('/dashboard');
+      return navigate('/songs');
     } catch (err) {
       showErrorMessage(err.response.data.error);
     }
@@ -127,4 +121,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginSub;
