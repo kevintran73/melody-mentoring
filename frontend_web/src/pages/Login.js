@@ -84,9 +84,9 @@ const Login = () => {
   const { token } = React.useContext(TokenContext);
   const navigate = useNavigate();
 
-  // Navigate to dashboard if active token
+  // Navigate to default page if active token
   if (token !== null) {
-    return <Navigate to='/dashboard' />;
+    return <Navigate to='/catalogue' />;
   }
 
   const navRegister = () => {

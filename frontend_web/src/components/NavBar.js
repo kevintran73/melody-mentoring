@@ -1,13 +1,13 @@
 import React from 'react';
 
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 import { styled } from '@mui/system';
+import CatalogueButton from './CatalogueButton';
 
 const StyledHeader = styled('header')({
   display: 'flex',
@@ -24,12 +24,6 @@ const StyledNotifs = styled(NotificationsIcon)({
   width: '40px',
   height: '40px',
   cursor: 'pointer',
-});
-
-const StyledMusic = styled(LibraryMusicIcon)({
-  color: '#ffffff',
-  width: '32px',
-  height: '32px',
 });
 
 const StyledCam = styled(CameraAltIcon)({
@@ -100,10 +94,7 @@ const NavBar = () => {
           <StyledCam />
           <IconCaption>Create</IconCaption>
         </IconContainer>
-        <IconContainer>
-          <StyledMusic />
-          <IconCaption>Catalogue</IconCaption>
-        </IconContainer>
+        <CatalogueButton />
         <IconContainer>
           <StyledBook />
           <IconCaption>Uploads</IconCaption>

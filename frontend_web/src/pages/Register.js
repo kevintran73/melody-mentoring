@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
 import { showErrorMessage } from '../helpers';
 
 import TokenContext from '../context/TokenContext';
@@ -34,12 +34,6 @@ const RegisterForm = styled('form')({
   height: '75vh',
   border: '1px solid #D9D9D9',
   borderRadius: '1rem',
-
-  //   '@media (max-width: 950px)': {
-  //     paddingLeft: '20%',
-  //     paddingRight: '20%',
-  //     width: '60%',
-  //   },
 });
 
 const StyledTextField = styled(TextField)({
@@ -80,7 +74,7 @@ const Register = () => {
 
       // Set the token and navigate to dashboard
       // setTokenLocalStorage(response.data.token);
-      return navigate('/songs');
+      return navigate('/catalogue');
     } catch (err) {
       showErrorMessage(err.response.data.error);
     }

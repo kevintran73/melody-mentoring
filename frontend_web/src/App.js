@@ -6,7 +6,7 @@ import TokenContext from './context/TokenContext';
 import Login from './pages/Login';
 import LoginSub from './pages/LoginSub';
 import Register from './pages/Register';
-import Songs from './pages/Songs';
+import Catalogue from './pages/Catalogue';
 
 const App = () => {
   // Get the token from localStorage if it exists, otherwise null
@@ -29,7 +29,7 @@ const App = () => {
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
           <Route path='/login-sub' element={<LoginSub />} />
-          <Route path='/songs' element={<Songs />} />
+          <Route path='/catalogue' element={<Catalogue />} />
         </Routes>
       </BrowserRouter>
     </TokenContext.Provider>

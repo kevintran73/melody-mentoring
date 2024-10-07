@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
 import { showErrorMessage } from '../helpers';
 
 import TokenContext from '../context/TokenContext';
@@ -79,7 +79,7 @@ const LoginSub = () => {
 
       // Set the token and navigate to dashboard
       // setTokenLocalStorage(response.data.token);
-      return navigate('/songs');
+      return navigate('/catalogue');
     } catch (err) {
       showErrorMessage(err.response.data.error);
     }
