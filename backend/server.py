@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from s3_bucket_helpers import urlFromBucketObj
+from s3_bucket_helpers import urlFromBucketObj, listOfFilesInBucket
 
 from dotenv import load_dotenv
 import os
@@ -8,12 +8,7 @@ bucket_name = os.getenv('BUCKET_NAME')
 
 app = Flask(__name__)
 
-@app.route('/test', methods=["GET"])
-def test():
-    return {'hey': 'you made a GET request!'}
-
-# TODO fix: currently the only pdf in here is test-pdf
-@app.route('/catalogue/<string:filename>', methods=["GET"])
+@app.route('/catalogue/<string:filename>', methods=['GET'])
 def get_file_pdf(filename):
     '''GET route for retrieving a link to the pdf
 
@@ -34,6 +29,20 @@ def get_file_pdf(filename):
         return jsonify({'url': url[0], 'signature': url[1]})
     else:
         return 'error: check the file name', 404
+
+@app.route('/catalogue/list', methods=['GET'])
+def get_file_list():
+    '''GET route which returns a list pdf file's keys
+
+    File keys are just their names separated by a '-' char
+    '''
+
+    files = listOfFilesInBucket(bucket_name)
+    if files is not None:
+        return jsonify(files), 200
+    else:
+        return 'error: no files found for that bucket', 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)

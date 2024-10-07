@@ -11,13 +11,13 @@ aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
 
 def urlFromBucketObj(bucket_name, object_name, expiration=60):
-    """Generate a presigned URL to share an S3 object
+    '''Generate a presigned URL to share an S3 object
 
     :param bucket_name: string
     :param object_name: string
     :param expiration: Time in seconds for the presigned URL to remain valid
     :return: Presigned URL with it's signature and URL separated. If error, returns None.
-    """
+    '''
 
     # Generate a presigned URL for the S3 object
     s3_client = boto3.client(
@@ -45,3 +45,18 @@ def urlFromBucketObj(bucket_name, object_name, expiration=60):
     remainingLink = re.sub(r'Signature=(.*)&Expires', 'Signature=INSERTSIGNATURE&Expires', response)
 
     return (remainingLink, signature)
+
+def listOfFilesInBucket(bucket_name):
+    '''Accesses the list of files available in our bucket
+
+    :param bucket_name: string
+    :return: a list of file keys for the available files
+    '''
+
+    session = boto3.Session( aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+    s3 = session.resource('s3')
+
+
+    my_bucket = s3.Bucket(bucket_name)
+
+    return list(map(lambda s: s.key, my_bucket.objects.all()))
