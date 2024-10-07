@@ -7,6 +7,11 @@ import Login from './pages/Login';
 import LoginSub from './pages/LoginSub';
 import Register from './pages/Register';
 import Catalogue from './pages/Catalogue';
+import Notifications from './pages/Notifications';
+import Activity from './pages/Activity';
+import Settings from './pages/Settings';
+import Create from './pages/Create';
+import Uploads from './pages/Uploads';
 
 const App = () => {
   // Get the token from localStorage if it exists, otherwise null
@@ -29,7 +34,13 @@ const App = () => {
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
           <Route path='/login-sub' element={<LoginSub />} />
+
+          <Route path='/notifications' element={<Notifications />} />
+          <Route path='/create' element={<Create />} />
           <Route path='/catalogue' element={<Catalogue />} />
+          <Route path='/uploads' element={<Uploads />} />
+          <Route path='/activity' element={<Activity />} />
+          <Route path='/settings' element={<Settings />} />
         </Routes>
       </BrowserRouter>
     </TokenContext.Provider>
