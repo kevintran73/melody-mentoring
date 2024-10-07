@@ -51,7 +51,6 @@ def confirmSignup():
         code = data['code']
         username = data['username']
 
-        print(code)
         client.confirm_sign_up(
             ClientId=os.getenv('AWS_COGNITO_CLIENTID'),
             Username=username,
