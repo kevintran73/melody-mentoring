@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
-from s3_bucket_helpers import urlFromBucketObj, listOfFilesInBucket
+from s3_bucket_helpers import urlFromBucketObj
+from dynamodb_helpers import listOfMusicBaskets
 import boto3
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
@@ -45,7 +46,7 @@ def sign_up():
         return jsonify({
             'error': 'Missing required fields (username, email, password)'
         }), 400
-    
+
 @app.route('/confirmSignup', methods=['POST'])
 def confirmSignup():
     try:
@@ -62,7 +63,7 @@ def confirmSignup():
         return jsonify({
             'message': 'Confirmation successful!',
         }), 200
-    
+
     except ClientError as e:
         return jsonify({
             'error': str(e)
@@ -87,7 +88,7 @@ def resendConfirmation():
         return jsonify({
             'message': 'New Code has been sent',
         }), 200
-    
+
     except ClientError as e:
         return jsonify({
             'error': str(e)
@@ -97,7 +98,7 @@ def resendConfirmation():
         return jsonify({
             'error': 'Missing required fields (username)'
         }), 400
-    
+
 @app.route('/login', methods=['POST'])
 def login():
     try:
@@ -130,7 +131,7 @@ def login():
         return jsonify({
             'error': 'Missing required fields (email, password)'
         }), 400
-    
+
 @app.route('/logout', methods=['POST'])
 def logout():
     try:
@@ -155,41 +156,69 @@ def logout():
             'error': 'Missing required fields (access_token)'
         }), 400
 
-@app.route('/catalogue/<string:filename>', methods=['GET'])
-def get_file_pdf(filename):
-    '''GET route for retrieving a link to the pdf
+@app.route('/catalogue/basket-list', methods=['GET'])
+def get_music_basket_list():
+    '''GET route which returns a list of music baskets
+
+    music baskets contain additional data about the song
+    Leaf key fields just denote typing e.g. SS => String Set
+    e.g. the song titled Johann Sebastian Bach might have a basket
+    looking like this
+    {
+        "basket-id": {
+            "S": "403deb46-92de-46b5-b271-814ed67867d7"
+        },
+        "genre-tags": {
+            "SS": [
+            "baroque",
+            "classical",
+            "instrument"
+            ]
+        },
+        "instrument": {
+            "S": "piano"
+        },
+        "sheet-file-key": {
+            "S": "johann-sebastian-bach"
+        },
+        "title": {
+            "S": "Johann Sebastian Bach"
+        }
+    }
+    '''
+    songs = listOfMusicBaskets()
+    if songs is not None:
+        return jsonify(songs), 200
+    else:
+        return jsonify({
+            'error': 'Music baskets cannot be found'
+        }), 500
+
+@app.route('/catalogue/find/<string:filekey>', methods=['GET'])
+def get_file_pdf(filekey):
+    '''GET route for retrieving a link to the pdf specified by key
 
     AWS s3's presigned link contains special chars like %2F inside their signature
     This means that the URL will get encoded when this API is called.
-    To get around this, this API now returns an object with two fields, 'url' and 'signature'
+    To get around this, this API returns an object with two fields, 'url' and 'signature'
     e.g.
-    GET /catalogue/afilename ...
+    GET /catalogue/sheetfilekey ...
     {
         "signature": "7GY4IXOmBA2J1pgK%2Bh3ltU2d1OY%3D",
-        "url": "https://bucketName.s3.amazonaws.com/afilename.pdf?AWSAccessKeyId=notTheNormalAccessKey&Signature=INSERTSIGNATURE&Expires=1728212979"
+        "url": "https://bucketName.s3.amazonaws.com/sheetfilekey.pdf?AWSAccessKeyId=notTheNormalAccessKey&Signature=INSERTSIGNATURE&Expires=1728212979"
     }
     To retrieve the link you have to piece it back together (replace 'INSERTSIGNATURE' with res.signature)
     '''
 
-    url = urlFromBucketObj(bucket_name, filename + '.pdf')
+    url = urlFromBucketObj(bucket_name, filekey + '.pdf')
     if url is not None:
-        return jsonify({'url': url[0], 'signature': url[1]})
+        return jsonify({
+            'url': url[0], 'signature': url[1]
+        }), 200
     else:
-        return 'error: check the file name', 404
+        return jsonify({
+            'error': 'requested file does not exist, please check you\'re using the file key.'
+        }), 404
 
-@app.route('/catalogue/list', methods=['GET'])
-def get_file_list():
-    '''GET route which returns a list pdf file's keys
-
-    File keys are just their names separated by a '-' char
-    '''
-
-    files = listOfFilesInBucket(bucket_name)
-    if files is not None:
-        return jsonify(files), 200
-    else:
-        return 'error: no files found for that bucket', 404
-      
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-
