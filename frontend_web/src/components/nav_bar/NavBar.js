@@ -20,35 +20,35 @@ const StyledHeader = styled('header')({
 });
 
 const StyledNotifs = styled(NotificationsIcon)({
-  color: '#ffffff',
+  color: '#B6B6B6',
   width: '40px',
   height: '40px',
   cursor: 'pointer',
 });
 
 const StyledCam = styled(CameraAltIcon)({
-  color: '#ffffff',
+  color: '#B6B6B6',
   width: '32px',
   height: '32px',
 });
 
 const StyledBook = styled(MenuBookIcon)({
   position: 'relative',
-  color: '#ffffff',
+  color: '#B6B6B6',
   width: '32px',
   height: '32px',
   top: '-2px',
 });
 
 const StyledPerson = styled(PersonIcon)({
-  color: '#ffffff',
+  color: '#B6B6B6',
   width: '40px',
   height: '40px',
   cursor: 'pointer',
 });
 
 const StyledSettings = styled(SettingsIcon)({
-  color: '#ffffff',
+  color: '#B6B6B6',
   width: '40px',
   height: '40px',
   cursor: 'pointer',
@@ -80,7 +80,7 @@ const IconContainer = styled('div')({
 
 const IconCaption = styled('p')({
   fontSize: '0.75rem',
-  color: '#ffffff',
+  color: '#B6B6B6',
   margin: '0',
 });
 
