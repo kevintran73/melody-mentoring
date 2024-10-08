@@ -12,11 +12,10 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
 
 const StyledCard = styled(Card)(() => ({
+  width: "10.5vw",
   minWidth: "200px",
-  // width: "15%",
-  aspectRatio: "9 / 12.5",
-  // minHeight: "280px",
-  // height: "30vh",
+  height: "14.5vw", 
+  minHeight: "280px",
   borderWidth: "2px",
   // boxShadow: "5px 10px grey",
   padding: "10px",

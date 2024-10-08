@@ -12,6 +12,7 @@ import Activity from './pages/Activity';
 import Settings from './pages/Settings';
 import Create from './pages/Create';
 import Uploads from './pages/Uploads';
+import Playlist from './pages/Playlist';
 
 const App = () => {
   // Get the token from localStorage if it exists, otherwise null
@@ -41,6 +42,7 @@ const App = () => {
           <Route path='/uploads' element={<Uploads />} />
           <Route path='/activity' element={<Activity />} />
           <Route path='/settings' element={<Settings />} />
+          <Route path='/playlist' element={<Playlist />} />
         </Routes>
       </BrowserRouter>
     </TokenContext.Provider>
