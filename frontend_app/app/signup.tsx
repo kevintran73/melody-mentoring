@@ -2,6 +2,7 @@ import { Text, View, TextInput, Pressable } from "react-native";
 import { Link, router } from 'expo-router'; 
 import React, { useState } from 'react';
 import axios from 'axios';
+import { LOCAL_IP } from '@env';
 
 
 export default function SignupScreen() {
@@ -19,7 +20,7 @@ export default function SignupScreen() {
       setError(false)
 
       try {
-        await axios.post('http://192.168.0.158:5001/signup', {
+        await axios.post(`http://${LOCAL_IP}:5001/signup`, {
           username: username,
           email: email,
           password: password,

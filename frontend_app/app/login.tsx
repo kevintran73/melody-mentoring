@@ -3,6 +3,7 @@ import { Link, router } from 'expo-router';
 import React, { useState } from 'react';
 import axios from 'axios';
 import * as SecureStore from "expo-secure-store";
+import { LOCAL_IP } from '@env';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
@@ -27,7 +28,7 @@ export default function LoginScreen() {
     } else {
       setError(false)
       try {
-        const response = await axios.post('http://192.168.0.158:5001/login', {
+        const response = await axios.post(`http://${LOCAL_IP}:5001/login`, {
           email: email,
           password: password,
         });
