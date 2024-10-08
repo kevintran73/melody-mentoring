@@ -9,7 +9,6 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState(false)
 
-
   // function to store access, id and refresh tokens 
   const storeTokens = async (access_token: string, id_token: string, refresh_token: string) => {
       try {
@@ -28,7 +27,7 @@ export default function LoginScreen() {
     } else {
       setError(false)
       try {
-        const response = await axios.post('http://127.0.0.1:5000/login', {
+        const response = await axios.post('http://192.168.0.158:5001/login', {
           email: email,
           password: password,
         });

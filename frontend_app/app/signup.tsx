@@ -12,28 +12,30 @@ export default function SignupScreen() {
   const [error, setError] = useState(false)
 
   const handleSignup = async () => {
-    if (email === '' || password === '') {
+    if (email === '' || password === '' || username === '') {
       setError(true)
     
     } else {
       setError(false)
 
       try {
-        await axios.post('http://127.0.0.1:5000/signup', {
+        await axios.post('http://192.168.0.158:5001/signup', {
           username: username,
           email: email,
           password: password,
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
-
         router.push({
           pathname: '/verification',
           params: {
             username: username,
           },
         })
-
       } catch (error) {
-        console.log(error)
+        alert(error.response.data.error)
       }
     }
   }
@@ -61,7 +63,7 @@ export default function SignupScreen() {
           onChangeText={setPassword}
           secureTextEntry
         />
-        {error && <Text className='mt-4 bg-red-400 rounded-md px-4 py-2'>Enter both email and password</Text>}
+        {error && <Text className='mt-4 bg-red-400 rounded-md px-4 py-2'>Fill in all fields</Text>}
         
         <Pressable className="bg-gray-700 rounded-lg py-2 px-10 my-4" onPress={handleSignup}>
           <Text className="text-white text-center">Sign Up</Text>

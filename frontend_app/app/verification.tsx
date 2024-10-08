@@ -11,7 +11,7 @@ export default function VerificationScreen() {
 
   const handleResend = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:5000/resendConfirmation', {
+      const response = await axios.post('http://192.168.0.158:5001/resendConfirmation', {
         username: username,
       });
       Alert.alert(response.data.message)
@@ -23,7 +23,7 @@ export default function VerificationScreen() {
 
   const handleConfirmation = async () => {
     try {
-      await axios.post('http://127.0.0.1:5000/confirmSignup', {
+      await axios.post('http://192.168.0.158:5001/confirmSignup', {
         code: code,
         username: username,
       });     
@@ -32,7 +32,7 @@ export default function VerificationScreen() {
       router.push('/login') 
 
     } catch (error) {
-      console.log(error)
+      alert(error.response.data.error)
     }
   }
 
