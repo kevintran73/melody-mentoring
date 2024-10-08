@@ -24,9 +24,7 @@ export default function SignupScreen() {
           email: email,
           password: password,
         });
-        // returns user_sub ? unique ID
 
-        router.push('/verification')  // direct to verfication page with username as param
         router.push({
           pathname: '/verification',
           params: {
