@@ -1,20 +1,47 @@
 import { Text, View, TextInput, Pressable } from "react-native";
-import { Link } from 'expo-router'; 
+import { Link, router } from 'expo-router'; 
 import React, { useState } from 'react';
+import axios from 'axios';
+import * as SecureStore from "expo-secure-store";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(false)
 
-  const handleSignup = () => {
+
+  // function to store access, id and refresh tokens 
+  const storeTokens = async (access_token: string, id_token: string, refresh_token: string) => {
+      try {
+        await SecureStore.setItemAsync('access_token', access_token)
+        await SecureStore.setItemAsync('id_token', id_token)
+        await SecureStore.setItemAsync('refresh_token', refresh_token)
+      } catch (error) {
+        console.log(error)
+      }
+  }
+
+  const handleLogin = async () => {
     if (email === '' || password === '') {
       setError(true)
     
     } else {
       setError(false)
-      // Make request to backend
-      
+      try {
+        const response = await axios.post('http://127.0.0.1:5000/login', {
+          email: email,
+          password: password,
+        });
+
+        // Store the tokens
+        const {access_token, id_token, refresh_token} = response.data
+        await storeTokens(access_token, id_token, refresh_token)
+
+        router.push('/')  // redirect to main page
+
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
@@ -37,7 +64,7 @@ export default function LoginScreen() {
         />
         {error && <Text className='mt-4 bg-red-400 rounded-md px-4 py-2'>Enter both email and password</Text>}
 
-        <Pressable className="bg-gray-700 rounded-lg py-2 px-10 my-4" onPress={handleSignup}>
+        <Pressable className="bg-gray-700 rounded-lg py-2 px-10 my-4" onPress={handleLogin}>
           <Text className="text-white text-center">Login</Text>
         </Pressable>
         <Link href="/signup" className="underline">Don't have an account?</Link>

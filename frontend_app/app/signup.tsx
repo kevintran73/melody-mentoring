@@ -1,37 +1,62 @@
 import { Text, View, TextInput, Pressable } from "react-native";
 import { Link, router } from 'expo-router'; 
 import React, { useState } from 'react';
+import axios from 'axios';
+
 
 export default function SignupScreen() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('')
   const [error, setError] = useState(false)
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (email === '' || password === '') {
       setError(true)
     
     } else {
       setError(false)
-      // Make request to backend
 
-      // If sign up is successful, navigate page to verification page
-      router.push('/verification')
+      try {
+        await axios.post('http://127.0.0.1:5000/signup', {
+          username: username,
+          email: email,
+          password: password,
+        });
+        // returns user_sub ? unique ID
+
+        router.push('/verification')  // direct to verfication page with username as param
+        router.push({
+          pathname: '/verification',
+          params: {
+            username: username,
+          },
+        })
+
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
   return (
     <View className="items-center flex-1 justify-center">
       <View className="px-4 py-4 border border-gray-300 w-[50%] rounded-lg">
-        <Text>Email</Text>
+      <Text>Username</Text>
+        <TextInput 
+          className="border border-gray-300 rounded-md px-3 py-1 my-1"
+          placeholder="Username"
+          onChangeText={setUsername}
+        />
+        <Text className="mt-2">Email</Text>
         <TextInput 
           className="border border-gray-300 rounded-md px-3 py-1 my-1"
           placeholder="Email"
           keyboardType="email-address"
           onChangeText={setEmail}
         />
-        <Text className="mt-4">Password</Text>
+        <Text className="mt-2">Password</Text>
         <TextInput 
           className="border border-gray-300 rounded-md px-3 py-1 my-1"
           placeholder="Password"
