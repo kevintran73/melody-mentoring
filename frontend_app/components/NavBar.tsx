@@ -6,26 +6,23 @@ import CreateButton from './CreateButton';
 import ActivityButton from './ActivityButton';
 import SettingsButton from './SettingsButton';
 import UploadsButton from './UploadsButton';
-import { styled } from 'nativewind';
-
-const StyledView = styled(View);
 
 const NavBar = () => {
   return (
-    <StyledView className="flex flex-row justify-between items-center p-4 bg-[#020E37] h-[75px]">
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: '#020E37', height: 75 }}>
       <NotificationsButton />
 
-      <StyledView className="flex flex-row items-center space-x-5">
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <CreateButton />
         <CatalogueButton />
         <UploadsButton />
-      </StyledView>
+      </View>
 
-      <StyledView className="flex flex-row items-center space-x-5">
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <ActivityButton />
         <SettingsButton />
-      </StyledView>
-    </StyledView>
+      </View>
+    </View>
   );
 };
 
