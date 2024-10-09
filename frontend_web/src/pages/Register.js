@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { showErrorMessage } from '../helpers';
-import Popup from '../components/Popup';
 
 import { Button, TextField } from '@mui/material';
 import { styled } from '@mui/system';
@@ -55,8 +54,6 @@ const Register = () => {
   const [password, setPassword] = React.useState('');
   const [username, setUsername] = React.useState('');
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState('')
   
   // Handles the signup 
   const register = async (event) => {
@@ -65,8 +62,7 @@ const Register = () => {
 
     // check all fields are filled
     if (username === '' || email === '' || password === '') {
-      setOpen(true)
-      setMessage("Please fill in all fields")
+      showErrorMessage("Please fill in all fields")
     } 
     else {
       try {
@@ -78,8 +74,7 @@ const Register = () => {
   
         navigate('/verification', { state: {username: username}});  // if signup is succesful, redirct to email verification page
       } catch (err) {
-        setOpen(true)
-        setMessage(err.response.data.error)
+        showErrorMessage(err.response.data.error)
       }
     }
   
@@ -124,7 +119,6 @@ const Register = () => {
           Sign up
         </StyledButton>
       </RegisterForm>
-      <Popup open={open} setOpen={setOpen} content={message}/>
     </StyledContainer>
   );
 };

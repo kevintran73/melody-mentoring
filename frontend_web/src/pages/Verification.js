@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Popup from '../components/Popup';
+import { showErrorMessage } from '../helpers';
+
 
 const Verification = () => {
 
@@ -26,11 +28,10 @@ const Verification = () => {
       await axios.post(`http://localhost:5001/resendConfirmation`, {
         username: username,
       });
-      
       setOpen(true) // open popup
       setMessage("New code has been sent")
     } catch (error) {
-      console.log(error)
+      showErrorMessage(error.response.data.error)
     }
   }
 
@@ -46,8 +47,7 @@ const Verification = () => {
       setMessage("Your email has been verified")
       navigate('/login-sub')
     } catch (error) {
-      setOpen(true)
-      setMessage(error.response.data.error)
+      showErrorMessage(error.response.data.error)
     }
   }
 

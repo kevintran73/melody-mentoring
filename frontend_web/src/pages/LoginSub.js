@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { showErrorMessage } from '../helpers';
-import Popup from '../components/Popup';
 
 import TokenContext from '../context/TokenContext';
 import { Button, TextField } from '@mui/material';
@@ -66,8 +65,7 @@ const LoginSub = () => {
 
     // check all fields are filled
     if (email === '' || password === '') {
-      setOpen(true)
-      setMessage("Please fill in all fields")
+      showErrorMessage("Please fill in all fields")
     } 
     else {
       try {
@@ -83,8 +81,7 @@ const LoginSub = () => {
         navigate('/catalogue');  // redirect to catalogue page
 
       } catch (err) {
-        setOpen(true)
-        setMessage(err.response.data.error)
+        showErrorMessage(err.response.data.error)
       }
     }
   };
@@ -120,7 +117,6 @@ const LoginSub = () => {
           Log in
         </StyledButton>
       </LoginForm>
-      <Popup open={open} setOpen={setOpen} content={message}/>
     </StyledContainer>
   );
 };
