@@ -1,9 +1,9 @@
-import { Text, View, TextInput, Pressable, TouchableOpacity } from "react-native";
+import { Text, View, TextInput, Pressable, Alert } from "react-native";
 import { Link, router } from 'expo-router';
 import React, { useState } from 'react';
 import axios from 'axios';
-import { MaterialIcons } from "@expo/vector-icons";
-
+import { LOCAL_IP } from '@env';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 export default function SignupScreen() {
 
@@ -20,7 +20,7 @@ export default function SignupScreen() {
       setError(false)
 
       try {
-        await axios.post('http://localhost:5001/signup', {
+        await axios.post(`http://${LOCAL_IP}:5001/signup`, {
           username: username,
           email: email,
           password: password,
@@ -36,7 +36,7 @@ export default function SignupScreen() {
           },
         })
       } catch (error) {
-        alert(error.response.data.error)
+        Alert.alert(error.response.data.error)
       }
     }
   }
@@ -47,11 +47,10 @@ export default function SignupScreen() {
 
   return (
     <>
-    <View className="flex mt-5 ml-8">
-    <TouchableOpacity onPress={goBack}>
-      <MaterialIcons name="arrow-back" size={32} />
-    </TouchableOpacity>
+    <View className="absolute top-4 left-4 ">
+      <AntDesign name="arrowleft" size={24} onPress={() => router.back()}/>
     </View>
+
     <View className="items-center flex-1 justify-center">
       <View className="px-4 py-4 border border-gray-300 w-[50%] rounded-lg">
       <Text>Username</Text>
@@ -82,6 +81,7 @@ export default function SignupScreen() {
         <Link href="/login" className="underline">Already have an account?</Link>
       </View>
     </View>
+    </>
     </>
   );
 }

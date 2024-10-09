@@ -6,14 +6,11 @@ from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 from flask_cors import CORS
 
-from flask_cors import CORS
-
 import os
 load_dotenv()
 bucket_name = os.getenv('BUCKET_NAME')
 app = Flask(__name__)
-CORS(app)CORS(app)
-
+CORS(app)
 client = boto3.client('cognito-idp', region_name='ap-southeast-2')
 
 @app.route('/signup', methods=['POST'])
@@ -224,4 +221,4 @@ def get_file_pdf(filekey):
         }), 404
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', host='0.0.0.0', debug=True, port=5001)
+    app.run(host='0.0.0.0', debug=True, port=5001)

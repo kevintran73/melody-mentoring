@@ -2,6 +2,7 @@ import { Text, View, TextInput, Pressable, Alert} from "react-native";
 import React, { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
+import { LOCAL_IP } from '@env';
 
 
 export default function VerificationScreen() {
@@ -11,7 +12,7 @@ export default function VerificationScreen() {
 
   const handleResend = async () => {
     try {
-      const response = await axios.post('http://localhost:5001/resendConfirmation', {
+      const response = await axios.post(`http://${LOCAL_IP}:5001/resendConfirmation`, {
         username: username,
       });
       Alert.alert(response.data.message)
@@ -23,7 +24,7 @@ export default function VerificationScreen() {
 
   const handleConfirmation = async () => {
     try {
-      await axios.post('http://localhost:5001/confirmSignup', {
+      await axios.post(`http://${LOCAL_IP}:5001/confirmSignup`, {
         code: code,
         username: username,
       });
@@ -32,7 +33,7 @@ export default function VerificationScreen() {
       router.push('/login')
 
     } catch (error) {
-      alert(error.response.data.error)
+      Alert.alert(error.response.data.error)
     }
   }
 
