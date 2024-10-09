@@ -9,10 +9,10 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
 
 const StyledCard = styled(Card)(() => ({
-  // width: '11.25vw',
-  minWidth: '150px',
-  // height: '16.5vw', 
-  minHeight: '220px',
+  width: '150px',
+  // minWidth: '150px',
+  height: '220px', 
+  // minHeight: '220px',
   borderWidth: '2px',
   // boxShadow: '5px 10px grey',
   padding: '12px',

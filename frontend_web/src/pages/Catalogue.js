@@ -12,7 +12,7 @@ import ScrollContainer from 'react-indiana-drag-scroll'
 import defaultImg from '../assets/default-img.png';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
-import { styled } from '@mui/system';
+import { maxHeight, styled } from '@mui/system';
 
 /**
  * Catalogue/songs page
@@ -48,13 +48,15 @@ const PlaylistTitle = ({ title, navPlaylist }) => (
 
 const SongCardTemplate = () => {
   return (
-    <SongCard
-      title='Song Title'
-      img={defaultImg}
-      artist='Artist Name'
-      difficulty='7/10'
-    />
-)
+    <Box>
+      <SongCard 
+        title='Song Title'
+        img={defaultImg}
+        artist='Artist Name'
+        difficulty='7/10'
+      />
+    </Box>
+  )
 }
 
 const Catalogue = () => {
@@ -100,10 +102,10 @@ const Catalogue = () => {
         </ScrollContainer>
       </Box>
       <Box margin='10px'>
-        <PlaylistTitle title='Playlist 4 >' navPlaylist={navPlaylist}/>
+        <PlaylistTitle title='Playlist 4 >' navPlaylist={navPlaylist} gap={0}/>
         <ScrollContainer>
-          <Box display='flex' flexDirection={'row'}>
-            {Array.apply(null, { length: 7 }).map((i) => (
+          <Box display='flex' flexDirection={'row'} justifyContent={'flex-start'}>
+            {Array.apply(null, { length: 5 }).map((i) => (
               <SongCardTemplate key={i}></SongCardTemplate>
             ))}
           </Box>

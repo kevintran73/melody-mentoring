@@ -16,7 +16,7 @@ const StyledHeader = styled('header')({
   alignItems: 'center',
   padding: '1rem 1.5rem',
   backgroundColor: '#020E37',
-  height: '40px',
+  height: '70px',
 });
 
 const MiddleContainer = styled('div')({
