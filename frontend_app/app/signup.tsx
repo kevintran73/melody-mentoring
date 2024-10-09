@@ -82,6 +82,5 @@ export default function SignupScreen() {
       </View>
     </View>
     </>
-    </>
   );
 }
