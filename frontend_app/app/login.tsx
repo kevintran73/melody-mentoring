@@ -1,4 +1,4 @@
-import { Text, View, TextInput, Pressable } from "react-native";
+import { Text, View, TextInput, Pressable, Alert } from "react-native";
 import { Link, router } from 'expo-router'; 
 import React, { useState } from 'react';
 import axios from 'axios';
@@ -40,7 +40,7 @@ export default function LoginScreen() {
         router.push('/')  // redirect to main page
 
       } catch (error) {
-        console.log(error)
+        Alert.alert(error.response.data.error)
       }
     }
   }

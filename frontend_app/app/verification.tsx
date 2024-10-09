@@ -33,7 +33,7 @@ export default function VerificationScreen() {
       router.push('/login') 
 
     } catch (error) {
-      alert(error.response.data.error)
+      Alert.alert(error.response.data.error)
     }
   }
 

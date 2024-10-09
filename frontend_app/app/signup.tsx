@@ -1,4 +1,4 @@
-import { Text, View, TextInput, Pressable } from "react-native";
+import { Text, View, TextInput, Pressable, Alert } from "react-native";
 import { Link, router } from 'expo-router'; 
 import React, { useState } from 'react';
 import axios from 'axios';
@@ -36,7 +36,7 @@ export default function SignupScreen() {
           },
         })
       } catch (error) {
-        alert(error.response.data.error)
+        Alert.alert(error.response.data.error)
       }
     }
   }
