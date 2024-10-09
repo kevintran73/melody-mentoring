@@ -22,6 +22,7 @@ const StyledCard = styled(Card)(() => ({
   paddingBottom: "5px",
   margin: "10px",
   marginRight: "15px",
+  cursor: "pointer",
 }));
 
 const card = (title, img, artist, difficulty) => (

@@ -22,21 +22,33 @@ const StyledMainSong = styled(Box)(() => ({
   paddingTop: "50px",
 }));
 
-const songInfo = (title, img, artist, difficulty) => (
-  <Box>
-    <img src={img} alt="img" width="500px" height="500px"></img>
-    <Box display="flex" flexDirection="column" padding="3px" gap={0.5}>
-      <Typography variant="h2" component="div" align="center">{title}</Typography>
-      <Typography variant="h4" sx={{ color: 'text.secondary' }} align="center">{artist}</Typography>
-      <Typography variant="h4" sx={{ color: 'text.secondary' }} align="center">{difficulty}</Typography>
-      <Button
-        variant="contained"
-        sx={{ borderRadius: '16px' }}
-        >
-          Click Me
-      </Button>
-    </Box>
+const StyledButton = styled(Button)({
+  width: '75%',
+  backgroundColor: '#020E37',
+  color:"white",
+  fontSize: '1.3rem',
+  padding: '8px 8px',
+  textTransform: 'none',
+  borderRadius: '16px',
+  marginTop: "10px",
+  '&:hover': {
+    backgroundColor: 'blue',
+    // borderColor: '#0062cc',
+    // boxShadow: 'none',
+  },
+});
 
+const songInfo = (title, img, artist, difficulty) => (
+  <Box marginTop="15%">
+    <img src={img} alt="img" width="500px" height="500px"></img>
+    <Box display="flex" flexDirection="column" padding="3px" gap={0.5} alignItems="center" marginTop="10px">
+      <Typography variant="h3" component="div" align="center">{title}</Typography>
+      <Typography variant="h5" sx={{ color: 'text.secondary' }} align="center">{artist}</Typography>
+      <Typography variant="h5" sx={{ color: 'text.secondary' }} align="center">{difficulty}</Typography>
+      <StyledButton>
+          Start Activity
+      </StyledButton>
+    </Box>
   </Box>
 );
 
