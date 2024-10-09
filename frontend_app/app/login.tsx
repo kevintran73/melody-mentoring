@@ -1,5 +1,5 @@
 import { Text, View, TextInput, Pressable, Alert } from "react-native";
-import { Link, router } from 'expo-router'; 
+import { Link, router } from 'expo-router';
 import React, { useState } from 'react';
 import axios from 'axios';
 import * as SecureStore from "expo-secure-store";
@@ -11,7 +11,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState(false)
 
-  // function to store access, id and refresh tokens 
+  // function to store access, id and refresh tokens
   const storeTokens = async (access_token: string, id_token: string, refresh_token: string) => {
       try {
         await SecureStore.setItemAsync('access_token', access_token)
@@ -25,7 +25,7 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     if (email === '' || password === '') {
       setError(true)
-    
+
     } else {
       setError(false)
       try {
@@ -38,13 +38,17 @@ export default function LoginScreen() {
         const {access_token, id_token, refresh_token} = response.data
         await storeTokens(access_token, id_token, refresh_token)
 
-        router.push('/')  // redirect to main page
+        router.push('/catalogue')  // redirect to main page
 
       } catch (error) {
         Alert.alert(error.response.data.error)
       }
     }
   }
+
+  const goBack = () => {
+    router.push('/')
+  };
 
   return (
     <>
@@ -55,14 +59,14 @@ export default function LoginScreen() {
     <View className="items-center flex-1 justify-center">
       <View className="px-4 py-4 border border-gray-300 w-[50%] rounded-lg">
         <Text>Email</Text>
-        <TextInput 
+        <TextInput
           className="border border-gray-300 rounded-md px-3 py-1 my-1"
           placeholder="Email"
           onChangeText={setEmail}
           keyboardType="email-address"
         />
         <Text className="mt-4">Password</Text>
-        <TextInput 
+        <TextInput
           className="border border-gray-300 rounded-md px-3 py-1 my-1"
           placeholder="Password"
           onChangeText={setPassword}

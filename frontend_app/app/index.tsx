@@ -1,5 +1,5 @@
 import { Text, View, Image } from "react-native";
-import { Link } from 'expo-router'; 
+import { Link } from 'expo-router';
 
 export default function Index() {
   return (
@@ -16,6 +16,7 @@ export default function Index() {
       <View className="w-1/2 items-center">
         <Image source={require("../assets/images/piano.jpg")} className="rounded-3xl object-contain w-60 h-60" />
       </View>
+
     </View>
   );
 }
