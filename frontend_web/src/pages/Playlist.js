@@ -9,6 +9,9 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import PlaylistMainSong from '../components/playlist/PlaylistMainSong';
 import SongScroll from '../components/playlist/SongScroll';
+import PlaylistCard from '../components/playlist/PlaylistCard';
+import ScrollContainer from 'react-indiana-drag-scroll'
+import TextField from '@mui/material/TextField';
 
 import { styled } from '@mui/system';
 
@@ -29,6 +32,11 @@ const StyledBackButton = styled(IconButton)({
     // borderColor: '#0062cc',
     // boxShadow: 'none',
   },
+});
+
+const StyledSearchBar = styled(TextField)({
+  marginBottom: "10px",
+  width: "90%",
 });
 
 const Playlist = () => {
@@ -54,7 +62,7 @@ const Playlist = () => {
       >
         <Box
           display= 'flex'
-          flex={1}
+          flex={3}
           justifyContent= 'center'
           alignItems= 'center'
         >
@@ -65,8 +73,31 @@ const Playlist = () => {
               difficulty="7/10"
           />
         </Box>
-        <Box display= 'flex' flex={1} justifyContent= 'center' alignItems= 'center'>
-          <SongScroll></SongScroll>
+        <Box
+          flex={5}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          maxHeight="80vh"
+          marginTop="5vh"
+        >
+          <StyledSearchBar id="outlined-basic" label="Search" variant="outlined"/>
+            <ScrollContainer style={{ width: "100%" }}>
+              <Box display="flex" flexDirection="column" width="100%" alignItems="center">
+                <PlaylistCard></PlaylistCard>
+                <PlaylistCard></PlaylistCard>
+                <PlaylistCard></PlaylistCard>
+                <PlaylistCard></PlaylistCard>
+                <PlaylistCard></PlaylistCard>
+                <PlaylistCard></PlaylistCard>
+                <PlaylistCard></PlaylistCard>
+                <PlaylistCard></PlaylistCard>
+                <PlaylistCard></PlaylistCard>
+                <PlaylistCard></PlaylistCard>
+                <PlaylistCard></PlaylistCard>
+                <PlaylistCard></PlaylistCard>
+              </Box>
+            </ScrollContainer>
         </Box>
       </Box>
     </>
