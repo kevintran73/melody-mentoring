@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -39,12 +39,67 @@ const StyledSearchBar = styled(TextField)({
   width: "90%",
 });
 
+const playlistData = [
+  {
+    "title": "Cold Cold Cold",
+    "artist": "Cage the Elephant",
+    "difficulty": "Hard",
+  }, {
+    "title": "September",
+    "artist": "Earth, Wind & Fire",
+    "difficulty": "Hard",
+  }, {
+    "title": "Budapest",
+    "artist": "George Ezra",
+    "difficulty": "Easy",
+  }, {
+    "title": "How Much A Dollar Cost",
+    "artist": "Kendrick Lamar",
+    "difficulty": "Easy",
+  }, {
+    "title": "Depreston",
+    "artist": "Courtney Barnett",
+    "difficulty": "Easy",
+  }, {
+    "title": "Piano Man",
+    "artist": "Billy Joel",
+    "difficulty": "Medium",
+  }, {
+    "title": "Dance the Night",
+    "artist": "Dua Lipa",
+    "difficulty": "Medium",
+  }, {
+    "title": "Like a Prayer",
+    "artist": "Madonna",
+    "difficulty": "Easy",
+  }, {
+    "title": "Cherry Bomb",
+    "artist": "The Runaways",
+    "difficulty": "Hard",
+  }, {
+    "title": "Dancing Queen",
+    "artist": "ABBA",
+    "difficulty": "Hard",
+  }
+]
+
 const Playlist = () => {
   const navigate = useNavigate();
 
   const navCatalogue = () => {
     return navigate('/catalogue');
   };
+
+  const [searchInput, setSearchInput] = useState("");
+
+  const handleSearchChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+
+  const filteredPlaylist = playlistData.filter(song => 
+    song.title.toLowerCase().includes(searchInput.toLowerCase()) ||
+    song.artist.toLowerCase().includes(searchInput.toLowerCase())
+  );
 
   return (
     <>
@@ -81,9 +136,10 @@ const Playlist = () => {
           maxHeight="80vh"
           marginTop="5vh"
         >
-          <StyledSearchBar id="outlined-basic" label="Search" variant="outlined"/>
+          <StyledSearchBar id="outlined-basic" label="Search" variant="outlined" onChange={handleSearchChange} value={searchInput}/>
             <ScrollContainer style={{ width: "100%" }}>
               <Box display="flex" flexDirection="column" width="100%" alignItems="center">
+                {/* <PlaylistCard></PlaylistCard>
                 <PlaylistCard></PlaylistCard>
                 <PlaylistCard></PlaylistCard>
                 <PlaylistCard></PlaylistCard>
@@ -94,8 +150,15 @@ const Playlist = () => {
                 <PlaylistCard></PlaylistCard>
                 <PlaylistCard></PlaylistCard>
                 <PlaylistCard></PlaylistCard>
-                <PlaylistCard></PlaylistCard>
-                <PlaylistCard></PlaylistCard>
+                <PlaylistCard></PlaylistCard> */}
+                {filteredPlaylist.map((song) => (
+                  <PlaylistCard 
+                    // key={song.id} 
+                    title={song.title} 
+                    artist={song.artist} 
+                    difficulty={song.difficulty} 
+                  />
+                ))}
               </Box>
             </ScrollContainer>
         </Box>

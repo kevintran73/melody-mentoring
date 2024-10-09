@@ -13,7 +13,7 @@ const Img = styled('img')({
   maxHeight: '100%',
 });
 
-const PlaylistCard = () => {
+const PlaylistCard = ({ title, artist, difficulty }) => {
   return (
     <Paper
       sx={(theme) => ({
@@ -38,10 +38,10 @@ const PlaylistCard = () => {
           <Grid item xs container direction="column">
             <Grid item xs>
               <Typography gutterBottom variant="subtitle1" component="div">
-                Song Title
+                {title}
               </Typography>
               <Typography variant="body2" gutterBottom>
-                Song Artist • Difficulty
+                {artist} • {difficulty}
               </Typography>
               {/* <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 ID: 1030114
