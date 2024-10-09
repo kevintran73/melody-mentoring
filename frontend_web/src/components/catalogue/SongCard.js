@@ -12,29 +12,30 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
 
 const StyledCard = styled(Card)(() => ({
-  width: "10.5vw",
-  minWidth: "200px",
-  height: "14.5vw", 
-  minHeight: "280px",
+  // width: "11.25vw",
+  minWidth: "150px",
+  // height: "16.5vw", 
+  minHeight: "220px",
   borderWidth: "2px",
   // boxShadow: "5px 10px grey",
-  padding: "10px",
+  padding: "12px",
   paddingBottom: "5px",
   margin: "10px",
+  marginRight: "15px",
 }));
 
 const card = (title, img, artist, difficulty) => (
   <React.Fragment>
     <CardMedia
         component="img"
-        height="194"
+        height="150"
         image={img}
         alt="img"
     />
     <Box padding="2px">
-      <Typography variant="h5" component="div">{title}</Typography>
-      <Typography sx={{ color: 'text.secondary' }}>{artist}</Typography>
-      <Typography sx={{ color: 'text.secondary' }}>{difficulty}</Typography>
+      <Typography fontSize="1rem" component="div">{title}</Typography>
+      <Typography fontSize="0.9rem" sx={{ color: 'text.secondary' }}>{artist}</Typography>
+      <Typography fontSize="0.8rem" sx={{ color: 'text.secondary' }}>{difficulty}</Typography>
     </Box>
   </React.Fragment>
 );

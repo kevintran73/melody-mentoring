@@ -58,7 +58,7 @@ const Register = () => {
 
   // Navigate to dashboard if active token
   if (token !== null) {
-    return <Navigate to='/dashboard' />;
+    return <Navigate to='/catalogue' />;
   }
 
   // Handles the login
