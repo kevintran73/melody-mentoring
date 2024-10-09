@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import * as SecureStore from "expo-secure-store";
 import { LOCAL_IP } from '@env';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
@@ -46,6 +47,11 @@ export default function LoginScreen() {
   }
 
   return (
+    <>
+    <View className="absolute top-4 left-4 ">
+      <AntDesign name="arrowleft" size={24} onPress={() => router.back()}/>
+    </View>
+
     <View className="items-center flex-1 justify-center">
       <View className="px-4 py-4 border border-gray-300 w-[50%] rounded-lg">
         <Text>Email</Text>
@@ -70,5 +76,6 @@ export default function LoginScreen() {
         <Link href="/signup" className="underline">Don't have an account?</Link>
       </View>
     </View>
+    </>
   );
 }

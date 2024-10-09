@@ -96,7 +96,7 @@ const LoginSub = () => {
   return (
     <StyledContainer>
       <LoginForm onSubmit={handleLogin} onKeyDown={handleKeyDown} noValidate>
-        <StyledHeader>Welcome Back!</StyledHeader>
+        <StyledHeader>Sign In</StyledHeader>
         <StyledTextField
           type='email'
           label='Email'
@@ -116,6 +116,7 @@ const LoginSub = () => {
         <StyledButton variant='contained' type='submit' id='login-go'>
           Log in
         </StyledButton>
+        <Link className='underline' to="/register">Don't have an account?</Link>
       </LoginForm>
     </StyledContainer>
   );

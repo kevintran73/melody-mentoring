@@ -118,6 +118,7 @@ const Register = () => {
         <StyledButton variant='contained' type='submit' id='register-go'>
           Sign up
         </StyledButton>
+        <Link className='underline' to="/login-sub">Already have an account?</Link>
       </RegisterForm>
     </StyledContainer>
   );
