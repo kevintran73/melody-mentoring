@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
-import loginImage from '../assets/default-img.png';
+import loginImage from '../assets/piano.jpg';
 
 import TokenContext from '../context/TokenContext';
 import { Button } from '@mui/material';
@@ -85,9 +85,11 @@ const Login = () => {
   const navigate = useNavigate();
 
   // Navigate to default page if active token
+  /*
   if (token !== null) {
     return <Navigate to='/catalogue' />;
   }
+    */
 
   const navRegister = () => {
     return navigate('/register');
@@ -101,7 +103,7 @@ const Login = () => {
     <StyledContainer>
       <LeftContainer>
         <StyledHeading1>Melody Mentoring</StyledHeading1>
-        <StyledHeading2>Catchy Slogan</StyledHeading2>
+        <StyledHeading2>Discover the Musician in You</StyledHeading2>
         <StyledButton variant='contained' type='button' id='nav-login-main' onClick={navLogin}>
           Login
         </StyledButton>

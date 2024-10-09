@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
-// import axios from 'axios';
+import axios from 'axios';
 import { showErrorMessage } from '../helpers';
 
-import TokenContext from '../context/TokenContext';
 import { Button, TextField } from '@mui/material';
 import { styled } from '@mui/system';
 
@@ -53,31 +52,32 @@ const StyledButton = styled(Button)({
 const Register = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const { token, setTokenLocalStorage } = React.useContext(TokenContext);
+  const [username, setUsername] = React.useState('');
   const navigate = useNavigate();
-
-  // Navigate to dashboard if active token
-  if (token !== null) {
-    return <Navigate to='/catalogue' />;
-  }
-
-  // Handles the login
+  
+  // Handles the signup 
   const register = async (event) => {
     // Prevent page from refreshing
     event.preventDefault();
 
-    try {
-      // const response = await axios.post('http://localhost:5005/admin/auth/register', {
-      //   email,
-      //   password,
-      // });
-
-      // Set the token and navigate to dashboard
-      // setTokenLocalStorage(response.data.token);
-      return navigate('/catalogue');
-    } catch (err) {
-      showErrorMessage(err.response.data.error);
+    // check all fields are filled
+    if (username === '' || email === '' || password === '') {
+      showErrorMessage("Please fill in all fields")
+    } 
+    else {
+      try {
+        await axios.post('http://localhost:5001/signup', {
+          username: username,
+          email: email,
+          password: password,
+        });
+  
+        navigate('/verification', { state: {username: username}});  // if signup is succesful, redirct to email verification page
+      } catch (err) {
+        showErrorMessage(err.response.data.error)
+      }
     }
+  
   };
 
   // Handle login if enter key is pressed
@@ -91,6 +91,14 @@ const Register = () => {
     <StyledContainer>
       <RegisterForm onSubmit={register} onKeyDown={handleKeyDown} noValidate>
         <StyledHeader>Sign Up</StyledHeader>
+        <StyledTextField
+          type='text'
+          label='Username'
+          onChange={(e) => setUsername(e.target.value)}
+          value={username}
+          id='register-username'
+          required
+        />
         <StyledTextField
           type='email'
           label='Email'
@@ -110,6 +118,7 @@ const Register = () => {
         <StyledButton variant='contained' type='submit' id='register-go'>
           Sign up
         </StyledButton>
+        <Link className='underline' to="/login-sub">Already have an account?</Link>
       </RegisterForm>
     </StyledContainer>
   );

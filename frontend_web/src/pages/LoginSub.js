@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
-// import axios from 'axios';
+import axios from 'axios';
 import { showErrorMessage } from '../helpers';
 
 import TokenContext from '../context/TokenContext';
@@ -47,55 +47,56 @@ const StyledButton = styled(Button)({
   fontSize: '1.1rem',
 });
 
-const StyledLink = styled(Link)({
-  fontSize: '1.3rem',
-  color: '#000000',
-});
-
 /**
  * Login sub-page
  */
 const LoginSub = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const { token, setTokenLocalStorage } = React.useContext(TokenContext);
+  const { login } = React.useContext(TokenContext);
   const navigate = useNavigate();
-
-  // Navigate to dashboard if active token
-  if (token !== null) {
-    return <Navigate to='/catalogue' />;
-  }
+  const [open, setOpen] = React.useState(false);
+  const [message, setMessage] = React.useState('')
 
   // Handles the login
-  const login = async (event) => {
+  const handleLogin = async (event) => {
     // Prevent page from refreshing
     event.preventDefault();
 
-    try {
-      // const response = await axios.post('http://localhost:5005/admin/auth/login', {
-      //   email,
-      //   password,
-      // });
+    // check all fields are filled
+    if (email === '' || password === '') {
+      showErrorMessage("Please fill in all fields")
+    } 
+    else {
+      try {
+        const response = await axios.post('http://localhost:5001/login', {
+          email: email,
+          password: password,
+        });
 
-      // Set the token and navigate to dashboard
-      // setTokenLocalStorage(response.data.token);
-      return navigate('/catalogue');
-    } catch (err) {
-      showErrorMessage(err.response.data.error);
+        // stores tokens inside variables using TokenContext's login
+        const {access_token, id_token, refresh_token} = response.data
+        login(access_token, id_token, refresh_token) 
+
+        navigate('/catalogue');  // redirect to catalogue page
+
+      } catch (err) {
+        showErrorMessage(err.response.data.error)
+      }
     }
   };
 
   // Handle login if enter key is pressed
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      login(event);
+      handleLogin(event);
     }
   };
 
   return (
     <StyledContainer>
-      <LoginForm onSubmit={login} onKeyDown={handleKeyDown} noValidate>
-        <StyledHeader>Welcome Back!</StyledHeader>
+      <LoginForm onSubmit={handleLogin} onKeyDown={handleKeyDown} noValidate>
+        <StyledHeader>Sign In</StyledHeader>
         <StyledTextField
           type='email'
           label='Email'
@@ -115,7 +116,7 @@ const LoginSub = () => {
         <StyledButton variant='contained' type='submit' id='login-go'>
           Log in
         </StyledButton>
-        <StyledLink to='/forgot-password'>Forgot password?</StyledLink>
+        <Link className='underline' to="/register">Don't have an account?</Link>
       </LoginForm>
     </StyledContainer>
   );

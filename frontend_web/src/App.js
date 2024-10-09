@@ -13,29 +13,43 @@ import Settings from './pages/Settings';
 import Create from './pages/Create';
 import Uploads from './pages/Uploads';
 import Playlist from './pages/Playlist';
+import Verification from './pages/Verification';
 
 const App = () => {
-  // Get the token from localStorage if it exists, otherwise null
-  let lsToken = null;
-  if (localStorage.getItem('token') !== 'null') {
-    lsToken = localStorage.getItem('token');
-  }
-  const [token, setToken] = React.useState(lsToken);
 
-  const setTokenLocalStorage = (token) => {
-    setToken(token);
-    localStorage.setItem('token', token);
-  };
+  const [accessToken, setAccessToken] = React.useState(null);
+  const [idToken, setIdToken] = React.useState(null);
+  const [refreshToken, setRefreshToken] = React.useState(null);
+
+  // at login, set and store tokens 
+  const login = (accessToken, idToken, refreshToken) => {
+    setAccessToken(accessToken)
+    setIdToken(idToken)
+    setRefreshToken(refreshToken)
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('idToken', idToken);
+    localStorage.setItem('refreshToken', refreshToken);
+  }
+
+  // at logout, set all tokens to null
+  const logout = () => {
+    setAccessToken(null)
+    setIdToken(null)
+    setRefreshToken(null)
+    localStorage.remove('accessToken')
+    localStorage.remove('idToken')
+    localStorage.remove('refreshToken')
+  }
 
   return (
-    <TokenContext.Provider value={{ token, setTokenLocalStorage }}>
+    <TokenContext.Provider value={{ accessToken, idToken, refreshToken, login, logout }}>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Navigate to='/login' />} />
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
           <Route path='/login-sub' element={<LoginSub />} />
-
+          <Route path='/verification' element={<Verification />} />
           <Route path='/notifications' element={<Notifications />} />
           <Route path='/create' element={<Create />} />
           <Route path='/catalogue' element={<Catalogue />} />
