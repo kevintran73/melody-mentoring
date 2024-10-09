@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import ScrollContainer from 'react-indiana-drag-scroll'
 
-import defaultImg from "../assets/default-img.png";
+import defaultImg from '../assets/default-img.png';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 import { styled } from '@mui/system';
@@ -23,23 +23,23 @@ const StyledButton = styled(Button)({
   backgroundColor: '#2C2C2C',
   fontSize: '1rem',
   padding: '8px 8px',
-  position:"absolute",
-  right:"10px",
-  marginTop:"0px",
+  position:'absolute',
+  right:'10px',
+  marginTop:'0px',
   textTransform: 'none',
 });
 
 const StyledSearchBar = styled(TextField)({
-  position:"absolute",
-  right:"130px",
-  marginTop:"2px",
+  position:'absolute',
+  right:'130px',
+  marginTop:'2px',
 });
 
 const PlaylistTitle = ({ title, navPlaylist }) => (
   <Typography
-    fontSize="2.0rem"
-    marginLeft="10px"
-    sx={{ cursor: "pointer", display: "inline" }}
+    fontSize='2.0rem'
+    marginLeft='10px'
+    sx={{ cursor: 'pointer', display: 'inline' }}
     onClick={navPlaylist}
   >
     {title}
@@ -49,10 +49,10 @@ const PlaylistTitle = ({ title, navPlaylist }) => (
 const SongCardTemplate = () => {
   return (
     <SongCard
-      title="Song Title"
+      title='Song Title'
       img={defaultImg}
-      artist="Artist Name"
-      difficulty="7/10"
+      artist='Artist Name'
+      difficulty='7/10'
     />
 )
 }
@@ -67,52 +67,52 @@ const Catalogue = () => {
   return (
     <Box>
       <NavBar></NavBar>
-      <Box margin="10px">
-        <StyledSearchBar id="outlined-basic" label="Search" variant="outlined" size="small"/>
-        <StyledButton variant="contained" endIcon={<FilterAltIcon />}>Filter</StyledButton>
-        <PlaylistTitle title="Playlist 1 >" navPlaylist={navPlaylist}/>
+      <Box margin='10px'>
+        <StyledSearchBar id='outlined-basic' label='Search' variant='outlined' size='small'/>
+        <StyledButton variant='contained' endIcon={<FilterAltIcon />}>Filter</StyledButton>
+        <PlaylistTitle title='Playlist 1 >' navPlaylist={navPlaylist}/>
         <ScrollContainer>
-          <Box display="flex" flexDirection={'row'}>
+          <Box display='flex' flexDirection={'row'}>
             {Array.apply(null, { length: 15 }).map((i) => (
               <SongCardTemplate key={i}></SongCardTemplate>
             ))}
           </Box>
         </ScrollContainer>
       </Box>
-      <Box margin="10px">
-        <PlaylistTitle title="Playlist 2 >" navPlaylist={navPlaylist}/>
+      <Box margin='10px'>
+        <PlaylistTitle title='Playlist 2 >' navPlaylist={navPlaylist}/>
         <ScrollContainer>
-          <Box display="flex" flexDirection={'row'}>
+          <Box display='flex' flexDirection={'row'}>
             {Array.apply(null, { length: 8 }).map((i) => (
               <SongCardTemplate key={i}></SongCardTemplate>
             ))}
           </Box>
         </ScrollContainer>
       </Box>
-      <Box margin="10px">
-        <PlaylistTitle title="Playlist 3 >" navPlaylist={navPlaylist}/>
+      <Box margin='10px'>
+        <PlaylistTitle title='Playlist 3 >' navPlaylist={navPlaylist}/>
         <ScrollContainer>
-          <Box display="flex" flexDirection={'row'}>
+          <Box display='flex' flexDirection={'row'}>
             {Array.apply(null, { length: 15 }).map((i) => (
               <SongCardTemplate key={i}></SongCardTemplate>
             ))}
           </Box>
         </ScrollContainer>
       </Box>
-      <Box margin="10px">
-        <PlaylistTitle title="Playlist 4 >" navPlaylist={navPlaylist}/>
+      <Box margin='10px'>
+        <PlaylistTitle title='Playlist 4 >' navPlaylist={navPlaylist}/>
         <ScrollContainer>
-          <Box display="flex" flexDirection={'row'}>
+          <Box display='flex' flexDirection={'row'}>
             {Array.apply(null, { length: 7 }).map((i) => (
               <SongCardTemplate key={i}></SongCardTemplate>
             ))}
           </Box>
         </ScrollContainer>
       </Box>
-      <Box margin="10px">
-        <PlaylistTitle title="Playlist 5 >" navPlaylist={navPlaylist}/>
+      <Box margin='10px'>
+        <PlaylistTitle title='Playlist 5 >' navPlaylist={navPlaylist}/>
         <ScrollContainer>
-          <Box display="flex" flexDirection={'row'}>
+          <Box display='flex' flexDirection={'row'}>
             {Array.apply(null, { length: 14 }).map((i) => (
               <SongCardTemplate key={i}></SongCardTemplate>
             ))}

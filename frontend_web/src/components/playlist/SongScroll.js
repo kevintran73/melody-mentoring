@@ -4,7 +4,6 @@ import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
 import InboxIcon from '@mui/icons-material/Inbox';
 import DraftsIcon from '@mui/icons-material/Drafts';
 
@@ -17,7 +16,7 @@ export default function SelectedListItem() {
 
   return (
     <Box sx={{ width: '100%', maxWidth: 800, bgcolor: 'background.paper' }}>
-      <List component="nav" aria-label="main mailbox folders">
+      <List component='nav' aria-label='main mailbox folders'>
         <ListItemButton
           selected={selectedIndex === 0}
           onClick={(event) => handleListItemClick(event, 0)}
@@ -26,7 +25,7 @@ export default function SelectedListItem() {
           <ListItemIcon>
             <InboxIcon />
           </ListItemIcon>
-          <ListItemText primary="Inbox" />
+          <ListItemText primary='Inbox' />
         </ListItemButton>
         <ListItemButton
           selected={selectedIndex === 1}
@@ -36,7 +35,7 @@ export default function SelectedListItem() {
           <ListItemIcon>
             <DraftsIcon />
           </ListItemIcon>
-          <ListItemText primary="Drafts" />
+          <ListItemText primary='Drafts' />
         </ListItemButton>
         <ListItemButton
           selected={selectedIndex === 2}
@@ -46,7 +45,7 @@ export default function SelectedListItem() {
           <ListItemIcon>
             <InboxIcon />
           </ListItemIcon>
-          <ListItemText primary="Trash" />
+          <ListItemText primary='Trash' />
         </ListItemButton>
         <ListItemButton
           selected={selectedIndex === 3}
@@ -56,7 +55,7 @@ export default function SelectedListItem() {
           <ListItemIcon>
             <InboxIcon />
           </ListItemIcon>
-          <ListItemText primary="Spam" />
+          <ListItemText primary='Spam' />
         </ListItemButton>
       </List>
     </Box>
