@@ -4,7 +4,6 @@ import logging
 import re
 
 import os
-
 from dotenv import load_dotenv
 load_dotenv()
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
@@ -45,18 +44,3 @@ def urlFromBucketObj(bucket_name, object_name, expiration=60):
     remainingLink = re.sub(r'Signature=(.*)&Expires', 'Signature=INSERTSIGNATURE&Expires', response)
 
     return (remainingLink, signature)
-
-def listOfFilesInBucket(bucket_name):
-    '''Accesses the list of files available in our bucket
-
-    :param bucket_name: string
-    :return: a list of file keys for the available files
-    '''
-
-    session = boto3.Session( aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
-    s3 = session.resource('s3')
-
-
-    my_bucket = s3.Bucket(bucket_name)
-
-    return list(map(lambda s: s.key, my_bucket.objects.all()))
