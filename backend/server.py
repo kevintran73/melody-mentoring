@@ -5,6 +5,7 @@ import boto3
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 from flask_cors import CORS
+import uuid
 
 import os
 load_dotenv()
@@ -12,6 +13,7 @@ bucket_name = os.getenv('BUCKET_NAME')
 app = Flask(__name__)
 CORS(app)
 client = boto3.client('cognito-idp', region_name='ap-southeast-2')
+dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
 
 @app.route('/signup', methods=['POST'])
 def sign_up():
@@ -59,6 +61,33 @@ def confirmSignup():
             Username=username,
             ConfirmationCode=code
         )
+
+        response = client.admin_get_user(
+            UserPoolId=os.getenv('AWS_COGNITO_USERPOOLID'), 
+            Username=username
+        )
+
+        email = ''
+
+        for attribute in response['UserAttributes']:
+            if attribute['Name'] == 'email':
+                email = attribute['Value']
+
+        users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
+        
+        user = {
+            'id': str(uuid.uuid4()),
+            'username': username,
+            'email': email,
+            'profile_picture': 's3://users-profile-picture/default-avatar-icon-of-social-media-user-vector.jpg',
+            'instrument': '',
+            'miniTestsProgress': [],
+            'history': [],
+            'level': '1'
+        }
+
+        users.put_item(Item=user)
+
 
         return jsonify({
             'message': 'Confirmation successful!',
@@ -156,69 +185,69 @@ def logout():
             'error': 'Missing required fields (access_token)'
         }), 400
 
-@app.route('/catalogue/basket-list', methods=['GET'])
-def get_music_basket_list():
-    '''GET route which returns a list of music baskets
+# @app.route('/catalogue/basket-list', methods=['GET'])
+# def get_music_basket_list():
+#     '''GET route which returns a list of music baskets
 
-    music baskets contain additional data about the song
-    Leaf key fields just denote typing e.g. SS => String Set
-    e.g. the song titled Johann Sebastian Bach might have a basket
-    looking like this
-    {
-        "basket-id": {
-            "S": "403deb46-92de-46b5-b271-814ed67867d7"
-        },
-        "genre-tags": {
-            "SS": [
-            "baroque",
-            "classical",
-            "instrument"
-            ]
-        },
-        "instrument": {
-            "S": "piano"
-        },
-        "sheet-file-key": {
-            "S": "johann-sebastian-bach"
-        },
-        "title": {
-            "S": "Johann Sebastian Bach"
-        }
-    }
-    '''
-    songs = listOfMusicBaskets()
-    if songs is not None:
-        return jsonify(songs), 200
-    else:
-        return jsonify({
-            'error': 'Music baskets cannot be found'
-        }), 500
+#     music baskets contain additional data about the song
+#     Leaf key fields just denote typing e.g. SS => String Set
+#     e.g. the song titled Johann Sebastian Bach might have a basket
+#     looking like this
+#     {
+#         "basket-id": {
+#             "S": "403deb46-92de-46b5-b271-814ed67867d7"
+#         },
+#         "genre-tags": {
+#             "SS": [
+#             "baroque",
+#             "classical",
+#             "instrument"
+#             ]
+#         },
+#         "instrument": {
+#             "S": "piano"
+#         },
+#         "sheet-file-key": {
+#             "S": "johann-sebastian-bach"
+#         },
+#         "title": {
+#             "S": "Johann Sebastian Bach"
+#         }
+#     }
+#     '''
+#     songs = listOfMusicBaskets()
+#     if songs is not None:
+#         return jsonify(songs), 200
+#     else:
+#         return jsonify({
+#             'error': 'Music baskets cannot be found'
+#         }), 500
 
-@app.route('/catalogue/find/<string:filekey>', methods=['GET'])
-def get_file_pdf(filekey):
-    '''GET route for retrieving a link to the pdf specified by key
+# @app.route('/catalogue/find/<string:filekey>', methods=['GET'])
+# def get_file_pdf(filekey):
+#     '''GET route for retrieving a link to the pdf specified by key
 
-    AWS s3's presigned link contains special chars like %2F inside their signature
-    This means that the URL will get encoded when this API is called.
-    To get around this, this API returns an object with two fields, 'url' and 'signature'
-    e.g.
-    GET /catalogue/sheetfilekey ...
-    {
-        "signature": "7GY4IXOmBA2J1pgK%2Bh3ltU2d1OY%3D",
-        "url": "https://bucketName.s3.amazonaws.com/sheetfilekey.pdf?AWSAccessKeyId=notTheNormalAccessKey&Signature=INSERTSIGNATURE&Expires=1728212979"
-    }
-    To retrieve the link you have to piece it back together (replace 'INSERTSIGNATURE' with res.signature)
-    '''
+#     AWS s3's presigned link contains special chars like %2F inside their signature
+#     This means that the URL will get encoded when this API is called.
+#     To get around this, this API returns an object with two fields, 'url' and 'signature'
+#     e.g.
+#     GET /catalogue/sheetfilekey ...
+#     {
+#         "signature": "7GY4IXOmBA2J1pgK%2Bh3ltU2d1OY%3D",
+#         "url": "https://bucketName.s3.amazonaws.com/sheetfilekey.pdf?AWSAccessKeyId=notTheNormalAccessKey&Signature=INSERTSIGNATURE&Expires=1728212979"
+#     }
+#     To retrieve the link you have to piece it back together (replace 'INSERTSIGNATURE' with res.signature)
+#     '''
 
-    url = urlFromBucketObj(bucket_name, filekey + '.pdf')
-    if url is not None:
-        return jsonify({
-            'url': url[0], 'signature': url[1]
-        }), 200
-    else:
-        return jsonify({
-            'error': 'requested file does not exist, please check you\'re using the file key.'
-        }), 404
+#     url = urlFromBucketObj(bucket_name, filekey + '.pdf')
+#     if url is not None:
+#         return jsonify({
+#             'url': url[0], 'signature': url[1]
+#         }), 200
+#     else:
+#         return jsonify({
+#             'error': 'requested file does not exist, please check you\'re using the file key.'
+#         }), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5001)
