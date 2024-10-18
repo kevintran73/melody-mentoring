@@ -6,6 +6,7 @@ from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 from flask_cors import CORS
 import uuid
+from functools import wraps
 
 import os
 load_dotenv()
@@ -18,6 +19,33 @@ s3 = boto3.client('s3', region_name='ap-southeast-2')
 
 
 #Authentication
+def validate_token(token):
+    try:
+        response = client.get_user(AccessToken=token)
+        print(response)
+        return response
+    except ClientError as e:
+        return None
+
+# An authentication wrapping function to ensure that the user has a valid token before accessing a route
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth_header = request.headers.get('Authorization', None)
+        if not auth_header:
+            return jsonify({'error': 'Missing Authorization header'}), 401
+        
+        token = auth_header.split(" ")[1]
+        user = validate_token(token)
+        
+        if user is None:
+            return jsonify({'error': 'Invalid or expired token'}), 403
+        
+        request.user = user
+        return f(*args, **kwargs)
+    
+    return decorated
+
 @app.route('/signup', methods=['POST'])
 def sign_up():
     try:
@@ -83,7 +111,7 @@ def confirmSignup():
             'id': str(uuid.uuid4()),
             'username': username,
             'email': email,
-            'profile_picture': 's3://users-profile-picture/default-avatar-icon-of-social-media-user-vector.jpg',
+            'profile_picture': f'https://{os.getenv('S3_BUCKET_USER_PICTURE')}.s3.amazonaws.com/default-avatar-icon-of-social-media-user-vector.jpg',
             'instrument': '',
             'miniTestsProgress': [],
             'history': [],
@@ -201,7 +229,36 @@ def logout():
         }), 400
 
 # User routes
+@app.route('/getUserDetails/<user_id>', methods=['GET'])
+@token_required
+def getUserDetails(user_id):
+    try:
+        # Must first make sure that the user has the correct permissions to view this user data
+        user = request.user
+        
+        users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
+        response = users.get_item(Key={'id': user_id})
+
+        if 'Item' not in response:
+            return jsonify({'error': 'User not found'}), 404
+        
+        user_data = response['Item']
+        print(user['Username'])
+        print(user_data['username'])
+        if user['Username'].lower() != user_data['username'].lower():
+            return jsonify({'error': 'Unauthorized access to this user\'s data'}), 403
+        
+        return jsonify(user_data), 200
+    
+    except Exception as e:
+        return jsonify({
+            'error': 'An error occurred while fetching user details',
+            'details': str(e)
+        }), 500
+        
+
 @app.route('/updateProfilePicture', methods=['POST'])
+@token_required
 def updateProfilePicture():
     try:
         data = request.form
@@ -244,6 +301,7 @@ def updateProfilePicture():
 # Route that will help to request the profile picture of a user.
 # file key should be as such "{user_id}-profile-picture.{file_extension}""
 @app.route('/get-presigned-url-picture/<file_key>', methods=['GET'])
+@token_required
 def get_presigned_url_picture(file_key):
     try:
         presigned_url = s3.generate_presigned_url(
@@ -263,6 +321,7 @@ def get_presigned_url_picture(file_key):
 
 # Route that will help to request the audio relating to a specic song
 @app.route('/get-presigned-url-track-audio/<song_id>', methods=['GET'])
+@token_required
 def get_presigned_url_track_audio(song_id):
     try:
         presigned_url = s3.generate_presigned_url(
@@ -282,6 +341,7 @@ def get_presigned_url_track_audio(song_id):
 
 # Route that will help to get the audio from a users previous experiment on a song
 @app.route('/get-presigned-url-user-experiment-audio/<user_id>/<song_id>/<track_attempt_id>', methods=['GET'])
+@token_required
 def get_presigned_url_user_experiment_audio(song_id, user_id, track_attempt_id):
     try:
         presigned_url = s3.generate_presigned_url(
@@ -301,6 +361,7 @@ def get_presigned_url_user_experiment_audio(song_id, user_id, track_attempt_id):
 
 # Route that will help to get the video from a users previous experiment on a song
 @app.route('/get-presigned-url-user-experiment-video/<user_id>/<song_id>/<track_attempt_id>', methods=['GET'])
+@token_required
 def get_presigned_url_user_experiment_video(song_id, user_id, track_attempt_id):
     try:
         presigned_url = s3.generate_presigned_url(
