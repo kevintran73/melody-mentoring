@@ -14,7 +14,10 @@ app = Flask(__name__)
 CORS(app)
 client = boto3.client('cognito-idp', region_name='ap-southeast-2')
 dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
+s3 = boto3.client('s3')
 
+
+#Authentication
 @app.route('/signup', methods=['POST'])
 def sign_up():
     try:
@@ -69,6 +72,7 @@ def confirmSignup():
 
         email = ''
 
+        # Users account is recorded in dynamodb only after it is confirmed
         for attribute in response['UserAttributes']:
             if attribute['Name'] == 'email':
                 email = attribute['Value']
@@ -144,11 +148,22 @@ def login():
                 },
         )
 
+        # The user id is returned to allow the front end to make queries in the future
+        users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
+        result = users.query(
+            IndexName='email-index',
+            KeyConditionExpression=boto3.dynamodb.conditions.Key('email').eq(email)
+        )
+
+        user = result['Items'][0]
+        user_id = user['id']
+
         return jsonify({
             'message': 'Login successful!',
             'access_token': response['AuthenticationResult']['AccessToken'],
             'id_token': response['AuthenticationResult']['IdToken'],
-            'refresh_token': response['AuthenticationResult']['RefreshToken']
+            'refresh_token': response['AuthenticationResult']['RefreshToken'],
+            'user_id': user_id
         }), 200
 
     except ClientError as e:
@@ -184,6 +199,49 @@ def logout():
         return jsonify({
             'error': 'Missing required fields (access_token)'
         }), 400
+
+# User routes
+@app.route('/updateProfilePicture', methods=['POST'])
+def updateProfilePicture():
+    try:
+        data = request.form
+        user_id = data['id']
+        file = request.files['file']
+
+        file_extension = file.filename.split('.')[-1]
+        filename = f"{user_id}-profile-picture.{file_extension}"
+        
+        s3.upload_fileobj(
+            file,
+            os.getenv('S3_BUCKET_USER_PICTURE'),
+            f'profile-pictures/{filename}',
+        )
+
+        file_url = f"https://{os.getenv('S3_BUCKET_USER_PICTURE')}.s3.amazonaws.com/profile-pictures/{filename}"
+
+        users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
+        users.update_item(
+            Key={'id': user_id},
+            UpdateExpression='SET profile_picture = :url',
+            ExpressionAttributeValues={':url': file_url}
+        )
+
+        return jsonify({
+            'message': 'Profile picture updated successfully!',
+            'profile_picture_url': file_url
+        }), 200
+
+    except ClientError as e:
+        return jsonify({
+            'error': str(e)
+        }), 400
+
+    except KeyError:
+        return jsonify({
+            'error': 'Missing required fields (user_id, file)'
+        }), 400
+
+
 
 # @app.route('/catalogue/basket-list', methods=['GET'])
 # def get_music_basket_list():
