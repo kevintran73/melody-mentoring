@@ -14,7 +14,7 @@ app = Flask(__name__)
 CORS(app)
 client = boto3.client('cognito-idp', region_name='ap-southeast-2')
 dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
-s3 = boto3.client('s3')
+s3 = boto3.client('s3', region_name='ap-southeast-2')
 
 
 #Authentication
@@ -241,7 +241,82 @@ def updateProfilePicture():
             'error': 'Missing required fields (user_id, file)'
         }), 400
 
+# Route that will help to request the profile picture of a user.
+# file key should be as such "{user_id}-profile-picture.{file_extension}""
+@app.route('/get-presigned-url-picture/<file_key>', methods=['GET'])
+def get_presigned_url_picture(file_key):
+    try:
+        presigned_url = s3.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': os.getenv('S3_BUCKET_USER_PICTURE'), 'Key': f'profile-pictures/{file_key}'},
+            ExpiresIn=604800
+        )
 
+        return jsonify({
+            'url': presigned_url
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'error': str(e)
+        }), 500
+
+# Route that will help to request the audio relating to a specic song
+@app.route('/get-presigned-url-track-audio/<song_id>', methods=['GET'])
+def get_presigned_url_track_audio(song_id):
+    try:
+        presigned_url = s3.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': os.getenv('S3_BUCKET_TRACKS'), 'Key': f'{song_id}'},
+            ExpiresIn=604800
+        )
+
+        return jsonify({
+            'url': presigned_url
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'error': str(e)
+        }), 500
+
+# Route that will help to get the audio from a users previous experiment on a song
+@app.route('/get-presigned-url-user-experiment-audio/<user_id>/<song_id>/<track_attempt_id>', methods=['GET'])
+def get_presigned_url_user_experiment_audio(song_id, user_id, track_attempt_id):
+    try:
+        presigned_url = s3.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': os.getenv('S3_BUCKET_USER_AUDIO'), 'Key': f'{user_id}/{song_id}/{track_attempt_id}'},
+            ExpiresIn=604800
+        )
+
+        return jsonify({
+            'url': presigned_url
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'error': str(e)
+        }), 500
+
+# Route that will help to get the video from a users previous experiment on a song
+@app.route('/get-presigned-url-user-experiment-video/<user_id>/<song_id>/<track_attempt_id>', methods=['GET'])
+def get_presigned_url_user_experiment_video(song_id, user_id, track_attempt_id):
+    try:
+        presigned_url = s3.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': os.getenv('S3_BUCKET_USER_VIDEO'), 'Key': f'{user_id}/{song_id}/{track_attempt_id}'},
+            ExpiresIn=604800
+        )
+
+        return jsonify({
+            'url': presigned_url
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'error': str(e)
+        }), 500
 
 # @app.route('/catalogue/basket-list', methods=['GET'])
 # def get_music_basket_list():
