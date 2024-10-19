@@ -339,6 +339,26 @@ def get_presigned_url_track_audio(song_id):
             'error': str(e)
         }), 500
 
+# Route that will help to request the sheet music for a specigic song
+@app.route('/get-presigned-url-track-sheet/<song_id>', methods=['GET'])
+@token_required
+def get_presigned_url_track_sheet(song_id):
+    try:
+        presigned_url = s3.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': os.getenv('S3_BUCKET_TRACK_SHEET'), 'Key': f'{song_id}'},
+            ExpiresIn=604800
+        )
+
+        return jsonify({
+            'url': presigned_url
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'error': str(e)
+        }), 500
+
 # Route that will help to get the audio from a users previous experiment on a song
 @app.route('/get-presigned-url-user-experiment-audio/<user_id>/<song_id>/<track_attempt_id>', methods=['GET'])
 @token_required
