@@ -55,8 +55,6 @@ const LoginSub = () => {
   const [password, setPassword] = React.useState('');
   const { login } = React.useContext(TokenContext);
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
-  const [message, setMessage] = React.useState('')
 
   // Handles the login
   const handleLogin = async (event) => {
@@ -65,9 +63,8 @@ const LoginSub = () => {
 
     // check all fields are filled
     if (email === '' || password === '') {
-      showErrorMessage("Please fill in all fields")
-    } 
-    else {
+      showErrorMessage('Please fill in all fields');
+    } else {
       try {
         const response = await axios.post('http://localhost:5001/login', {
           email: email,
@@ -75,13 +72,12 @@ const LoginSub = () => {
         });
 
         // stores tokens inside variables using TokenContext's login
-        const {access_token, id_token, refresh_token} = response.data
-        login(access_token, id_token, refresh_token) 
+        const { access_token, id_token, refresh_token } = response.data;
+        login(access_token, id_token, refresh_token);
 
-        navigate('/catalogue');  // redirect to catalogue page
-
+        navigate('/catalogue'); // redirect to catalogue page
       } catch (err) {
-        showErrorMessage(err.response.data.error)
+        showErrorMessage(err.response.data.error);
       }
     }
   };
@@ -116,7 +112,9 @@ const LoginSub = () => {
         <StyledButton variant='contained' type='submit' id='login-go'>
           Log in
         </StyledButton>
-        <Link className='underline' to="/register">Don't have an account?</Link>
+        <Link className='underline' to='/register'>
+          Don't have an account?
+        </Link>
       </LoginForm>
     </StyledContainer>
   );

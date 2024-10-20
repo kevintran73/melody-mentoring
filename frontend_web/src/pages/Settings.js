@@ -8,8 +8,10 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 
 import Account from '../components/settings/Account';
 import Support from '../components/settings/Support';
-import LegalInfo from '../components/settings/LegalInfo';
 import Accessibility from '../components/settings/Accessibility';
+import TokenContext from '../context/TokenContext';
+import { Navigate } from 'react-router-dom';
+import LegalInfo from '../components/settings/LegalInfo';
 
 const StyledHeader = styled('h1')({
   fontSize: '2rem',
@@ -34,6 +36,11 @@ const CategoryBlock = styled('div')({
  */
 const Settings = () => {
   const [settingsCategory, setSettingsCategory] = React.useState('account');
+
+  const { accessToken } = React.useContext(TokenContext);
+  if (accessToken == null) {
+    return <Navigate to='/login' />;
+  }
 
   return (
     <>
