@@ -29,6 +29,7 @@ const CategoryBlock = styled('div')({
   padding: '1rem 2rem',
   border: '1px solid gray',
   borderRadius: '10px',
+  overflowY: 'auto',
 });
 
 /**
