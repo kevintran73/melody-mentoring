@@ -31,6 +31,8 @@ def urlFromBucketObj(bucket_name, object_name, expiration=60):
                                                     Params={'Bucket': bucket_name,
                                                             'Key': object_name},
                                                     ExpiresIn=expiration)
+        return response
+
     except botocore.exceptions.ClientError as e:
         logging.error(e)
         return None
