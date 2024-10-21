@@ -56,7 +56,7 @@ const StyledLogoutButton = styled(LogoutIcon)({
 const Account = () => {
   const { accessToken, logout } = React.useContext(TokenContext);
 
-  const handleLogout = () => {
+  const handleLogout = async (event) => {
     try {
       const response = axios.post('http://localhost:5001/logout', {
         access_token: accessToken,
