@@ -16,30 +16,43 @@ import Playlist from './pages/Playlist';
 import Verification from './pages/Verification';
 
 const App = () => {
+  let lsAccessToken = null;
+  if (localStorage.getItem('accessToken') !== 'null') {
+    lsAccessToken = localStorage.getItem('accessToken');
+  }
+  const [accessToken, setAccessToken] = React.useState(lsAccessToken);
 
-  const [accessToken, setAccessToken] = React.useState(null);
-  const [idToken, setIdToken] = React.useState(null);
-  const [refreshToken, setRefreshToken] = React.useState(null);
+  let lsIdToken = null;
+  if (localStorage.getItem('idToken') !== 'null') {
+    lsIdToken = localStorage.getItem('idToken');
+  }
+  const [idToken, setIdToken] = React.useState(lsIdToken);
 
-  // at login, set and store tokens 
+  let lsRefreshToken = null;
+  if (localStorage.getItem('refreshToken') !== 'null') {
+    lsRefreshToken = localStorage.getItem('refreshToken');
+  }
+  const [refreshToken, setRefreshToken] = React.useState(lsRefreshToken);
+
+  // at login, set and store tokens
   const login = (accessToken, idToken, refreshToken) => {
-    setAccessToken(accessToken)
-    setIdToken(idToken)
-    setRefreshToken(refreshToken)
+    setAccessToken(accessToken);
+    setIdToken(idToken);
+    setRefreshToken(refreshToken);
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('idToken', idToken);
     localStorage.setItem('refreshToken', refreshToken);
-  }
+  };
 
   // at logout, set all tokens to null
   const logout = () => {
-    setAccessToken(null)
-    setIdToken(null)
-    setRefreshToken(null)
-    localStorage.remove('accessToken')
-    localStorage.remove('idToken')
-    localStorage.remove('refreshToken')
-  }
+    setAccessToken(null);
+    setIdToken(null);
+    setRefreshToken(null);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('idToken');
+    localStorage.removeItem('refreshToken');
+  };
 
   return (
     <TokenContext.Provider value={{ accessToken, idToken, refreshToken, login, logout }}>
