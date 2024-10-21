@@ -8,7 +8,7 @@ import LoginSub from './pages/LoginSub';
 import Register from './pages/Register';
 import Catalogue from './pages/Catalogue';
 import Notifications from './pages/Notifications';
-import Activity from './pages/Activity';
+import Summary from './pages/Summary';
 import Settings from './pages/Settings';
 import Create from './pages/Create';
 import Uploads from './pages/Uploads';
@@ -67,7 +67,7 @@ const App = () => {
           <Route path='/create' element={<Create />} />
           <Route path='/catalogue' element={<Catalogue />} />
           <Route path='/uploads' element={<Uploads />} />
-          <Route path='/activity' element={<Activity />} />
+          <Route path='/summary' element={<Summary />} />
           <Route path='/settings' element={<Settings />} />
           <Route path='/playlist' element={<Playlist />} />
         </Routes>
