@@ -20,16 +20,17 @@ const PageBlock = styled('div')({
   margin: '1rem 2.5rem',
 });
 
-const UploadBlock = styled('div')({
+const UploadForm = styled('form')({
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'space-between',
+  justifyContent: 'start',
   gap: '30px',
   height: 'calc(90vh - 70px - 4rem)',
   marginTop: '2rem',
   padding: '2rem 2rem',
   border: '1px solid gray',
   borderRadius: '10px',
+  width: '100%',
 });
 
 const ImgContainer = styled('div')({
@@ -37,25 +38,34 @@ const ImgContainer = styled('div')({
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  gap: '20px',
+  gap: '40px',
+  width: '35%',
+  height: '100%',
 });
 
 const ImgRight = styled('img')({
-  width: '300px',
-  height: '300px',
+  width: '70%',
+  objectFit: 'cover',
   borderRadius: '10%',
-});
-
-const StyledForm = styled('form')({
-  display: 'flex',
-  flexDirection: 'row',
-  gap: '30px',
 });
 
 const TextFieldsContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  gap: '20px',
+  gap: '25px',
+  width: '58%',
+});
+
+const SubmitButton = styled(Button)({
+  backgroundColor: '#2C2C2C',
+  color: '#ffffff',
+  width: '100%',
+  height: '3rem',
+  fontSize: '1.1rem',
+
+  '&:hover': {
+    backgroundColor: '#3D3D3D',
+  },
 });
 
 /**
@@ -73,35 +83,34 @@ const Create = () => {
       <NavBar></NavBar>
       <PageBlock>
         <StyledHeader>Create an experiment</StyledHeader>
-        <UploadBlock>
-          <StyledForm noValidate>
-            <ImgContainer>
-              <ImgRight src={defaultImage} />
-              <InputFileUpload innerText='Upload a song' />
-            </ImgContainer>
+        <UploadForm noValidate>
+          <ImgContainer>
+            <ImgRight src={defaultImage} />
+            <InputFileUpload innerText='Upload a song' width='60%' fontSize='1.3rem' />
+          </ImgContainer>
 
-            <TextFieldsContainer>
-              <TextField label='Song Name' />
-              <TextField label='Artist' />
-              <FormControl fullWidth>
-                <InputLabel id='select-difficulty-label'>Difficulty</InputLabel>
-                <Select
-                  labelId='select-difficulty-label'
-                  id='select-difficulty'
-                  value={diff}
-                  label='Difficulty'
-                  onChange={handleChange}
-                >
-                  <MenuItem value='easy'>Easy</MenuItem>
-                  <MenuItem value='medium'>Medium</MenuItem>
-                  <MenuItem value='hard'>Hard</MenuItem>
-                  <MenuItem value='expert'>Expert</MenuItem>
-                </Select>
-              </FormControl>
-              <TextField label='Description' />
-            </TextFieldsContainer>
-          </StyledForm>
-        </UploadBlock>
+          <TextFieldsContainer>
+            <TextField label='Song Name' />
+            <TextField label='Artist' />
+            <FormControl fullWidth>
+              <InputLabel id='select-difficulty-label'>Difficulty</InputLabel>
+              <Select
+                labelId='select-difficulty-label'
+                id='select-difficulty'
+                value={diff}
+                label='Difficulty'
+                onChange={handleChange}
+              >
+                <MenuItem value='easy'>Easy</MenuItem>
+                <MenuItem value='medium'>Medium</MenuItem>
+                <MenuItem value='hard'>Hard</MenuItem>
+                <MenuItem value='expert'>Expert</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField label='Description' />
+            <SubmitButton>Submit</SubmitButton>
+          </TextFieldsContainer>
+        </UploadForm>
       </PageBlock>
     </>
   );

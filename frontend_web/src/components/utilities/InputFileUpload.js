@@ -25,7 +25,7 @@ const StyledButton = styled(Button)({
 /**
  * MUI template for video and audio file input fields
  */
-const InputFileUpload = ({ innerText, onChangeEvent }) => {
+const InputFileUpload = ({ innerText, onChangeEvent, width = '100%', fontSize = '1rem' }) => {
   return (
     <StyledButton
       id='upload-file'
@@ -33,6 +33,7 @@ const InputFileUpload = ({ innerText, onChangeEvent }) => {
       role={undefined}
       variant='contained'
       tabIndex={-1}
+      sx={{ width, fontSize }}
     >
       {innerText}
       <VisuallyHiddenInput
