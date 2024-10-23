@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
-from s3_bucket_helpers import urlFromBucketObj
-from dynamodb_helpers import listOfMusicBaskets
+from s3_bucket_helpers import urlFromBucketObj, uploadFileToBucket
+from dynamodb_helpers import listOfMusicBaskets, addExperimentalFileUpload
 import boto3
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
@@ -110,7 +110,7 @@ def confirmSignup():
             'id': str(uuid.uuid4()),
             'username': username,
             'email': email,
-            'profile_picture': f'https://{os.getenv('S3_BUCKET_USER_PICTURE')}.s3.amazonaws.com/default-avatar-icon-of-social-media-user-vector.jpg',
+            'profile_picture': f'https://{os.getenv("S3_BUCKET_USER_PICTURE")}.s3.amazonaws.com/default-avatar-icon-of-social-media-user-vector.jpg',
             'instrument': '',
             'miniTestsProgress': [],
             'history': [],
@@ -441,20 +441,24 @@ def get_file_pdf(id):
         }), 404
 
 @app.route('/files/user/audio/upload', methods=['POST'])
-@token_required
+# @token_required
 def upload_experimental_audio():
     try:
         data = request.json
         userId = data['userId']
         uploadName = data['uploadName']
         filePath = data['filePath']
-        # TODO: then db and s3 logic
-        response = 'hey'
+        uploadFileToBucket('user-experiment-audio', filePath, uploadName)
+        addExperimentalFileUpload(userId, 'audio', uploadName)
 
         return jsonify({
-            'message': 'Upload successful',
-            'server_res': response
+            'message': f'Upload successful, file under key: {uploadName}',
         }), 200
+
+    except FileNotFoundError as e:
+        return jsonify({
+            'error': str(e)
+        }), 404
 
     except ClientError as e:
         return jsonify({

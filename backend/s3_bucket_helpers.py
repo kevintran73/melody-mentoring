@@ -16,7 +16,7 @@ def uploadFileToBucket(bucketName, filePath, key):
         aws_access_key_id=aws_access_key_id,
         aws_secret_access_key=aws_secret_access_key
     )
-    s3_client.upload_file(filePath, bucketName, key)
+    s3_client.upload_file(Filename=filePath, Bucket=bucketName, Key=key)
     return
 
 def urlFromBucketObj(bucketName, objectName, expiration=60):

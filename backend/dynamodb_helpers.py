@@ -8,9 +8,9 @@ aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
 
 def addExperimentalFileUpload(userId, type, key):
     attr = None
-    if type is 'audio':
+    if type == 'audio':
         attr = 'experimental_upload_audios'
-    elif type is 'video':
+    elif type == 'video':
         attr = 'experimental_upload_videos'
     else:
         raise Exception('type must be audio or video')
