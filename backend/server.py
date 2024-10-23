@@ -383,37 +383,28 @@ def get_presigned_url_user_experiment_video(song_id, user_id, track_attempt_id):
 @app.route('/catalogue/songs/list-all', methods=['GET'])
 @token_required
 def get_music_basket_list():
-    '''GET route which returns a list of music baskets
-
-    music baskets contain additional data about the song
-    Leaf key fields just denote typing e.g. SS => String Set
-    e.g. the song titled Johann Sebastian Bach might have a basket
-    looking like this
+    '''GET route which returns a list of "music baskets", which contain additional
+    info about a song.
+    returns:
     {
-        "basket-id": {
-            "S": "403deb46-92de-46b5-b271-814ed67867d7"
-        },
-        "genre-tags": {
-            "SS": [
-            "baroque",
-            "classical",
-            "instrument"
-            ]
-        },
-        "instrument": {
-            "S": "piano"
-        },
-        "sheet-file-key": {
-            "S": "johann-sebastian-bach"
-        },
-        "title": {
-            "S": "Johann Sebastian Bach"
-        }
+        "songs": List[Song]
+    },
+
+    where
+    Song: {
+        id: str
+        thumbnail: str
+        genreTags: list[str]
+        instrument: str
+        title: str
+        difficulty: float       # assigned a float value from [1, 5]
     }
     '''
     songs = listOfMusicBaskets()
     if songs is not None:
-        return jsonify(songs), 200
+        return jsonify({
+            'songs': songs
+        }), 200
     else:
         return jsonify({
             'error': 'Music baskets cannot be found'
@@ -423,11 +414,11 @@ def get_music_basket_list():
 @token_required
 def get_file_pdf(id):
     '''GET route for retrieving a link to the pdf specified by key
-    GET /catalogue/id ...
+    returns:
     {
-        "url": "https://bucketName.s3.amazonaws.com/id?AWSAccessKeyId=notTheNormalAccessKey&Signature=INSERTSIGNATURE&Expires=1728212979"
+        "url": "https://bucketName.s3.amazonaws.com/id?AWSAccessKeyId=notTheNorm
+                alAccessKey&Signature=INSERTSIGNATURE&Expires=1728212979"
     }
-    To retrieve the link you have to piece it back together (replace 'INSERTSIGNATURE' with res.signature)
     '''
 
     url = urlFromBucketObj(os.getenv('S3_BUCKET_TRACKS_SHEETS'), id)
@@ -441,18 +432,64 @@ def get_file_pdf(id):
         }), 404
 
 @app.route('/files/user/audio/upload', methods=['POST'])
-# @token_required
+@token_required
 def upload_experimental_audio():
+    '''POST route for uploading experimental audio
+    Body requires a json with the keys: userId, uploadName, filePath
+    returns:
+    {
+        "message": "Upload successful, file under key: {uploadName}, for user: {userId}"
+    }
+    '''
     try:
         data = request.json
         userId = data['userId']
         uploadName = data['uploadName']
         filePath = data['filePath']
+
         uploadFileToBucket('user-experiment-audio', filePath, uploadName)
         addExperimentalFileUpload(userId, 'audio', uploadName)
 
         return jsonify({
-            'message': f'Upload successful, file under key: {uploadName}',
+            'message': f'Upload successful, file under key: {uploadName}, for user: {userId}',
+        }), 200
+
+    except FileNotFoundError as e:
+        return jsonify({
+            'error': str(e)
+        }), 404
+
+    except ClientError as e:
+        return jsonify({
+            'error': str(e)
+        }), 400
+
+    except KeyError:
+        return jsonify({
+            'error': 'Missing required fields (userId, uploadName, filePath)'
+        }), 400
+
+@app.route('/files/user/video/upload', methods=['POST'])
+@token_required
+def upload_experimental_video():
+    '''POST route for uploading experimental video
+    Body requires a json with the keys: userId, uploadName, filePath
+    returns:
+    {
+        "message": "Upload successful, file under key: {uploadName}, for user: {userId}"
+    }
+    '''
+    try:
+        data = request.json
+        userId = data['userId']
+        uploadName = data['uploadName']
+        filePath = data['filePath']
+
+        uploadFileToBucket('user-experiment-video', filePath, uploadName)
+        addExperimentalFileUpload(userId, 'video', uploadName)
+
+        return jsonify({
+            'message': f'Upload successful, file under key: {uploadName}, for user: {userId}',
         }), 200
 
     except FileNotFoundError as e:

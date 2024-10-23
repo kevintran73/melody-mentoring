@@ -32,8 +32,9 @@ def addExperimentalFileUpload(userId, type, key):
         },
         ReturnValues="UPDATED_NEW"
     )
+    # print(result['ResponseMetadata']['HTTPStatusCode'] == 200)
     if result['ResponseMetadata']['HTTPStatusCode'] == 200 and 'Attributes' in result:
-        return result['Attributes']['some_attr']
+        return result['Attributes'][attr]
 
 def listOfMusicBaskets():
     db = boto3.resource(

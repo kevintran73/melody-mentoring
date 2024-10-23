@@ -11,10 +11,6 @@ class Song(BaseModel):
     title: str
     difficulty: float       # assigned a float value from [1, 5]
 
-class Upload(BaseModel):
-    s3key: str
-    title: str
-
 class User(BaseModel):
     id: str # uuid
     username: str
@@ -24,5 +20,5 @@ class User(BaseModel):
     miniTestsProgress: list[str]
     history: list[str]
     level: 1
-    experimental_upload_videos: list[Upload] # see above
-    experimental_upload_audios: list[Upload]
+    experimental_upload_videos: list[str] # s3 file key
+    experimental_upload_audios: list[str]
