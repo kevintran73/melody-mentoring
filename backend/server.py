@@ -114,7 +114,9 @@ def confirmSignup():
             'instrument': '',
             'miniTestsProgress': [],
             'history': [],
-            'level': '1'
+            'level': '1',
+            'experimental_upload_videos': [],
+            'experimental_upload_audios': []
         }
 
         users.put_item(Item=user)
@@ -378,7 +380,8 @@ def get_presigned_url_user_experiment_video(song_id, user_id, track_attempt_id):
             'error': str(e)
         }), 500
 
-@app.route('/catalogue/list-all', methods=['GET'])
+@app.route('/catalogue/songs/list-all', methods=['GET'])
+@token_required
 def get_music_basket_list():
     '''GET route which returns a list of music baskets
 
@@ -416,17 +419,12 @@ def get_music_basket_list():
             'error': 'Music baskets cannot be found'
         }), 500
 
-@app.route('/catalogue/find/<string:id>', methods=['GET'])
+@app.route('/catalogue/songs/find/<string:id>', methods=['GET'])
+@token_required
 def get_file_pdf(id):
     '''GET route for retrieving a link to the pdf specified by key
-
-    AWS s3's presigned link contains special chars like %2F inside their signature
-    This means that the URL will get encoded when this API is called.
-    To get around this, this API returns an object with two fields, 'url' and 'signature'
-    e.g.
     GET /catalogue/id ...
     {
-        "signature": "7GY4IXOmBA2J1pgK%2Bh3ltU2d1OY%3D",
         "url": "https://bucketName.s3.amazonaws.com/id?AWSAccessKeyId=notTheNormalAccessKey&Signature=INSERTSIGNATURE&Expires=1728212979"
     }
     To retrieve the link you have to piece it back together (replace 'INSERTSIGNATURE' with res.signature)
@@ -441,6 +439,32 @@ def get_file_pdf(id):
         return jsonify({
             'error': 'requested file does not exist, please check you\'re using the file key.'
         }), 404
+
+@app.route('/files/user/audio/upload', methods=['POST'])
+@token_required
+def upload_experimental_audio():
+    try:
+        data = request.json
+        userId = data['userId']
+        uploadName = data['uploadName']
+        filePath = data['filePath']
+        # TODO: then db and s3 logic
+        response = 'hey'
+
+        return jsonify({
+            'message': 'Upload successful',
+            'server_res': response
+        }), 200
+
+    except ClientError as e:
+        return jsonify({
+            'error': str(e)
+        }), 400
+
+    except KeyError:
+        return jsonify({
+            'error': 'Missing required fields (userId, uploadName, filePath)'
+        }), 400
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5001)
