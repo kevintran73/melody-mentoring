@@ -20,5 +20,5 @@ class User(BaseModel):
     miniTestsProgress: list[str]
     history: list[str]
     level: 1
-    experimental_upload_videos: list[str] # s3 file key
+    experimental_upload_videos: list[str] # corresponding s3 file key
     experimental_upload_audios: list[str]
