@@ -11,6 +11,8 @@ dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
 auth_bp = Blueprint('auth', __name__)
 
 #Authentication
+
+# A helper function that checks whether a token is valid
 def validate_token_helper(token):
     try:
         response = client.get_user(AccessToken=token)
@@ -23,9 +25,9 @@ def validate_token_helper(token):
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        auth_header = request.headers.get('Authorization', None)
+        auth_header = request.headers.get('Authorisation', None)
         if not auth_header:
-            return jsonify({'error': 'Missing Authorization header'}), 401
+            return jsonify({'error': 'Missing Authorisation header'}), 401
 
         token = auth_header.split(" ")[1]
         user = validate_token_helper(token)
@@ -40,8 +42,16 @@ def token_required(f):
 
 @auth_bp.route('/auth/validate-token', methods=['GET'])
 def validateToken():
+    '''GET route to return whether or not a token is valid
+    Header must contain the following things:
+    {
+        Authorisation: "Bearer <token:str>"                 # accessToken of the user
+    }
+
+    Returns basic info on the user aswell as if their token is valid or not
+    '''
     try:
-        auth_header = request.headers.get('Authorization', None)
+        auth_header = request.headers.get('Authorisation', None)
 
         if not auth_header:
             return jsonify({'error': 'Missing Authorisation header'}), 400
@@ -66,6 +76,16 @@ def validateToken():
 
 @auth_bp.route('/auth/signup', methods=['POST'])
 def sign_up():
+    '''POST route to sign a user up to the service
+    Body must contain the following things:
+    {
+        username: str                 # username of the new user
+        email: str                    # email of the new user
+        password: str                 # password of the new user
+    }
+
+    Returns basic info on the user aswell as if the sign up was successful
+    '''
     try:
         data = request.json
         username = data['username']
@@ -100,6 +120,13 @@ def sign_up():
 
 @auth_bp.route('/auth/confirm-signup', methods=['POST'])
 def confirmSignup():
+    '''POST route to confirm the users sign up and add them into the db
+    Body must contain the following things:
+    {
+        username: str                 # username of the new user
+        code: str                     # confirmation code
+    }
+    '''
     try:
         data = request.json
         code = data['code']
@@ -155,6 +182,12 @@ def confirmSignup():
 
 @auth_bp.route('/auth/resend-confirmation', methods=['POST'])
 def resendConfirmation():
+    '''POST route to resend the confirmation code if the user needs one
+    Body must contain the following things:
+    {
+        username: str                 # username of the new user
+    }
+    '''
     try:
         data = request.json
         username = data['username']
@@ -180,6 +213,14 @@ def resendConfirmation():
 
 @auth_bp.route('/auth/login', methods=['POST'])
 def login():
+    '''POST route to log the user in
+    Body must contain the following things:
+    {
+        email: str                 # email of the user
+        password: str              # password of the user
+    }
+    Returns an access_token for the users session aswell as their userId
+    '''
     try:
         data = request.json
         email = data['email']
@@ -224,6 +265,12 @@ def login():
 
 @auth_bp.route('/auth/logout', methods=['POST'])
 def logout():
+    '''POST route to log the user out of all sessions
+    Body must contain the following things:
+    {
+        access_token: str                 # current access_token of the user
+    }
+    '''
     try:
         data = request.json
         access_token = data['access_token']

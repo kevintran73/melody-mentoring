@@ -10,15 +10,24 @@ s3 = boto3.client('s3', region_name='ap-southeast-2')
 profile_bp = Blueprint('user', __name__)
 
 # User routes
-@profile_bp.route('/profile/<user_id>', methods=['GET'])
+@profile_bp.route('/profile/<userId>', methods=['GET'])
 @token_required
-def getUserDetails(user_id):
+def getUserDetails(userId):
+    '''GET route to access the details of a particular user
+    Route parameters must be of the following format:
+    {
+        userId: str                 # id of user we need the details from
+    }
+
+    Gets the details of the user from dynamodb
+    Makes sure that the details are being retrieved from the actual user
+    '''
     try:
         # Must first make sure that the user has the correct permissions to view this user data
         user = request.user
 
         users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
-        response = users.get_item(Key={'id': user_id})
+        response = users.get_item(Key={'id': userId})
 
         if 'Item' not in response:
             return jsonify({'error': 'User not found'}), 404
@@ -41,25 +50,31 @@ def getUserDetails(user_id):
 @profile_bp.route('/profile/profile-picture', methods=['PUT'])
 @token_required
 def updateProfilePicture():
+    '''PUT route to update the profile picture of a user
+    Body must be of the following format:
+    {
+        userId: str                 # id of user whose profile picture we want to update
+        file: (IMAGE FILE TYPE)     # file of the new profile picture
+    }
+
+    Updates the users profile picture
+    '''
     try:
         data = request.form
-        user_id = data['id']
+        userId = data['userId']
         file = request.files['file']
-
-        file_extension = file.filename.split('.')[-1]
-        filename = f"{user_id}-profile-picture.{file_extension}"
 
         s3.upload_fileobj(
             file,
             os.getenv('S3_BUCKET_USER_PICTURE'),
-            f'profile-pictures/{filename}',
+            f'profile-pictures/{userId}',
         )
 
-        file_url = f"https://{os.getenv('S3_BUCKET_USER_PICTURE')}.s3.amazonaws.com/profile-pictures/{filename}"
+        file_url = f"https://{os.getenv('S3_BUCKET_USER_PICTURE')}.s3.amazonaws.com/profile-pictures/{userId}"
 
         users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
         users.update_item(
-            Key={'id': user_id},
+            Key={'id': userId},
             UpdateExpression='SET profile_picture = :url',
             ExpressionAttributeValues={':url': file_url}
         )

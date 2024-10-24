@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify
 import boto3
 import os
 from s3_bucket_helpers import urlFromBucketObj
+from dynamodb_helpers import getTrackAttempyDetails
 from .auth import token_required
 
 s3 = boto3.client('s3', region_name='ap-southeast-2')
@@ -12,18 +13,22 @@ files_bp = Blueprint('media', __name__)
 
 # Route that will help to request the profile picture of a user.
 # file key should be as such "{user_id}-profile-picture.{file_extension}""
-@files_bp.route('/files/user/profile-picture/<file_key>', methods=['GET'])
+@files_bp.route('/files/user/profile-picture/<user_id>', methods=['GET'])
 @token_required
-def get_presigned_url_picture(file_key):
+def get_presigned_url_picture(userId):
+    '''GET route to access a users profile picture
+    Route parameters must be of the following format:
+    {
+        userId: str                 # id of the uploading user
+    }
+
+    Gets the profile pictures stored in profile-pictures/{user_id}
+    '''
     try:
-        presigned_url = s3.generate_presigned_url(
-            'get_object',
-            Params={'Bucket': os.getenv('S3_BUCKET_USER_PICTURE'), 'Key': f'profile-pictures/{file_key}'},
-            ExpiresIn=604800
-        )
+        url = urlFromBucketObj(os.getenv('S3_BUCKET_USER_PICTURE'), f'profile-pictures/{userId}')
 
         return jsonify({
-            'url': presigned_url
+            'url': url
         }), 200
 
     except Exception as e:
@@ -34,16 +39,19 @@ def get_presigned_url_picture(file_key):
 # Route that will help to request the audio relating to a specic song
 @files_bp.route('/files/audio/<song_id>', methods=['GET'])
 @token_required
-def get_presigned_url_track_audio(song_id):
-    try:
-        presigned_url = s3.generate_presigned_url(
-            'get_object',
-            Params={'Bucket': os.getenv('S3_BUCKET_TRACKS'), 'Key': f'{song_id}'},
-            ExpiresIn=604800
-        )
+def get_presigned_url_track_audio(songId):
+    '''GET route to access the audio of a particular song
+    Route parameters must be of the following format:
+    {
+        songId: str                 # id of the song being accessed
+    }
 
+    Gets the url for the audio of the particular song stored in the s3 bucket
+    '''
+    try:
+        url = urlFromBucketObj(os.getenv('S3_BUCKET_TRACKS'), songId)
         return jsonify({
-            'url': presigned_url
+            'url': url
         }), 200
 
     except Exception as e:
@@ -54,16 +62,20 @@ def get_presigned_url_track_audio(song_id):
 # Route that will help to request the sheet music for a specigic song
 @files_bp.route('/files/sheets/<song_id>', methods=['GET'])
 @token_required
-def get_presigned_url_track_sheet(song_id):
+def get_presigned_url_track_sheet(songId):
+    '''GET route to access the music sheet of a particular song
+    Route parameters must be of the following format:
+    {
+        songId: str                 # id of the song being accessed
+    }
+
+    Gets the url for the music sheet of the particular song stored in the s3 bucket
+    '''
     try:
-        presigned_url = s3.generate_presigned_url(
-            'get_object',
-            Params={'Bucket': os.getenv('S3_BUCKET_TRACK_SHEET'), 'Key': f'{song_id}'},
-            ExpiresIn=604800
-        )
+        url = urlFromBucketObj(os.getenv('S3_BUCKET_TRACK_SHEET'), songId)
 
         return jsonify({
-            'url': presigned_url
+            'url': url
         }), 200
 
     except Exception as e:
@@ -74,16 +86,23 @@ def get_presigned_url_track_sheet(song_id):
 # Route that will help to get the audio from a users previous experiment on a song
 @files_bp.route('/files/user/audio/<track_attempt_id>', methods=['GET'])
 @token_required
-def get_presigned_url_user_experiment_audio(song_id, user_id, track_attempt_id):
+def get_presigned_url_user_experiment_audio(trackAttemptId):
+    '''GET route to access the audio of a users attempt at playing a song
+    Route parameters must be of the following format:
+    {
+        trackAttemptId: str                 # id of the the track attempt
+
+    Gets the url for the audio of a users attempt to play a song
+    '''
     try:
-        presigned_url = s3.generate_presigned_url(
-            'get_object',
-            Params={'Bucket': os.getenv('S3_BUCKET_USER_AUDIO'), 'Key': f'{user_id}/{song_id}/{track_attempt_id}'},
-            ExpiresIn=604800
-        )
+        trackAttemptDetails = getTrackAttempyDetails(trackAttemptId)
+        userId = trackAttemptDetails['userId']
+        songId = trackAttemptDetails['songId']
+
+        url = urlFromBucketObj(os.getenv('S3_BUCKET_USER_AUDIO'), f'{userId}/{songId}/{trackAttemptId}')
 
         return jsonify({
-            'url': presigned_url
+            'url': url
         }), 200
 
     except Exception as e:
@@ -94,16 +113,23 @@ def get_presigned_url_user_experiment_audio(song_id, user_id, track_attempt_id):
 # Route that will help to get the video from a users previous experiment on a song
 @files_bp.route('/files/user/video/<track_attempt_id>', methods=['GET'])
 @token_required
-def get_presigned_url_user_experiment_video(song_id, user_id, track_attempt_id):
+def get_presigned_url_user_experiment_video(trackAttemptId):
+    '''GET route to access the video of a users attempt at playing a song
+    Route parameters must be of the following format:
+    {
+        trackAttemptId: str                 # id of the the track attempt
+
+    Gets the url for the video of a users attempt to play a song
+    '''
     try:
-        presigned_url = s3.generate_presigned_url(
-            'get_object',
-            Params={'Bucket': os.getenv('S3_BUCKET_USER_VIDEO'), 'Key': f'{user_id}/{song_id}/{track_attempt_id}'},
-            ExpiresIn=604800
-        )
+        trackAttemptDetails = getTrackAttempyDetails(trackAttemptId)
+        userId = trackAttemptDetails['userId']
+        songId = trackAttemptDetails['songId']
+
+        url = urlFromBucketObj(os.getenv('S3_BUCKET_USER_VIDEO'), f'{userId}/{songId}/{trackAttemptId}')
 
         return jsonify({
-            'url': presigned_url
+            'url': url
         }), 200
 
     except Exception as e:

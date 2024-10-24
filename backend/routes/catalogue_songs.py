@@ -11,11 +11,20 @@ catalogue_songs_bp = Blueprint('catalogue_songs', __name__)
 
 @catalogue_songs_bp.route('/catalogue/songs/find/<song_id>', methods=['GET'])
 @token_required
-def get_song_details(song_id):
+def get_song_details(songId):
+    '''GET route which returns the details for a specific song
+    Route parameters must be of the following format:
+    {
+        songId: str                 # id of the song you need the details for
+    }
+
+    Pulls the information from dynamodb and returns all the information for the fronte end to access
+    The set is changed to a list to allow jsonifying
+    '''
     try:
         songs = dynamodb.Table(os.getenv('DYNAMODB_TABLE_SONGS'))
         
-        response = songs.get_item(Key={'id': song_id})
+        response = songs.get_item(Key={'id': songId})
 
         if 'Item' not in response:
             return jsonify({'error': 'song not found'}), 404
