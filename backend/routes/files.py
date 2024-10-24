@@ -136,7 +136,7 @@ def user_creates_private_song():
     try:
         data = request.json
         songId = addSongtoSongs(data, True)
-        uploadFileToBucket('track-audio', data['trackAudio'], songId)
+        uploadFileToBucket(os.getenv('S3_BUCKET_TRACKS'), data['trackAudio'], songId)
         return jsonify({
             'message': f'New song created by user: {data["userId"]} under the title: {data["title"]}',
         }), 200
@@ -167,7 +167,7 @@ def user_attempts_track():
         userId: str
         songId: str
         audioFilePath: str      # file path to the user's uploaded audio
-        videoFilePath: str      # file path to the user's uploaded video
+        videoFilePath: str      # OPTIONAL file path to the user's uploaded video
     }
 
     Creates TrackAttempt object added to TrackAttempts table
@@ -177,11 +177,15 @@ def user_attempts_track():
     '''
     try:
         data = request.json
-        if not os.path.exists(data['audioFilePath']) or not os.path.exists(data['videoFilePath']):
-            raise FileNotFoundError('audio or video file not found')
+        # audio files are of course, mandatory for files
+        if not os.path.exists(data['audioFilePath']):
+            raise FileNotFoundError('audio file not found')
+
         attemptId = addAttemptToTrackAttempt(data['userId'], data['songId'])
-        uploadFileToBucket('user-experiment-audio', data['audioFilePath'], attemptId)
-        uploadFileToBucket('user-experiment-video', data['videoFilePath'], attemptId)
+        uploadFileToBucket(os.getenv('S3_BUCKET_USER_AUDIO'), data['audioFilePath'], attemptId)
+        # adding a video is optional
+        if 'videoFilePath' in data and data['videoFilePath'] is not None:
+            uploadFileToBucket(os.getenv('S3_BUCKET_USER_VIDEO'), data['videoFilePath'], attemptId)
 
         return jsonify({
             'message': f'Submitted track attempt for user: {data["userId"]}'

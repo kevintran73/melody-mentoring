@@ -50,7 +50,7 @@ def addSongtoSongs(songDetails, isPrivate=False):
 
     returns: the created song's id
     '''
-    table = db.Table('Songs')
+    table = db.Table(os.getenv('DYNAMODB_TABLE_SONGS'))
     songId = str(uuid.uuid4())
     userId = None
     if isPrivate:
@@ -70,7 +70,7 @@ def addSongtoSongs(songDetails, isPrivate=False):
     pprint(response)
     # track audio s3 key is just this song's id
     if isPrivate:
-        appendStrToTableItemsAttribute('Users', 'private_songs', userId, songId)
+        appendStrToTableItemsAttribute(os.getenv('DYNAMODB_TABLE_USERS'), 'private_songs', userId, songId)
     if response['ResponseMetadata']['HTTPStatusCode'] == 200:
         return songId
     else:
@@ -93,16 +93,15 @@ def addAttemptToTrackAttempt(userId, songId):
             'reviews': [],
         }
     )
-    appendStrToTableItemsAttribute('Users', 'track_attempts', userId, trackAttempId)
+    appendStrToTableItemsAttribute(os.getenv('DYNAMODB_TABLE_USERS'), 'track_attempts', userId, trackAttempId)
 
     if res['ResponseMetadata']['HTTPStatusCode'] == 200:
         return trackAttempId
     else:
         raise Exception('DynamoDB: internal server error')
 
-
 def listOfMusicBaskets():
-    table = db.Table('Songs')
+    table = db.Table(os.getenv('DYNAMODB_TABLE_SONGS'))
     baskets = (table.scan())["Items"]
     def convertGenresToList(basket):
         basket['genreTags'] = list(basket['genreTags'])
