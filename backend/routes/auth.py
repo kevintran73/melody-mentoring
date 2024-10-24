@@ -11,7 +11,7 @@ dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
 auth_bp = Blueprint('auth', __name__)
 
 #Authentication
-def validate_token(token):
+def validate_token_helper(token):
     try:
         response = client.get_user(AccessToken=token)
         print(response)
@@ -28,7 +28,7 @@ def token_required(f):
             return jsonify({'error': 'Missing Authorization header'}), 401
 
         token = auth_header.split(" ")[1]
-        user = validate_token(token)
+        user = validate_token_helper(token)
 
         if user is None:
             return jsonify({'error': 'Invalid or expired token'}), 403
@@ -37,6 +37,32 @@ def token_required(f):
         return f(*args, **kwargs)
 
     return decorated
+
+@auth_bp.route('/auth/validate-token', methods=['GET'])
+def validateToken():
+    try:
+        auth_header = request.headers.get('Authorization', None)
+
+        if not auth_header:
+            return jsonify({'error': 'Missing Authorisation header'}), 400
+
+        token = auth_header.split(" ")[1]
+        user = validate_token_helper(token)
+
+        if user is None:
+            return jsonify({'message': 'Invalid or expired token'}), 403
+
+        # If token is valid, return user information
+        return jsonify({
+            'message': 'Token is valid',
+            'user': user
+        }), 200
+
+    except ClientError as e:
+        return jsonify({
+            'error': str(e)
+        }), 400
+
 
 @auth_bp.route('/auth/signup', methods=['POST'])
 def sign_up():
