@@ -1,48 +1,107 @@
 import boto3
 
+import uuid
+from pprint import pprint
+from datetime import datetime
+
 import os
 from dotenv import load_dotenv
 load_dotenv()
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
 
-def addExperimentalFileUpload(userId, type, key):
-    attr = None
-    if type == 'audio':
-        attr = 'experimental_upload_audios'
-    elif type == 'video':
-        attr = 'experimental_upload_videos'
-    else:
-        raise Exception('type must be audio or video')
+db = boto3.resource(
+    service_name='dynamodb',
+    region_name='ap-southeast-2',
+    aws_access_key_id=aws_access_key_id,
+    aws_secret_access_key=aws_secret_access_key
+)
 
-    db = boto3.resource(
-        service_name='dynamodb',
-        region_name='ap-southeast-2',
-        aws_access_key_id=aws_access_key_id,
-        aws_secret_access_key=aws_secret_access_key
-    )
-    table = db.Table('Users')
+def appendStrToTableItemsAttribute(tableName: str, attr: str, itemId: str, strToAppend: str):
+    table = db.Table(tableName)
     result = table.update_item(
         Key={
-            'id': userId
+            'id': itemId
         },
         UpdateExpression=f'SET {attr} = list_append({attr}, :i)',
         ExpressionAttributeValues={
-            ':i': [key]
+            ':i': [strToAppend]
         },
         ReturnValues="UPDATED_NEW"
     )
-    # print(result['ResponseMetadata']['HTTPStatusCode'] == 200)
     if result['ResponseMetadata']['HTTPStatusCode'] == 200 and 'Attributes' in result:
         return result['Attributes'][attr]
 
-def listOfMusicBaskets():
-    db = boto3.resource(
-        service_name='dynamodb',
-        region_name='ap-southeast-2',
-        aws_access_key_id=aws_access_key_id,
-        aws_secret_access_key=aws_secret_access_key
+def addSongtoSongs(songDetails, isPrivate=False):
+    '''
+    Adds a song to Songs table
+    If isPrivate is true:
+        then also updates the User[uploader].private_songs list too
+
+    songDetails: {
+        uploader: str
+        thumbnail: str          # base64 encoding
+        genreTags: list[str]
+        instrument: str
+        title: str
+        difficulty: str (but interpreted as a float)
+        composer: str
+    }
+
+    returns: the created song's id
+    '''
+    table = db.Table('Songs')
+    songId = str(uuid.uuid4())
+    userId = None
+    if isPrivate:
+        userId = songDetails['userId']
+    response = table.put_item(
+        Item={
+            'id': songId,
+            'uploaderId': userId,
+            'thumbnail': songDetails['thumbnail'],
+            'genreTags': songDetails['genreTags'],
+            'instrument': songDetails['instrument'],
+            'title': songDetails['title'],
+            'difficulty': songDetails['difficulty'],
+            'composer': songDetails['composer']
+        }
     )
+    pprint(response)
+    # track audio s3 key is just this song's id
+    if isPrivate:
+        appendStrToTableItemsAttribute('Users', 'private_songs', userId, songId)
+    if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+        return songId
+    else:
+        raise Exception('DynamoDB: internal server error')
+
+def addAttemptToTrackAttempt(userId, songId):
+    '''
+    Records a track attempt for a user trying a song
+    returns trackAttemptId
+    '''
+    trackAttempId = str(uuid.uuid4())
+    isoDate = datetime.now().isoformat()
+    table = db.Table('TrackAttempts')
+    res = table.put_item(
+        Item={
+            'id': trackAttempId,
+            'userId': userId,
+            'songId': songId,
+            'isoUploadTime': isoDate,
+            'reviews': [],
+        }
+    )
+    appendStrToTableItemsAttribute('Users', 'track_attempts', userId, trackAttempId)
+
+    if res['ResponseMetadata']['HTTPStatusCode'] == 200:
+        return trackAttempId
+    else:
+        raise Exception('DynamoDB: internal server error')
+
+
+def listOfMusicBaskets():
     table = db.Table('Songs')
     baskets = (table.scan())["Items"]
     def convertGenresToList(basket):

@@ -46,13 +46,3 @@ def urlFromBucketObj(bucketName, objectName, expiration=60):
     except botocore.exceptions.ClientError as e:
         logging.error(e)
         return None
-
-    # The response contains the presigned URL
-    # but we need to extract and wrap it to protect it from URL encoding
-
-    match = re.search(r'Signature=(.*)&Expires', response)
-    signature = match.group(1)
-
-    remainingLink = re.sub(r'Signature=(.*)&Expires', 'Signature=INSERTSIGNATURE&Expires', response)
-
-    return (remainingLink, signature)

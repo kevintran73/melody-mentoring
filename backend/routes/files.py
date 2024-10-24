@@ -1,10 +1,9 @@
 from flask import Blueprint, jsonify, request
 import boto3
 import os
-from s3_bucket_helpers import urlFromBucketObj
 from .auth import token_required
 from s3_bucket_helpers import urlFromBucketObj, uploadFileToBucket
-from dynamodb_helpers import addExperimentalFileUpload
+from dynamodb_helpers import addSongtoSongs, addAttemptToTrackAttempt
 from botocore.exceptions import ClientError
 
 s3 = boto3.client('s3', region_name='ap-southeast-2')
@@ -114,100 +113,91 @@ def get_presigned_url_user_experiment_video(song_id, user_id, track_attempt_id):
             'error': str(e)
         }), 500
 
-@files_bp.route('/catalogue/find/<string:id>', methods=['GET'])
-@token_required
-def get_file_pdf(id):
-    '''GET route for retrieving a link to the pdf specified by key
-    e.g.
-    GET /catalogue/find/<string:id> ...
+@files_bp.route('/files/user/create-private-song', methods=['POST'])
+def user_creates_private_song():
+    ''' POST route for when users want to "create" their own song to practise
+    Body of request must be in the format:
     {
-        "url": "https://bucketName.s3.amazonaws.com/id?AWSAccessKeyId=notTheNormalAccessKey&Signature=INSERTSIGNATURE&Expires=1728212979"
+        userId: str                 # id of the uploading user
+        composer: str               # name of the composer
+        thumbnail: str
+        genreTags: list[str]
+        instrument: str
+        title: str
+        difficulty: float           # assigned a float value from [1, 5]
+        trackAudio: str             # filepath to the audio of the track
     }
-    To retrieve the link you have to piece it back together (replace 'INSERTSIGNATURE' with res.signature)
-    '''
 
-    url = urlFromBucketObj(os.getenv('S3_BUCKET_TRACKS_SHEETS'), id)
-    if url is not None:
-        return jsonify({
-            'url': url
-        }), 200
-    else:
-        return jsonify({
-            'error': 'requested file does not exist, please check you\'re using the file key.'
-        }), 404
-
-@files_bp.route('/files/user/audio/upload', methods=['POST'])
-@token_required
-def upload_experimental_audio():
-    '''POST route for uploading experimental audio
-    Body requires a json with the keys: userId, uploadName, filePath
-    returns:
-    {
-        "message": "Upload successful, file under key: {uploadName}, for user: {userId}"
-    }
+    Creates a song in the Songs table (dynamodb)
+    Appends this song in Users[userid].private_songs
+    uploads the trackaudio to s3 "track-audio" bucket
     '''
     try:
         data = request.json
-        userId = data['userId']
-        uploadName = data['uploadName']
-        filePath = data['filePath']
-
-        uploadFileToBucket('user-experiment-audio', filePath, uploadName)
-        addExperimentalFileUpload(userId, 'audio', uploadName)
-
+        songId = addSongtoSongs(data, True)
+        uploadFileToBucket('track-audio', data['trackAudio'], songId)
         return jsonify({
-            'message': f'Upload successful, file under key: {uploadName}, for user: {userId}',
+            'message': f'New song created by user: {data["userId"]} under the title: {data["title"]}',
         }), 200
 
     except FileNotFoundError as e:
         return jsonify({
             'error': str(e)
         }), 404
-
     except ClientError as e:
         return jsonify({
             'error': str(e)
         }), 400
-
     except KeyError:
         return jsonify({
-            'error': 'Missing required fields (userId, uploadName, filePath)'
+            'error': 'Missing required fields (userId, composer, thumbnail, genreTags, instrument, title, difficulty, trackAudio)'
         }), 400
+    except Exception as e:
+        return jsonify({
+            'error': 'DynamoDB: coudn\'t add item to table'
+        }), 500
 
-@files_bp.route('/files/user/video/upload', methods=['POST'])
-@token_required
-def upload_experimental_video():
-    '''POST route for uploading experimental video
-    Body requires a json with the keys: userId, uploadName, filePath
-    returns:
+@files_bp.route('/files/user/new-track-attempt', methods=['POST'])
+def user_attempts_track():
+    '''POST route when a user attempts a track
+    Body of request must be in the format:
     {
-        "message": "Upload successful, file under key: {uploadName}, for user: {userId}"
+        userId: str
+        songId: str
+        audioFilePath: str      # file path to the user's uploaded audio
+        videoFilePath: str      # file path to the user's uploaded video
     }
+
+    Creates TrackAttempt object added to TrackAttempts table
+    Appends this song in Users[userid].track_attempts
+    Uploads audio file to s3 users-experiment-audio
+    Uploads video file to s3 users-experiment-video
     '''
     try:
         data = request.json
-        userId = data['userId']
-        uploadName = data['uploadName']
-        filePath = data['filePath']
-
-        uploadFileToBucket('user-experiment-video', filePath, uploadName)
-        addExperimentalFileUpload(userId, 'video', uploadName)
+        if not os.path.exists(data['audioFilePath']) or not os.path.exists(data['videoFilePath']):
+            raise FileNotFoundError('audio or video file not found')
+        attemptId = addAttemptToTrackAttempt(data['userId'], data['songId'])
+        uploadFileToBucket('user-experiment-audio', data['audioFilePath'], attemptId)
+        uploadFileToBucket('user-experiment-video', data['videoFilePath'], attemptId)
 
         return jsonify({
-            'message': f'Upload successful, file under key: {uploadName}, for user: {userId}',
+            'message': f'Submitted track attempt for user: {data["userId"]}'
         }), 200
 
     except FileNotFoundError as e:
         return jsonify({
             'error': str(e)
         }), 404
-
     except ClientError as e:
         return jsonify({
             'error': str(e)
         }), 400
-
     except KeyError:
         return jsonify({
-            'error': 'Missing required fields (userId, uploadName, filePath)'
+            'error': 'Missing required fields (userId, composer, thumbnail, genreTags, instrument, title, difficulty, trackAudio)'
         }), 400
+    except Exception as e:
+        return jsonify({
+            'error': str(e)
+        }), 500

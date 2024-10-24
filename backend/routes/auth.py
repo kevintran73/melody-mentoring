@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 import boto3
 from botocore.exceptions import ClientError
-import os 
+import os
 from functools import wraps
 import uuid
 
@@ -103,10 +103,11 @@ def confirmSignup():
             'id': str(uuid.uuid4()),
             'username': username,
             'email': email,
-            'profile_picture': f'https://{os.getenv('S3_BUCKET_USER_PICTURE')}.s3.amazonaws.com/default-avatar-icon-of-social-media-user-vector.jpg',
+            'profile_picture': f'https://{os.getenv("S3_BUCKET_USER_PICTURE")}.s3.amazonaws.com/default-avatar-icon-of-social-media-user-vector.jpg',
             'instrument': '',
             'miniTestsProgress': [],
-            'history': [],
+            'trackAttempts': [],
+            'privateSongs': [],
             'level': '1'
         }
 
