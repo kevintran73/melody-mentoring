@@ -14,6 +14,7 @@ import Create from './pages/Create';
 import Uploads from './pages/Uploads';
 import Playlist from './pages/Playlist';
 import Verification from './pages/Verification';
+import Experiment from './pages/Experiment';
 
 const App = () => {
   let lsAccessToken = null;
@@ -70,6 +71,7 @@ const App = () => {
           <Route path='/summary' element={<Summary />} />
           <Route path='/settings' element={<Settings />} />
           <Route path='/playlist' element={<Playlist />} />
+          <Route path='/experiment/:songId' element={<Experiment />} />
         </Routes>
       </BrowserRouter>
     </TokenContext.Provider>

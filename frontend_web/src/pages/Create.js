@@ -72,10 +72,13 @@ const SubmitButton = styled(Button)({
  * Create experiment page
  */
 const Create = () => {
+  const [song, setSong] = React.useState('');
+  const [artist, setArtist] = React.useState('');
   const [diff, setDiff] = React.useState('');
+  const [desc, setDesc] = React.useState('');
 
-  const handleChange = (event) => {
-    setDiff(event.target.value);
+  const handleSubmit = (event) => {
+    event.preventDefault();
   };
 
   return (
@@ -83,23 +86,23 @@ const Create = () => {
       <NavBar></NavBar>
       <PageBlock>
         <StyledHeader>Create an experiment</StyledHeader>
-        <UploadForm noValidate>
+        <UploadForm onSubmit={handleSubmit} noValidate>
           <ImgContainer>
             <ImgRight src={defaultImage} />
             <InputFileUpload innerText='Upload a song' width='60%' fontSize='1.3rem' />
           </ImgContainer>
 
           <TextFieldsContainer>
-            <TextField label='Song Name' />
-            <TextField label='Artist' />
+            <TextField label='Song Name' value={song} onChange={(s) => setSong(s.target.value)} />
+            <TextField label='Artist' value={artist} onChange={(a) => setArtist(a.target.value)} />
             <FormControl fullWidth>
               <InputLabel id='select-difficulty-label'>Difficulty</InputLabel>
               <Select
+                label='Difficulty'
                 labelId='select-difficulty-label'
                 id='select-difficulty'
                 value={diff}
-                label='Difficulty'
-                onChange={handleChange}
+                onChange={(d) => setDiff(d.target.value)}
               >
                 <MenuItem value='easy'>Easy</MenuItem>
                 <MenuItem value='medium'>Medium</MenuItem>
@@ -107,7 +110,7 @@ const Create = () => {
                 <MenuItem value='expert'>Expert</MenuItem>
               </Select>
             </FormControl>
-            <TextField label='Description' />
+            <TextField label='Description' value={desc} onChange={(d) => setDesc(d.target.value)} />
             <SubmitButton>Submit</SubmitButton>
           </TextFieldsContainer>
         </UploadForm>
