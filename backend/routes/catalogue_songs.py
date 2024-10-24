@@ -28,13 +28,13 @@ def get_song_details(songId):
 
         if 'Item' not in response:
             return jsonify({'error': 'song not found'}), 404
-        
+
         song_data = response['Item']
 
         # making sure that everything in the data is jsonifiable
         for key, value in song_data.items():
             if isinstance(value, set):
-                song_data[key] = list(value) 
+                song_data[key] = list(value)
 
         return jsonify(song_data), 200
     except Exception as e:
@@ -42,8 +42,9 @@ def get_song_details(songId):
             'error': 'An error occurred while fetching song details',
             'details': str(e)
         }), 500
-    
+
 @catalogue_songs_bp.route('/catalogue/songs/list-all', methods=['GET'])
+@token_required
 def get_music_basket_list():
     '''GET route which returns a list of music baskets
 

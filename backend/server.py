@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask
 from dotenv import load_dotenv
 from flask_cors import CORS
 import os
@@ -11,8 +11,7 @@ from routes.files import files_bp
 from routes.catalogue_songs import catalogue_songs_bp
 
 app = Flask(__name__)
-CORS(app) 
-
+CORS(app)
 app.register_blueprint(auth_bp)
 app.register_blueprint(profile_bp)
 app.register_blueprint(files_bp)
