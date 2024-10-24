@@ -114,6 +114,7 @@ def get_presigned_url_user_experiment_video(song_id, user_id, track_attempt_id):
         }), 500
 
 @files_bp.route('/files/user/create-private-song', methods=['POST'])
+@token_required
 def user_creates_private_song():
     ''' POST route for when users want to "create" their own song to practise
     Body of request must be in the format:
@@ -158,6 +159,7 @@ def user_creates_private_song():
         }), 500
 
 @files_bp.route('/files/user/new-track-attempt', methods=['POST'])
+@token_required
 def user_attempts_track():
     '''POST route when a user attempts a track
     Body of request must be in the format:
