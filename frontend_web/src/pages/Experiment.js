@@ -4,6 +4,9 @@ import { useReactMediaRecorder } from 'react-media-recorder';
 import { Button, styled, Typography } from '@mui/material';
 import NavBar from '../components/nav_bar/NavBar';
 
+import OpenSheetMusicDisplay from '../components/experiment/OpenSheetMusicDisplay';
+import odeToJoy from '../assets/Ode_to_Joy_Easy.mxl';
+
 const PageBlock = styled('div')({
   height: 'calc(100vh - 70px - 2rem)',
   margin: '1rem 2.5rem',
@@ -105,6 +108,8 @@ const Experiment = () => {
       {!experimentStarted && countdown === null && (
         <Button onClick={initiateCountdown}>Begin</Button>
       )}
+
+      <OpenSheetMusicDisplay file={odeToJoy} />
 
       {!experimentStarted && countdown !== 0 && countdown !== null && (
         <CountdownOverlay innerText={countdown} />
