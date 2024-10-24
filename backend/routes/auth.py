@@ -25,9 +25,9 @@ def validate_token_helper(token):
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        auth_header = request.headers.get('Authorisation', None)
+        auth_header = request.headers.get('Authorization', None)
         if not auth_header:
-            return jsonify({'error': 'Missing Authorisation header'}), 401
+            return jsonify({'error': 'Missing Authorization header'}), 401
 
         token = auth_header.split(" ")[1]
         user = validate_token_helper(token)
@@ -45,16 +45,16 @@ def validateToken():
     '''GET route to return whether or not a token is valid
     Header must contain the following things:
     {
-        Authorisation: "Bearer <token:str>"                 # accessToken of the user
+        Authorization: "Bearer <token:str>"                 # accessToken of the user
     }
 
     Returns basic info on the user aswell as if their token is valid or not
     '''
     try:
-        auth_header = request.headers.get('Authorisation', None)
+        auth_header = request.headers.get('Authorization', None)
 
         if not auth_header:
-            return jsonify({'error': 'Missing Authorisation header'}), 400
+            return jsonify({'error': 'Missing Authorization header'}), 400
 
         token = auth_header.split(" ")[1]
         user = validate_token_helper(token)

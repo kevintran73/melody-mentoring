@@ -14,7 +14,7 @@ files_bp = Blueprint('media', __name__)
 
 # Route that will help to request the profile picture of a user.
 # file key should be as such "{user_id}-profile-picture.{file_extension}""
-@files_bp.route('/files/user/profile-picture/<user_id>', methods=['GET'])
+@files_bp.route('/files/user/profile-picture/<userId>', methods=['GET'])
 @token_required
 def get_presigned_url_picture(userId):
     '''GET route to access a users profile picture
@@ -38,7 +38,7 @@ def get_presigned_url_picture(userId):
         }), 500
 
 # Route that will help to request the audio relating to a specic song
-@files_bp.route('/files/audio/<song_id>', methods=['GET'])
+@files_bp.route('/files/audio/<songId>', methods=['GET'])
 @token_required
 def get_presigned_url_track_audio(songId):
     '''GET route to access the audio of a particular song
@@ -61,7 +61,7 @@ def get_presigned_url_track_audio(songId):
         }), 500
 
 # Route that will help to request the sheet music for a specigic song
-@files_bp.route('/files/sheets/<song_id>', methods=['GET'])
+@files_bp.route('/files/sheets/<songId>', methods=['GET'])
 @token_required
 def get_presigned_url_track_sheet(songId):
     '''GET route to access the music sheet of a particular song
@@ -85,7 +85,7 @@ def get_presigned_url_track_sheet(songId):
         }), 500
 
 # Route that will help to get the audio from a users previous experiment on a song
-@files_bp.route('/files/user/audio/<track_attempt_id>', methods=['GET'])
+@files_bp.route('/files/user/audio/<trackAttemptId>', methods=['GET'])
 @token_required
 def get_presigned_url_user_experiment_audio(trackAttemptId):
     '''GET route to access the audio of a users attempt at playing a song
@@ -112,7 +112,7 @@ def get_presigned_url_user_experiment_audio(trackAttemptId):
         }), 500
 
 # Route that will help to get the video from a users previous experiment on a song
-@files_bp.route('/files/user/video/<track_attempt_id>', methods=['GET'])
+@files_bp.route('/files/user/video/<trackAttemptId>', methods=['GET'])
 @token_required
 def get_presigned_url_user_experiment_video(trackAttemptId):
     '''GET route to access the video of a users attempt at playing a song
