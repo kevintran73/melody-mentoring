@@ -3,8 +3,8 @@ import { useReactMediaRecorder } from 'react-media-recorder';
 
 import { Button, styled, Typography } from '@mui/material';
 import NavBar from '../components/nav_bar/NavBar';
-
 import OpenSheetMusicDisplay from '../components/experiment/OpenSheetMusicDisplay';
+
 import odeToJoy from '../assets/Ode_to_Joy_Easy.mxl';
 
 const PageBlock = styled('div')({
@@ -59,6 +59,7 @@ const StopRecordingOverlay = ({ onClickEvent }) => {
 const Experiment = () => {
   const [experimentStarted, setExperimentStarted] = React.useState(false);
   const [countdown, setCountdown] = React.useState(null);
+  const osmdRef = React.useRef();
 
   // Audio recording hooks
   const { status, startRecording, stopRecording, mediaBlobUrl, clearBlobUrl } =
@@ -78,6 +79,9 @@ const Experiment = () => {
     } else if (countdown === 0 && !experimentStarted) {
       setExperimentStarted(true);
       startRecording();
+      if (osmdRef.current) {
+        osmdRef.current.beginSong();
+      }
     }
 
     return () => clearTimeout(timer);
@@ -109,7 +113,7 @@ const Experiment = () => {
         <Button onClick={initiateCountdown}>Begin</Button>
       )}
 
-      <OpenSheetMusicDisplay file={odeToJoy} />
+      <OpenSheetMusicDisplay ref={osmdRef} file={odeToJoy} />
 
       {!experimentStarted && countdown !== 0 && countdown !== null && (
         <CountdownOverlay innerText={countdown} />
