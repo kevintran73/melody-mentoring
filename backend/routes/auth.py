@@ -34,11 +34,27 @@ def token_required(f):
 
         if user is None:
             return jsonify({'error': 'Invalid or expired token'}), 403
+        
+        try:
+            userIdFromRequest = kwargs.get('userId') or request.json.get('userId')
+        except Exception as e:
+            print("Error accessing request.json or route parameter:", e)
+            userIdFromRequest = None 
+
+        if userIdFromRequest:
+            print(userIdFromRequest)
+            users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
+            response = users.get_item(Key={'id': userIdFromRequest})
+            user_data = response['Item']
+
+            if user['Username'].lower() != user_data['username'].lower():
+                return jsonify({'error': 'Unauthorized access to this user\'s data'}), 403
 
         request.user = user
         return f(*args, **kwargs)
 
     return decorated
+
 
 @auth_bp.route('/auth/validate-token', methods=['GET'])
 def validateToken():
