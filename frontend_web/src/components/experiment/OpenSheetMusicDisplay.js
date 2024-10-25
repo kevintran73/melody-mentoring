@@ -11,7 +11,7 @@ class OpenSheetMusicDisplay extends Component {
 
   setupOsmd() {
     const options = {
-      autoResize: this.props.autoResize !== undefined ? this.props.autoResize : true,
+      autoResize: false,
       drawTitle: this.props.drawTitle !== undefined ? this.props.drawTitle : true,
     };
     this.osmd = new OSMD(this.divRef.current, options);
@@ -61,9 +61,9 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd.enableOrDisableCursors(true);
 
     // Update cursor height
-    const cursorElem = this.osmd.cursor.cursorElement;
     this.osmd.cursors[0].show();
-    cursorElem.style.height = cursorElem.getAttribute('height') + 'px';
+    this.osmd.cursor.cursorElement.style.height =
+      this.osmd.cursor.cursorElement.getAttribute('height') + 'px';
 
     const it = this.osmd.cursor.Iterator;
     while (!it.endReached) {
@@ -76,13 +76,16 @@ class OpenSheetMusicDisplay extends Component {
       this.nextMeasure();
 
       // Dynamically update cursor height
-      cursorElem.style.height = cursorElem.getAttribute('height') + 'px';
+      this.osmd.cursor.cursorElement.style.height =
+        this.osmd.cursor.cursorElement.getAttribute('height') + 'px';
     }
   }
 
   resize = () => {
     if (this.osmd && this.state.dataReady) {
       this.renderOsmd();
+      this.osmd.cursor.cursorElement.style.height =
+        this.osmd.cursor.cursorElement.getAttribute('height') + 'px';
     }
   };
 
