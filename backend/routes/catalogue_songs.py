@@ -9,7 +9,7 @@ s3 = boto3.client('s3', region_name='ap-southeast-2')
 
 catalogue_songs_bp = Blueprint('catalogue_songs', __name__)
 
-@catalogue_songs_bp.route('/catalogue/songs/find/<song_id>', methods=['GET'])
+@catalogue_songs_bp.route('/catalogue/songs/find/<songId>', methods=['GET'])
 @token_required
 def get_song_details(songId):
     '''GET route which returns the details for a specific song
