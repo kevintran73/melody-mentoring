@@ -23,9 +23,6 @@ def getUserDetails(userId):
     Makes sure that the details are being retrieved from the actual user
     '''
     try:
-        # Must first make sure that the user has the correct permissions to view this user data
-        user = request.user
-
         users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
         response = users.get_item(Key={'id': userId})
 
@@ -33,10 +30,6 @@ def getUserDetails(userId):
             return jsonify({'error': 'User not found'}), 404
 
         user_data = response['Item']
-        print(user['Username'])
-        print(user_data['username'])
-        if user['Username'].lower() != user_data['username'].lower():
-            return jsonify({'error': 'Unauthorized access to this user\'s data'}), 403
 
         return jsonify(user_data), 200
 
