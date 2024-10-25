@@ -80,11 +80,11 @@ class OpenSheetMusicDisplay extends Component {
     }
   }
 
-  resize() {
+  resize = () => {
     if (this.osmd && this.state.dataReady) {
-      this.osmd.render();
+      this.renderOsmd();
     }
-  }
+  };
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.resize);
@@ -93,6 +93,7 @@ class OpenSheetMusicDisplay extends Component {
   // Called after render
   componentDidMount() {
     this.setupOsmd();
+    window.addEventListener('resize', this.resize);
   }
 
   render() {
