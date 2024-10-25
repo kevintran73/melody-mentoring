@@ -65,7 +65,8 @@ def addSongtoSongs(songDetails, isPrivate=False):
             'instrument': songDetails['instrument'],
             'title': songDetails['title'],
             'difficulty': songDetails['difficulty'],
-            'composer': songDetails['composer']
+            'composer': songDetails['composer'],
+            'private': True,
         }
     )
     pprint(response)
@@ -118,12 +119,12 @@ def getTrackAttempyDetails(trackAttemptID):
     )
 
     table = db.table(os.getenv('DYNAMODB_TABLE_TRACK_ATTEMPTS'))
-    
+
     attempt = table.get_item(Key={'id': trackAttemptID})
 
     if 'Item' not in attempt:
             return jsonify({'error': 'song not found'}), 404
-        
+
     attemptData = attempt['Item']
 
     return attemptData

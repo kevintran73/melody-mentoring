@@ -16,7 +16,6 @@ auth_bp = Blueprint('auth', __name__)
 def validate_token_helper(token):
     try:
         response = client.get_user(AccessToken=token)
-        print(response)
         return response
     except ClientError as e:
         return None
@@ -28,7 +27,6 @@ def token_required(f):
         auth_header = request.headers.get('Authorization', None)
         if not auth_header:
             return jsonify({'error': 'Missing Authorization header'}), 401
-
         token = auth_header.split(" ")[1]
         user = validate_token_helper(token)
 
