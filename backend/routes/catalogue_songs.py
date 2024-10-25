@@ -9,7 +9,7 @@ s3 = boto3.client('s3', region_name='ap-southeast-2')
 
 catalogue_songs_bp = Blueprint('catalogue_songs', __name__)
 
-@catalogue_songs_bp.route('/catalogue/songs/find/<song_id>', methods=['GET'])
+@catalogue_songs_bp.route('/catalogue/songs/find/<songId>', methods=['GET'])
 @token_required
 def get_song_details(songId):
     '''GET route which returns the details for a specific song
@@ -23,7 +23,7 @@ def get_song_details(songId):
     '''
     try:
         songs = dynamodb.Table(os.getenv('DYNAMODB_TABLE_SONGS'))
-        
+
         response = songs.get_item(Key={'id': songId})
 
         if 'Item' not in response:
@@ -46,32 +46,16 @@ def get_song_details(songId):
 @catalogue_songs_bp.route('/catalogue/songs/list-all', methods=['GET'])
 @token_required
 def get_music_basket_list():
-    '''GET route which returns a list of music baskets
-
-    music baskets contain additional data about the song
-    Leaf key fields just denote typing e.g. SS => String Set
-    e.g. the song titled Johann Sebastian Bach might have a basket
-    looking like this
+    '''GET route which returns a list of all PUBLIC (song.private == False) songs
+    returns
     {
-        "basket-id": {
-            "S": "403deb46-92de-46b5-b271-814ed67867d7"
-        },
-        "genre-tags": {
-            "SS": [
-            "baroque",
-            "classical",
-            "instrument"
-            ]
-        },
-        "instrument": {
-            "S": "piano"
-        },
-        "sheet-file-key": {
-            "S": "johann-sebastian-bach"
-        },
-        "title": {
-            "S": "Johann Sebastian Bach"
-        }
+        songs: [
+            song1: Song,
+            song2: Song,
+            .
+            .
+            .
+        ]
     }
     '''
     songs = listOfMusicBaskets()
@@ -79,5 +63,5 @@ def get_music_basket_list():
         return jsonify(songs), 200
     else:
         return jsonify({
-            'error': 'Music baskets cannot be found'
+            'error': 'Songs cannot be found'
         }), 500

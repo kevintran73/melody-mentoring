@@ -108,7 +108,7 @@ def listOfMusicBaskets():
     def convertGenresToList(basket):
         basket['genreTags'] = list(basket['genreTags'])
         return basket
-    return list(map(convertGenresToList, baskets))
+    return {'songs': list(map(convertGenresToList, baskets))}
 
 def getTrackAttempyDetails(trackAttemptID):
     table = db.table(os.getenv('DYNAMODB_TABLE_TRACK_ATTEMPTS'))
