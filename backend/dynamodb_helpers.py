@@ -110,13 +110,6 @@ def listOfMusicBaskets():
     return list(map(convertGenresToList, baskets))
 
 def getTrackAttempyDetails(trackAttemptID):
-    db = boto3.resource(
-        service_name='dynamodb',
-        region_name='ap-southeast-2',
-        aws_access_key_id=aws_access_key_id,
-        aws_secret_access_key=aws_secret_access_key
-    )
-
     table = db.table(os.getenv('DYNAMODB_TABLE_TRACK_ATTEMPTS'))
     
     attempt = table.get_item(Key={'id': trackAttemptID})
