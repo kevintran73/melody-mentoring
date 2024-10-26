@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { OpenSheetMusicDisplay as OSMD } from 'opensheetmusicdisplay';
 
+import * as Tone from 'tone';
+
 class OpenSheetMusicDisplay extends Component {
   constructor(props) {
     super(props);
@@ -8,6 +10,7 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd = undefined;
     this.divRef = React.createRef();
     this.playing = false;
+    this.synth = new Tone.PolySynth(Tone.Synth).toDestination();
   }
 
   setupOsmd() {
@@ -19,6 +22,10 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd.load(this.props.file).then(() => {
       this.setState({ dataReady: true }, () => {
         this.renderOsmd();
+
+        if (this.props.onLoad) {
+          this.props.onLoad();
+        }
       });
     });
   }
@@ -62,6 +69,56 @@ class OpenSheetMusicDisplay extends Component {
     }
   }
 
+  // Returns a list of notes from the given measure sorted by their timestamp
+  getNotesFromMeasure(measure) {
+    const musicEvents = [];
+
+    measure.VerticalSourceStaffEntryContainers.forEach((vsec) => {
+      vsec.StaffEntries.forEach((staffEntry) => {
+        const simultaneousNotes = [];
+        let maxDuration = 0;
+
+        staffEntry.VoiceEntries.forEach((voiceEntry) => {
+          voiceEntry.Notes.forEach((note) => {
+            const pitch = note.halfTone;
+            // Convert note lengths to quarter note units
+            const duration = note.Length.RealValue;
+            simultaneousNotes.push(pitch);
+            maxDuration = Math.max(maxDuration, duration);
+          });
+        });
+
+        // If there is a chord or notes played at the same timestamp
+        if (simultaneousNotes.length > 0) {
+          musicEvents.push({
+            notes: simultaneousNotes,
+            duration: maxDuration,
+            timestamp: staffEntry.Timestamp.RealValue,
+          });
+        }
+      });
+    });
+
+    return musicEvents.sort((a, b) => a.timestamp - b.timestamp);
+  }
+
+  // Prompts Tone.js to play the specified sequence of notes
+  async playMeasure(musicEvents, tempo, beatsPerMeasure) {
+    let startTime = Tone.now();
+
+    musicEvents.forEach((event) => {
+      const { notes, duration, timestamp } = event;
+
+      const durationInSeconds = (duration * 60) / tempo;
+      const eventStartTime = startTime + timestamp * ((60 / tempo) * beatsPerMeasure);
+      const frequencies = notes.map((pitch) => Tone.Frequency(pitch, 'midi').toFrequency());
+
+      // Prompt note to play in a specific timeframe
+      this.synth.triggerAttackRelease(frequencies, durationInSeconds, eventStartTime);
+    });
+  }
+
+  // Begins playing the song with cursor
   async beginSong() {
     this.playing = true;
 
@@ -78,22 +135,19 @@ class OpenSheetMusicDisplay extends Component {
 
     const it = this.osmd.cursor.Iterator;
     while (!it.endReached && this.playing === true) {
-      // console.log(it.currentTimeStamp.realValue);
-      // const cursorVoiceEntry = it.CurrentVoiceEntries[0];
-      // const lowestVoiceEntryNote = cursorVoiceEntry.Notes[0];
-      // console.log(lowestVoiceEntryNote.Pitch.ToString());
-
       // Determine bpm of the current measure
       const measure = this.osmd.Sheet.SourceMeasures[it.CurrentMeasureIndex];
       const tempoInstructions = measure.TempoExpressions;
       let currentTempo = this.osmd.Sheet.DefaultStartTempoInBpm;
       if (tempoInstructions.length > 0 && it.CurrentMeasureIndex > 0) {
-        currentTempo = tempoInstructions[0].TempoInBpm;
+        currentTempo = tempoInstructions[0].sourceMeasure.tempoInBPM;
       }
 
-      // Calculate time taken per measure and sleep
+      // Get and play all notes/chords in the measure
       const timeSignature = measure.activeTimeSignature;
       const beatsPerMeasure = timeSignature.numerator;
+      const musicEvents = this.getNotesFromMeasure(measure);
+      await this.playMeasure(musicEvents, currentTempo, beatsPerMeasure);
       await this.sleep((60000 / currentTempo) * beatsPerMeasure);
 
       // Dynamically update cursor height and go to next measure
@@ -107,6 +161,10 @@ class OpenSheetMusicDisplay extends Component {
   endSong() {
     this.osmd.cursor.hide();
     this.playing = false;
+  }
+
+  isLoading() {
+    return !this.state.dataReady;
   }
 
   resize = () => {

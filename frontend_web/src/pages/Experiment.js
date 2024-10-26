@@ -1,11 +1,13 @@
 import React from 'react';
 import { useReactMediaRecorder } from 'react-media-recorder';
+import * as Tone from 'tone';
 
-import { Button, styled, Typography } from '@mui/material';
+import { Button, styled, Typography, CircularProgress } from '@mui/material';
 import NavBar from '../components/nav_bar/NavBar';
 import OpenSheetMusicDisplay from '../components/experiment/OpenSheetMusicDisplay';
 
 import odeToJoy from '../assets/Ode_to_Joy_Easy.mxl';
+import moonlightSonata from '../assets/Sonate_No._14_Moonlight_3rd_Movement.mxl';
 
 const PageBlock = styled('div')({
   height: 'calc(100vh - 70px - 2rem)',
@@ -29,6 +31,20 @@ const PageOverlay = styled('div')({
 const StopButton = styled('button')({
   color: 'white',
   fontSize: '5rem',
+});
+
+// New loading overlay component
+const LoadingOverlay = styled('div')({
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(255, 255, 255, 0)', // Semi-transparent white
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 999, // Just below the PageOverlay
 });
 
 const CountdownOverlay = ({ innerText }) => {
@@ -59,7 +75,13 @@ const StopRecordingOverlay = ({ onClickEvent }) => {
 const Experiment = () => {
   const [experimentStarted, setExperimentStarted] = React.useState(false);
   const [countdown, setCountdown] = React.useState(null);
+
   const osmdRef = React.useRef();
+  const [osmdLoaded, setOsmdLoaded] = React.useState(false);
+
+  const onOsmdLoad = () => {
+    setOsmdLoaded(true);
+  };
 
   // Audio recording hooks
   const { status, startRecording, stopRecording, mediaBlobUrl, clearBlobUrl } =
@@ -93,8 +115,9 @@ const Experiment = () => {
     }
   }, [status]);
 
-  const initiateCountdown = () => {
+  const initiateCountdown = async () => {
     setCountdown(5);
+    await Tone.start();
   };
 
   const onRecordingStop = () => {
@@ -124,7 +147,12 @@ const Experiment = () => {
           <Button onClick={initiateCountdown}>Begin</Button>
         )}
 
-        <OpenSheetMusicDisplay ref={osmdRef} file={odeToJoy} />
+        {!osmdLoaded && (
+          <LoadingOverlay>
+            <CircularProgress size='50vh' />
+          </LoadingOverlay>
+        )}
+        <OpenSheetMusicDisplay ref={osmdRef} file={moonlightSonata} onLoad={onOsmdLoad} />
 
         {!experimentStarted && countdown !== 0 && countdown !== null && (
           <CountdownOverlay innerText={countdown} />
@@ -132,7 +160,6 @@ const Experiment = () => {
 
         {experimentStarted && (
           <div>
-            <p>{status}</p>
             {!mediaBlobUrl && <StopRecordingOverlay onClickEvent={onRecordingStop} />}
             {mediaBlobUrl && countdown === -1 && (
               <>
