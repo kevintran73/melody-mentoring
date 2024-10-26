@@ -28,6 +28,13 @@ const PageOverlay = styled('div')({
   zIndex: 1000,
 });
 
+const BeginButton = styled(Button)({
+  position: 'absolute',
+  bottom: '20px',
+  right: '20px',
+  zIndex: '998',
+});
+
 const StopButton = styled('button')({
   color: 'white',
   fontSize: '5rem',
@@ -144,12 +151,12 @@ const Experiment = () => {
       <NavBar></NavBar>
       <PageBlock>
         {!experimentStarted && countdown === null && (
-          <Button onClick={initiateCountdown}>Begin</Button>
+          <BeginButton onClick={initiateCountdown}>Begin</BeginButton>
         )}
 
         {!osmdLoaded && (
           <LoadingOverlay>
-            <CircularProgress size='50vh' />
+            <CircularProgress size='45vh' />
           </LoadingOverlay>
         )}
         <OpenSheetMusicDisplay ref={osmdRef} file={moonlightSonata} onLoad={onOsmdLoad} />

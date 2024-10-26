@@ -22,10 +22,6 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd.load(this.props.file).then(() => {
       this.setState({ dataReady: true }, () => {
         this.renderOsmd();
-
-        if (this.props.onLoad) {
-          this.props.onLoad();
-        }
       });
     });
   }
@@ -35,6 +31,9 @@ class OpenSheetMusicDisplay extends Component {
     if (this.osmd.IsReadyToRender()) {
       try {
         this.osmd.render();
+        if (this.props.onLoad) {
+          this.props.onLoad();
+        }
       } catch (error) {
         console.error('Error during OSMD render:', error);
       }
