@@ -54,6 +54,13 @@ class OpenSheetMusicDisplay extends Component {
     }
   };
 
+  // Scroll to where the cursor is on the page
+  scrollToCursor() {
+    if (this.osmd.cursor.cursorElement) {
+      this.osmd.cursor.cursorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
   async beginSong() {
     this.osmd.cursor.reset();
     let cursorsOptions = [{ type: 3, color: '#33e02f', alpha: 0.5, follow: true }];
@@ -64,6 +71,7 @@ class OpenSheetMusicDisplay extends Component {
     this.osmd.cursors[0].show();
     this.osmd.cursor.cursorElement.style.height =
       this.osmd.cursor.cursorElement.getAttribute('height') + 'px';
+    this.scrollToCursor();
 
     const it = this.osmd.cursor.Iterator;
     while (!it.endReached) {
@@ -72,12 +80,24 @@ class OpenSheetMusicDisplay extends Component {
       // const lowestVoiceEntryNote = cursorVoiceEntry.Notes[0];
       // console.log(lowestVoiceEntryNote.Pitch.ToString());
 
-      await this.sleep((60000 / 140) * 4);
-      this.nextMeasure();
+      // Determine bpm of the current measure
+      const measure = this.osmd.Sheet.SourceMeasures[it.CurrentMeasureIndex];
+      const tempoInstructions = measure.TempoExpressions;
+      let currentTempo = this.osmd.Sheet.DefaultStartTempoInBpm;
+      if (tempoInstructions.length > 0 && it.CurrentMeasureIndex > 0) {
+        currentTempo = tempoInstructions[0].TempoInBpm;
+      }
 
-      // Dynamically update cursor height
+      // Calculate time taken per measure and sleep
+      const timeSignature = measure.activeTimeSignature;
+      const beatsPerMeasure = timeSignature.numerator;
+      await this.sleep((60000 / currentTempo) * beatsPerMeasure);
+
+      // Dynamically update cursor height and go to next measure
+      this.nextMeasure();
       this.osmd.cursor.cursorElement.style.height =
         this.osmd.cursor.cursorElement.getAttribute('height') + 'px';
+      this.scrollToCursor();
     }
   }
 
