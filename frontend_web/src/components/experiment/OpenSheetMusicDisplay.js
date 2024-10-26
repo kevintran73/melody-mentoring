@@ -7,6 +7,7 @@ class OpenSheetMusicDisplay extends Component {
     this.state = { dataReady: false };
     this.osmd = undefined;
     this.divRef = React.createRef();
+    this.playing = false;
   }
 
   setupOsmd() {
@@ -62,6 +63,8 @@ class OpenSheetMusicDisplay extends Component {
   }
 
   async beginSong() {
+    this.playing = true;
+
     this.osmd.cursor.reset();
     let cursorsOptions = [{ type: 3, color: '#33e02f', alpha: 0.5, follow: true }];
     this.osmd.setOptions({ cursorsOptions: cursorsOptions });
@@ -74,7 +77,7 @@ class OpenSheetMusicDisplay extends Component {
     this.scrollToCursor();
 
     const it = this.osmd.cursor.Iterator;
-    while (!it.endReached) {
+    while (!it.endReached && this.playing === true) {
       // console.log(it.currentTimeStamp.realValue);
       // const cursorVoiceEntry = it.CurrentVoiceEntries[0];
       // const lowestVoiceEntryNote = cursorVoiceEntry.Notes[0];
@@ -99,6 +102,11 @@ class OpenSheetMusicDisplay extends Component {
         this.osmd.cursor.cursorElement.getAttribute('height') + 'px';
       this.scrollToCursor();
     }
+  }
+
+  endSong() {
+    this.osmd.cursor.hide();
+    this.playing = false;
   }
 
   resize = () => {

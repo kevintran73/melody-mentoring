@@ -9,7 +9,7 @@ import odeToJoy from '../assets/Ode_to_Joy_Easy.mxl';
 
 const PageBlock = styled('div')({
   height: 'calc(100vh - 70px - 2rem)',
-  margin: '1rem 2.5rem',
+  padding: '1rem 2.5rem',
   overflowY: 'auto',
 });
 
@@ -79,13 +79,19 @@ const Experiment = () => {
     } else if (countdown === 0 && !experimentStarted) {
       setExperimentStarted(true);
       startRecording();
-      if (osmdRef.current) {
-        osmdRef.current.beginSong();
-      }
     }
 
     return () => clearTimeout(timer);
   }, [countdown, experimentStarted, startRecording]);
+
+  // Begin song after status is "recording"
+  React.useEffect(() => {
+    if (status === 'recording') {
+      if (osmdRef.current) {
+        osmdRef.current.beginSong();
+      }
+    }
+  }, [status]);
 
   const initiateCountdown = () => {
     setCountdown(5);
@@ -94,6 +100,10 @@ const Experiment = () => {
   const onRecordingStop = () => {
     stopRecording();
     setCountdown(-1);
+
+    if (osmdRef.current) {
+      osmdRef.current.endSong();
+    }
   };
 
   const retryAttempt = () => {
@@ -109,29 +119,31 @@ const Experiment = () => {
   return (
     <>
       <NavBar></NavBar>
-      {!experimentStarted && countdown === null && (
-        <Button onClick={initiateCountdown}>Begin</Button>
-      )}
+      <PageBlock>
+        {!experimentStarted && countdown === null && (
+          <Button onClick={initiateCountdown}>Begin</Button>
+        )}
 
-      <OpenSheetMusicDisplay ref={osmdRef} file={odeToJoy} />
+        <OpenSheetMusicDisplay ref={osmdRef} file={odeToJoy} />
 
-      {!experimentStarted && countdown !== 0 && countdown !== null && (
-        <CountdownOverlay innerText={countdown} />
-      )}
+        {!experimentStarted && countdown !== 0 && countdown !== null && (
+          <CountdownOverlay innerText={countdown} />
+        )}
 
-      {experimentStarted && (
-        <PageBlock>
-          <p>{status}</p>
-          {!mediaBlobUrl && <StopRecordingOverlay onClickEvent={onRecordingStop} />}
-          {mediaBlobUrl && countdown === -1 && (
-            <>
-              <audio src={mediaBlobUrl} controls />
-              <Button onClick={retryAttempt}>Retry attempt</Button>
-              <Button onClick={finishAttempt}>Finish attempt</Button>
-            </>
-          )}
-        </PageBlock>
-      )}
+        {experimentStarted && (
+          <div>
+            <p>{status}</p>
+            {!mediaBlobUrl && <StopRecordingOverlay onClickEvent={onRecordingStop} />}
+            {mediaBlobUrl && countdown === -1 && (
+              <>
+                <audio src={mediaBlobUrl} controls />
+                <Button onClick={retryAttempt}>Retry attempt</Button>
+                <Button onClick={finishAttempt}>Finish attempt</Button>
+              </>
+            )}
+          </div>
+        )}
+      </PageBlock>
     </>
   );
 };
