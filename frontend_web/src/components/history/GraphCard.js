@@ -18,9 +18,9 @@ const StyledCard = styled(Card)(() => ({
 const card = () => (
   <Box>
     <Box padding='2px'>
-      <Typography variant='h2' component='div'>Statistics</Typography>
-      <Typography fontSize='0.9rem' sx={{ color: 'text.secondary' }}>Test</Typography>
-      <Typography fontSize='0.8rem' sx={{ color: 'text.secondary' }}>Test2</Typography>
+      <Typography variant='h3' component='div'>Statistics</Typography>
+      {/* <Typography fontSize='0.9rem' sx={{ color: 'text.secondary' }}>Test</Typography>
+      <Typography fontSize='0.8rem' sx={{ color: 'text.secondary' }}>Test2</Typography> */}
     </Box>
   </Box>
 );

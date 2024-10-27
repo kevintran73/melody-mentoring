@@ -36,14 +36,17 @@ const History = () => {
         </Box>
       </StyledTopContainer>
       
-      <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column' marginX='10vw' gap='1vw'>
+      <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column' marginX='10vw'>
         <TextField 
           sx={{
             // marginX: '10vw',
             width: '100%',
+            marginBottom: '30px',
           }}
           id='outlined-basic' label='Search' variant='outlined'
         />
+        <HistoryCard title='September' artist='Earth, Wind & Fire' difficulty='Medium' date='11:07PM Sunday 27 October 2024'/>
+        <HistoryCard title='test' artist='test' difficulty='test' date='test'/>
         <HistoryCard title='test' artist='test' difficulty='test' date='test'/>
         <HistoryCard title='test' artist='test' difficulty='test' date='test'/>
         <HistoryCard title='test' artist='test' difficulty='test' date='test'/>
