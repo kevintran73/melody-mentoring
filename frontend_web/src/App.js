@@ -11,7 +11,7 @@ import Notifications from './pages/Notifications';
 import Activity from './pages/Activity';
 import Settings from './pages/Settings';
 import Create from './pages/Create';
-import Uploads from './pages/Uploads';
+import History from './pages/History';
 import Playlist from './pages/Playlist';
 import Verification from './pages/Verification';
 import TrackSummary from './pages/TrackSummary';
@@ -67,7 +67,7 @@ const App = () => {
           <Route path='/notifications' element={<Notifications />} />
           <Route path='/create' element={<Create />} />
           <Route path='/catalogue' element={<Catalogue />} />
-          <Route path='/uploads' element={<Uploads />} />
+          <Route path='/history' element={<History />} />
           <Route path='/activity' element={<Activity />} />
           <Route path='/settings' element={<Settings />} />
           <Route path='/playlist' element={<Playlist />} />

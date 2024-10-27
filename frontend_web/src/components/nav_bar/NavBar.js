@@ -7,7 +7,7 @@ import NotificationsButton from './NotificationsButton';
 import ActivityButton from './ActivityButton';
 import SettingsButton from './SettingsButton';
 import CreateButton from './CreateButton';
-import UploadsButton from './UploadsButton';
+import HistoryButton from './HistoryButton';
 
 const StyledHeader = styled('header')({
   display: 'flex',
@@ -43,7 +43,7 @@ const NavBar = () => {
       <MiddleContainer>
         <CreateButton />
         <CatalogueButton />
-        <UploadsButton />
+        <HistoryButton />
       </MiddleContainer>
 
       <RightContainer>
