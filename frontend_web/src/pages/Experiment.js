@@ -8,6 +8,7 @@ import StopRoundedIcon from '@mui/icons-material/StopRounded';
 import ReplayIcon from '@mui/icons-material/Replay';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import MetronomeIcon from '../components/experiment/MetronomeIcon';
 import DoneIcon from '@mui/icons-material/Done';
 
 import NavBar from '../components/nav_bar/NavBar';
@@ -70,7 +71,7 @@ const ToolBarLeftPill = styled('span')({
   paddingTop: '10px',
   paddingBottom: '10px',
   paddingLeft: '15px',
-  paddingRight: '60px',
+  paddingRight: '55px',
   backgroundColor: '#dfdfdf',
   borderRadius: '50px',
   width: '200px',
@@ -85,7 +86,7 @@ const ToolbarRightPill = styled('span')({
   right: '50px',
   paddingTop: '10px',
   paddingBottom: '10px',
-  paddingLeft: '60px',
+  paddingLeft: '55px',
   paddingRight: '15px',
   backgroundColor: '#dfdfdf',
   borderRadius: '50px',
@@ -118,6 +119,12 @@ const StyledVolumeUp = styled(VolumeUpIcon)({
 
 const StyledVolumeOff = styled(VolumeOffIcon)({
   fontSize: '50px',
+  color: '#3b3b3b',
+});
+
+const StyledMetronome = styled(MetronomeIcon)({
+  width: '50px',
+  height: '50px',
   color: '#3b3b3b',
 });
 
@@ -174,7 +181,10 @@ const Experiment = () => {
   const osmdRef = React.useRef();
   const [osmdLoaded, setOsmdLoaded] = React.useState(false);
   const [osmdMuted, setOsmdMuted] = React.useState(
-    osmdRef.current ? osmdRef.current.isMuted() : false
+    osmdRef.current ? osmdRef.current.isMusicMuted() : false
+  );
+  const [osmdMetroMuted, setOsmdMetroMuted] = React.useState(
+    osmdRef.current ? osmdRef.current.isMetronomeMuted() : false
   );
 
   const onOsmdLoad = () => {
@@ -247,9 +257,15 @@ const Experiment = () => {
     // Upload mediaBlobUrl to database
   };
 
-  const toggleMute = () => {
+  const toggleMusicMute = () => {
     if (osmdRef.current) {
-      osmdRef.current.toggleMute();
+      osmdRef.current.toggleMuteMusic();
+    }
+  };
+
+  const toggleMetronome = () => {
+    if (osmdRef.current) {
+      osmdRef.current.toggleMetronome();
     }
   };
 
@@ -268,9 +284,10 @@ const Experiment = () => {
         )}
         <OpenSheetMusicDisplay
           ref={osmdRef}
-          file={moonlightSonata}
+          file={odeToJoy}
           onLoad={onOsmdLoad}
           onMuteToggle={(b) => setOsmdMuted(b)}
+          onMetroMuteToggle={(b) => setOsmdMetroMuted(b)}
         />
 
         {experimentStarted && (
@@ -287,15 +304,18 @@ const Experiment = () => {
       <ToolBar>
         <ToolBarLeftPill>
           {!osmdMuted && (
-            <UnstyledButtonContainer onClick={toggleMute} title='Mute sound'>
+            <UnstyledButtonContainer onClick={toggleMusicMute} title='Mute sound'>
               <StyledVolumeUp />
             </UnstyledButtonContainer>
           )}
           {osmdMuted && (
-            <UnstyledButtonContainer onClick={toggleMute} title='Unmute sound'>
+            <UnstyledButtonContainer onClick={toggleMusicMute} title='Unmute sound'>
               <StyledVolumeOff />
             </UnstyledButtonContainer>
           )}
+          <UnstyledButtonContainer onClick={toggleMetronome} title='Toggle metronome'>
+            <StyledMetronome crossedOut={osmdMetroMuted} />
+          </UnstyledButtonContainer>
         </ToolBarLeftPill>
 
         {!experimentStarted && countdown === null && (

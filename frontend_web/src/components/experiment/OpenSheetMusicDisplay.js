@@ -11,6 +11,7 @@ class OpenSheetMusicDisplay extends Component {
     this.divRef = React.createRef();
     this.playing = false;
     this.synth = new Tone.PolySynth(Tone.Synth).toDestination();
+    this.metronome = new Tone.MembraneSynth().toDestination();
   }
 
   setupOsmd() {
@@ -105,6 +106,13 @@ class OpenSheetMusicDisplay extends Component {
   async playMeasure(musicEvents, tempo, beatsPerMeasure) {
     let startTime = Tone.now();
 
+    // Metronome; play quarter notes
+    for (let i = 1; i <= 4; i += 1) {
+      const eventStartTime = startTime + i * 0.25 * ((60 / tempo) * beatsPerMeasure);
+      this.metronome.triggerAttackRelease('C2', '8n', eventStartTime);
+    }
+
+    // Music
     musicEvents.forEach((event) => {
       const { notes, duration, timestamp } = event;
 
@@ -166,7 +174,7 @@ class OpenSheetMusicDisplay extends Component {
     return !this.state.dataReady;
   }
 
-  turnOnMute = () => {
+  turnOnMuteMusic = () => {
     this.synth.volume.value = -Infinity;
 
     if (this.props.onMuteToggle) {
@@ -174,7 +182,7 @@ class OpenSheetMusicDisplay extends Component {
     }
   };
 
-  turnOffMute = () => {
+  turnOffMuteMusic = () => {
     this.synth.volume.value = 0;
 
     if (this.props.onMuteToggle) {
@@ -182,15 +190,31 @@ class OpenSheetMusicDisplay extends Component {
     }
   };
 
-  isMuted = () => {
+  isMusicMuted = () => {
     return this.synth.volume.value === -Infinity;
   };
 
-  toggleMute = () => {
-    if (this.isMuted()) {
-      this.turnOffMute();
+  toggleMuteMusic = () => {
+    if (this.isMusicMuted()) {
+      this.turnOffMuteMusic();
     } else {
-      this.turnOnMute();
+      this.turnOnMuteMusic();
+    }
+  };
+
+  isMetronomeMuted = () => {
+    return this.metronome.volume.value === -Infinity;
+  };
+
+  toggleMetronome = () => {
+    if (this.isMetronomeMuted()) {
+      this.metronome.volume.value = 0;
+    } else {
+      this.metronome.volume.value = -Infinity;
+    }
+
+    if (this.props.onMetroMuteToggle) {
+      this.props.onMetroMuteToggle(this.metronome.volume.value === -Infinity);
     }
   };
 
