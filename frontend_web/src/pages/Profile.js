@@ -12,12 +12,12 @@ import TutorList from '../components/profile/TutorList';
  */
 const Profile = () => {
   return (
-    <Box height='100vh' display='flex' flexDirection='column'>
+    <Box height='100vh' display='flex' flexDirection='column' backgroundColor='#f5f5f5'>
       <NavBar />
-      <Box flex='1' backgroundColor='green' display='flex' flexDirection='row' alignItems='center' justifyContent='center' margin='40px'>
 
+      <Box flex='1' backgroundColor='green' display='flex' flexDirection='row' alignItems='center' justifyContent='center' margin='30px'>
         {/* Profile Card */}
-        <Box flex='3' backgroundColor='blue' width='100%' height='100%' padding='20px'>
+        <Box flex='3' backgroundColor='blue' width='100%' height='100%' padding='0'>
           <ProfileCard></ProfileCard>
         </Box>
 

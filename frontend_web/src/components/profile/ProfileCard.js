@@ -22,7 +22,8 @@ const StyledCard = styled(Card)(() => ({
   flexDirection: 'column',
   textAlign: 'center',
   alignItems: 'center',
-  padding: '2vw',
+  padding: '5%' ,
+  backgroundColor: 'green',
 }));
 
 const StyledButton = styled(Button)({
@@ -50,19 +51,13 @@ const SongCard = () => {
 
   return (
     <StyledCard variant='outlined'>
-      {/* <CardMedia
-        component='img'
-        image={defaultImg}
-        alt='img'
-        sx={{ width: '20vw' , height: '20vw',  }}
-      /> */}
       <Box
         component="img"
         src={defaultImg}
         alt='test'
         sx={{
-          width: '22vw',
-          height: '22vw',
+          width: '100%',
+          // height: '100%',
           objectFit: 'cover',
         }}
       />

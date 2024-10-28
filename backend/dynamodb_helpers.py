@@ -13,9 +13,9 @@ def listOfMusicBaskets():
         aws_access_key_id=aws_access_key_id,
         aws_secret_access_key=aws_secret_access_key
     )
-    table = db.Table('music-basket')
+    table = db.Table(os.getenv('DYNAMODB_TABLE_SONGS'))
     baskets = (table.scan())["Items"]
     def convertGenresToList(basket):
-        basket['genre-tags'] = list(basket['genre-tags'])
+        basket['genreTags'] = list(basket['genreTags'])
         return basket
     return list(map(convertGenresToList, baskets))
