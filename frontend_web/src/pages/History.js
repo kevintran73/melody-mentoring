@@ -1,12 +1,10 @@
-import React from 'react';
-
+import React, { useEffect, useState } from 'react';
 import NavBar from '../components/nav_bar/NavBar';
 import Box from '@mui/material/Box';
 import HistoryCard from '../components/history/HistoryCard';
 import GraphCard from '../components/history/GraphCard';
-import { TextField } from '@mui/material';
+import { TextField, Typography } from '@mui/material';
 import HistoryIntroCard from '../components/history/HistoryIntroCard';
-
 import { styled } from '@mui/system';
 
 /**
