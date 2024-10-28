@@ -46,13 +46,29 @@ const UnstyledButtonContainer = styled('button')({
   zIndex: '998',
 });
 
+const StyledAudio = styled('audio')({
+  // display: 'flex',
+  // alignItems: 'center',
+  // justifyContent: 'center',
+  width: '350px',
+  position: 'relative',
+});
+
+const ToolBarBlock = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '15px',
+  position: 'fixed',
+  bottom: '20px',
+});
+
 const ToolBar = styled('span')({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   width: '100vw',
-  position: 'fixed',
-  bottom: '20px',
 });
 
 const MainToolBarCircle = styled('div')({
@@ -276,7 +292,6 @@ const Experiment = () => {
         {!experimentStarted && countdown !== 0 && countdown !== null && (
           <CountdownOverlay innerText={countdown} />
         )}
-
         {!osmdLoaded && (
           <LoadingOverlay>
             <CircularProgress size='45vh' />
@@ -289,65 +304,60 @@ const Experiment = () => {
           onMuteToggle={(b) => setOsmdMuted(b)}
           onMetroMuteToggle={(b) => setOsmdMetroMuted(b)}
         />
-
-        {experimentStarted && (
-          <div>
-            {mediaBlobUrl && countdown === -1 && (
-              <>
-                <audio src={mediaBlobUrl} controls />
-              </>
-            )}
-          </div>
-        )}
       </PageBlock>
 
-      <ToolBar>
-        <ToolBarLeftPill>
-          {!osmdMuted && (
-            <UnstyledButtonContainer onClick={toggleMusicMute} title='Mute sound'>
-              <StyledVolumeUp />
-            </UnstyledButtonContainer>
-          )}
-          {osmdMuted && (
-            <UnstyledButtonContainer onClick={toggleMusicMute} title='Unmute sound'>
-              <StyledVolumeOff />
-            </UnstyledButtonContainer>
-          )}
-          <UnstyledButtonContainer onClick={toggleMetronome} title='Toggle metronome'>
-            <StyledMetronome crossedOut={osmdMetroMuted} />
-          </UnstyledButtonContainer>
-        </ToolBarLeftPill>
-
-        {!experimentStarted && countdown === null && (
-          <UnstyledButtonContainer onClick={initiateCountdown} title='Begin attempt'>
-            <MainToolBarCircle>
-              <StyledPlayArrow />
-            </MainToolBarCircle>
-          </UnstyledButtonContainer>
-        )}
-        {countdown !== null && countdown !== -1 && !mediaBlobUrl && (
-          <UnstyledButtonContainer onClick={onRecordingStop} title='Stop attempt'>
-            <MainToolBarCircle>
-              <StyledStop />
-            </MainToolBarCircle>
-          </UnstyledButtonContainer>
-        )}
+      <ToolBarBlock>
         {experimentStarted && mediaBlobUrl && countdown === -1 && (
-          <UnstyledButtonContainer onClick={retryAttempt} title='Retry attempt'>
-            <MainToolBarCircle>
-              <StyledReplay />
-            </MainToolBarCircle>
-          </UnstyledButtonContainer>
+          <StyledAudio src={mediaBlobUrl} controls />
         )}
+        <ToolBar>
+          <ToolBarLeftPill>
+            {!osmdMuted && (
+              <UnstyledButtonContainer onClick={toggleMusicMute} title='Mute sound'>
+                <StyledVolumeUp />
+              </UnstyledButtonContainer>
+            )}
+            {osmdMuted && (
+              <UnstyledButtonContainer onClick={toggleMusicMute} title='Unmute sound'>
+                <StyledVolumeOff />
+              </UnstyledButtonContainer>
+            )}
+            <UnstyledButtonContainer onClick={toggleMetronome} title='Toggle metronome'>
+              <StyledMetronome crossedOut={osmdMetroMuted} />
+            </UnstyledButtonContainer>
+          </ToolBarLeftPill>
 
-        <ToolbarRightPill>
-          {experimentStarted && mediaBlobUrl && countdown === -1 && (
-            <UnstyledButtonContainer onClick={finishAttempt} title='Finish attempt'>
-              <StyledDone />
+          {!experimentStarted && countdown === null && (
+            <UnstyledButtonContainer onClick={initiateCountdown} title='Begin attempt'>
+              <MainToolBarCircle>
+                <StyledPlayArrow />
+              </MainToolBarCircle>
             </UnstyledButtonContainer>
           )}
-        </ToolbarRightPill>
-      </ToolBar>
+          {countdown !== null && countdown !== -1 && !mediaBlobUrl && (
+            <UnstyledButtonContainer onClick={onRecordingStop} title='Stop attempt'>
+              <MainToolBarCircle>
+                <StyledStop />
+              </MainToolBarCircle>
+            </UnstyledButtonContainer>
+          )}
+          {experimentStarted && mediaBlobUrl && countdown === -1 && (
+            <UnstyledButtonContainer onClick={retryAttempt} title='Retry attempt'>
+              <MainToolBarCircle>
+                <StyledReplay />
+              </MainToolBarCircle>
+            </UnstyledButtonContainer>
+          )}
+
+          <ToolbarRightPill>
+            {experimentStarted && mediaBlobUrl && countdown === -1 && (
+              <UnstyledButtonContainer onClick={finishAttempt} title='Finish attempt'>
+                <StyledDone />
+              </UnstyledButtonContainer>
+            )}
+          </ToolbarRightPill>
+        </ToolBar>
+      </ToolBarBlock>
     </>
   );
 };
