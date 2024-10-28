@@ -3,6 +3,12 @@ import { useReactMediaRecorder } from 'react-media-recorder';
 import * as Tone from 'tone';
 
 import { Button, styled, Typography, CircularProgress } from '@mui/material';
+import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
+import StopRoundedIcon from '@mui/icons-material/StopRounded';
+import ReplayIcon from '@mui/icons-material/Replay';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+
 import NavBar from '../components/nav_bar/NavBar';
 import OpenSheetMusicDisplay from '../components/experiment/OpenSheetMusicDisplay';
 
@@ -10,8 +16,9 @@ import odeToJoy from '../assets/Ode_to_Joy_Easy.mxl';
 import moonlightSonata from '../assets/Sonate_No._14_Moonlight_3rd_Movement.mxl';
 
 const PageBlock = styled('div')({
-  height: 'calc(100vh - 70px - 2rem)',
-  padding: '1rem 2.5rem',
+  height: 'calc(100vh - 70px)',
+  paddingLeft: '2rem',
+  paddingRight: '2rem',
   overflowY: 'auto',
 });
 
@@ -28,30 +35,102 @@ const PageOverlay = styled('div')({
   zIndex: 1000,
 });
 
-const BeginButton = styled(Button)({
-  position: 'absolute',
-  bottom: '20px',
-  right: '20px',
+const UnstyledButtonContainer = styled('button')({
+  background: 'none',
+  border: 'none',
+  padding: '0',
+  margin: '0',
+  cursor: 'pointer',
   zIndex: '998',
 });
 
-const StopButton = styled('button')({
-  color: 'white',
-  fontSize: '5rem',
+const ToolBar = styled('span')({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100vw',
+  position: 'fixed',
+  bottom: '20px',
 });
 
-// New loading overlay component
+const MainToolBarCircle = styled('div')({
+  height: '90px',
+  width: '90px',
+  backgroundColor: '#ededed',
+  borderRadius: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+const ToolBarLeftPill = styled('span')({
+  position: 'relative',
+  left: '50px',
+  paddingTop: '10px',
+  paddingBottom: '10px',
+  paddingLeft: '15px',
+  paddingRight: '60px',
+  backgroundColor: '#dfdfdf',
+  borderRadius: '50px',
+  width: '200px',
+  height: '60px',
+  display: 'flex',
+  justifyContent: 'space-evenly',
+  alignItems: 'center',
+});
+
+const ToolbarRightPill = styled('span')({
+  position: 'relative',
+  right: '50px',
+  paddingTop: '10px',
+  paddingBottom: '10px',
+  paddingLeft: '60px',
+  paddingRight: '15px',
+  backgroundColor: '#dfdfdf',
+  borderRadius: '50px',
+  width: '200px',
+  height: '60px',
+  display: 'flex',
+  justifyContent: 'space-evenly',
+  alignItems: 'center',
+});
+
+const StyledPlayArrow = styled(PlayArrowRoundedIcon)({
+  fontSize: '60px',
+  color: '#2161cc',
+});
+
+const StyledStop = styled(StopRoundedIcon)({
+  fontSize: '60px',
+  color: '#ed4d3e',
+});
+
+const StyledReplay = styled(ReplayIcon)({
+  fontSize: '60px',
+  color: '#3b3b3b',
+});
+
+const StyledVolumeUp = styled(VolumeUpIcon)({
+  fontSize: '50px',
+  color: '#3b3b3b',
+});
+
+const StyledVolumeOff = styled(VolumeOffIcon)({
+  fontSize: '50px',
+  color: '#3b3b3b',
+});
+
 const LoadingOverlay = styled('div')({
   position: 'fixed',
   top: 0,
   left: 0,
   right: 0,
   bottom: 0,
-  backgroundColor: 'rgba(255, 255, 255, 0)', // Semi-transparent white
+  backgroundColor: 'rgba(255, 255, 255, 0)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  zIndex: 999, // Just below the PageOverlay
+  zIndex: 999,
 });
 
 const CountdownOverlay = ({ innerText }) => {
@@ -66,15 +145,17 @@ const CountdownOverlay = ({ innerText }) => {
   );
 };
 
-const StopRecordingOverlay = ({ onClickEvent }) => {
-  return (
-    <PageOverlay>
-      <div>
-        <StopButton onClick={onClickEvent}>Stop Recording</StopButton>
-      </div>
-    </PageOverlay>
-  );
-};
+// const StopRecordingOverlay = ({ onClickEvent }) => {
+//   return (
+//     <PageOverlay>
+//       <div>
+//         <StopButton onClick={onClickEvent} filled>
+//           Stop Recording
+//         </StopButton>
+//       </div>
+//     </PageOverlay>
+//   );
+// };
 
 /**
  * Experiment page
@@ -83,8 +164,12 @@ const Experiment = () => {
   const [experimentStarted, setExperimentStarted] = React.useState(false);
   const [countdown, setCountdown] = React.useState(null);
 
+  const pageBlockRef = React.useRef();
   const osmdRef = React.useRef();
   const [osmdLoaded, setOsmdLoaded] = React.useState(false);
+  const [osmdMuted, setOsmdMuted] = React.useState(
+    osmdRef.current ? osmdRef.current.isMuted() : false
+  );
 
   const onOsmdLoad = () => {
     setOsmdLoaded(true);
@@ -122,7 +207,12 @@ const Experiment = () => {
     }
   }, [status]);
 
+  // Trigger the countdown for a song beginning
   const initiateCountdown = async () => {
+    if (pageBlockRef.current) {
+      pageBlockRef.current.scrollTop = 0;
+    }
+
     setCountdown(5);
     await Tone.start();
   };
@@ -137,6 +227,11 @@ const Experiment = () => {
   };
 
   const retryAttempt = () => {
+    // Scroll to top of sheet
+    if (pageBlockRef.current) {
+      pageBlockRef.current.scrollTop = 0;
+    }
+
     clearBlobUrl();
     setExperimentStarted(false);
     initiateCountdown();
@@ -146,12 +241,18 @@ const Experiment = () => {
     // Upload mediaBlobUrl to database
   };
 
+  const toggleMute = () => {
+    if (osmdRef.current) {
+      osmdRef.current.toggleMute();
+    }
+  };
+
   return (
     <>
       <NavBar></NavBar>
-      <PageBlock>
-        {!experimentStarted && countdown === null && (
-          <BeginButton onClick={initiateCountdown}>Begin</BeginButton>
+      <PageBlock ref={pageBlockRef}>
+        {!experimentStarted && countdown !== 0 && countdown !== null && (
+          <CountdownOverlay innerText={countdown} />
         )}
 
         {!osmdLoaded && (
@@ -159,25 +260,62 @@ const Experiment = () => {
             <CircularProgress size='45vh' />
           </LoadingOverlay>
         )}
-        <OpenSheetMusicDisplay ref={osmdRef} file={moonlightSonata} onLoad={onOsmdLoad} />
-
-        {!experimentStarted && countdown !== 0 && countdown !== null && (
-          <CountdownOverlay innerText={countdown} />
-        )}
+        <OpenSheetMusicDisplay
+          ref={osmdRef}
+          file={odeToJoy}
+          onLoad={onOsmdLoad}
+          onMuteToggle={(b) => setOsmdMuted(b)}
+        />
 
         {experimentStarted && (
           <div>
-            {!mediaBlobUrl && <StopRecordingOverlay onClickEvent={onRecordingStop} />}
             {mediaBlobUrl && countdown === -1 && (
               <>
                 <audio src={mediaBlobUrl} controls />
-                <Button onClick={retryAttempt}>Retry attempt</Button>
-                <Button onClick={finishAttempt}>Finish attempt</Button>
               </>
             )}
           </div>
         )}
       </PageBlock>
+
+      <ToolBar>
+        <ToolBarLeftPill>
+          {!osmdMuted && (
+            <UnstyledButtonContainer onClick={toggleMute} title='Mute sound'>
+              <StyledVolumeUp />
+            </UnstyledButtonContainer>
+          )}
+          {osmdMuted && (
+            <UnstyledButtonContainer onClick={toggleMute} title='Unmute sound'>
+              <StyledVolumeOff />
+            </UnstyledButtonContainer>
+          )}
+        </ToolBarLeftPill>
+
+        {!experimentStarted && countdown === null && (
+          <UnstyledButtonContainer onClick={initiateCountdown} title='Begin attempt'>
+            <MainToolBarCircle>
+              <StyledPlayArrow />
+            </MainToolBarCircle>
+          </UnstyledButtonContainer>
+        )}
+        {countdown !== null && countdown !== -1 && !mediaBlobUrl && (
+          <UnstyledButtonContainer onClick={onRecordingStop} title='Stop attempt'>
+            <MainToolBarCircle>
+              <StyledStop />
+            </MainToolBarCircle>
+          </UnstyledButtonContainer>
+        )}
+        {experimentStarted && mediaBlobUrl && countdown === -1 && (
+          <UnstyledButtonContainer onClick={retryAttempt} title='Retry attempt'>
+            <MainToolBarCircle>
+              <StyledReplay />
+            </MainToolBarCircle>
+          </UnstyledButtonContainer>
+        )}
+
+        <ToolbarRightPill></ToolbarRightPill>
+      </ToolBar>
     </>
   );
 };

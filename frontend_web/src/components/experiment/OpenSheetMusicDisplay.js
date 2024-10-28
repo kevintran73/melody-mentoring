@@ -166,6 +166,34 @@ class OpenSheetMusicDisplay extends Component {
     return !this.state.dataReady;
   }
 
+  turnOnMute = () => {
+    this.synth.volume.value = -Infinity;
+
+    if (this.props.onMuteToggle) {
+      this.props.onMuteToggle(true);
+    }
+  };
+
+  turnOffMute = () => {
+    this.synth.volume.value = 0;
+
+    if (this.props.onMuteToggle) {
+      this.props.onMuteToggle(false);
+    }
+  };
+
+  isMuted = () => {
+    return this.synth.volume.value === -Infinity;
+  };
+
+  toggleMute = () => {
+    if (this.isMuted()) {
+      this.turnOffMute();
+    } else {
+      this.turnOnMute();
+    }
+  };
+
   resize = () => {
     if (this.osmd && this.state.dataReady) {
       this.renderOsmd();
