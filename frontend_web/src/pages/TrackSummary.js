@@ -5,6 +5,7 @@ import NavBar from '../components/nav_bar/NavBar';
 import PieChartCard from '../components/track_summary/PieChartCard'
 import SubAdviceCard from '../components/track_summary/SubAdviceCard';
 import Thumbnail from '../components/track_summary/Thumbnail';
+import ScrollContainer from 'react-indiana-drag-scroll';
 
 import { styled } from '@mui/system';
 
@@ -34,7 +35,7 @@ const StyledMainSummary = styled(Box)(() => ({
 
 const TrackSummary = () => {
   return (
-    <Box>
+  <Box>
       <NavBar></NavBar>
       <StyledMainSummary>
         <Box flex='4' marginRight='30px'>
@@ -48,44 +49,133 @@ const TrackSummary = () => {
         </Box>
       </StyledMainSummary>
 
-      <Typography align='left' variant='h4' margin='10px' marginLeft='20px'>Notes</Typography>
-      <StyledAdviceBox>
-        <PieChartCard />
-        <PieChartCard />
-        <Box flex={1} height='100%' >
-          <SubAdviceCard height="100%" />
+      <ScrollContainer
+            hideScrollbars={false}      // Shows the scrollbars for normal scrolling
+            vertical={true}             // Enables vertical scrolling
+            horizontal={true}           // Enables horizontal scrolling
+            activationDistance={5}      // Set a small distance to activate drag
+            ignoreElements=".no-drag"
+      >
+      <Box display='flex' flexDirection='row' justifyContent='space-evenly' backgroundColor='green' gap='10px' margin='10px 40px'>
+        <Box backgroundColor='purple'>
+          <Typography align='left' variant='h4' margin='10px' marginRight='20px'>Correct Notes</Typography>
+          <StyledAdviceBox sx={{width:'40vw'}}>
+            <PieChartCard
+              val1={77}
+              name1='On Time'
+              val2={10}
+              name2='Rushed'
+              val3={13}
+              name3='Dragged'
+            />
+            <Box flex={1}>
+              <SubAdviceCard
+                main='It looks like you were on time for only 77% of the piece.'
+                details='You rushed 10% of your notes while you dragged on 13% of your notes.'
+                tips='Remember getting it right is better than playing it fast!'
+                height='100%'
+              />
+            </Box>
+          </StyledAdviceBox>
         </Box>
-      </StyledAdviceBox>
 
-      <Typography align='right' variant='h4' margin='10px' marginRight='20px'>Timing</Typography>
-      <StyledAdviceBox>
-        <Box flex={1} height='100%' >
-          <SubAdviceCard height="100%" />
+        <Box>
+          <Typography align='left' variant='h4' margin='10px' marginRight='20px'>Timing</Typography>
+          <StyledAdviceBox sx={{width:'40vw'}}>
+            <PieChartCard
+              val1={77}
+              name1='On Time'
+              val2={10}
+              name2='Rushed'
+              val3={13}
+              name3='Dragged'
+            />
+            <Box flex={1}>
+              <SubAdviceCard
+                main='It looks like you were on time for only 77% of the piece.'
+                details='You rushed 10% of your notes while you dragged on 13% of your notes.'
+                tips='Remember getting it right is better than playing it fast!'
+                height='100%'
+              />
+            </Box>
+          </StyledAdviceBox>
         </Box>
-        <PieChartCard />
-        <PieChartCard />
-      </StyledAdviceBox>
 
-      Note Types
-      <Box display='flex' flexDirection={'row'}>
-        <PieChartCard />
-        <PieChartCard />
-        <SubAdviceCard />
+        <Box>
+          <Typography align='left' variant='h4' margin='10px' marginRight='20px'>Note Types</Typography>
+          <StyledAdviceBox sx={{width:'40vw'}}>
+            <PieChartCard
+              val1={77}
+              name1='On Time'
+              val2={10}
+              name2='Rushed'
+              val3={13}
+              name3='Dragged'
+            />
+            <Box flex={1}>
+              <SubAdviceCard
+                main='It looks like you were on time for only 77% of the piece.'
+                details='You rushed 10% of your notes while you dragged on 13% of your notes.'
+                tips='Remember getting it right is better than playing it fast!'
+                height='100%'
+              />
+            </Box>
+          </StyledAdviceBox>
+        </Box>
+
+        <Box>
+          <Typography align='left' variant='h4' margin='10px' marginRight='20px'>Articulation</Typography>
+          <StyledAdviceBox sx={{width:'40vw'}}>
+            <PieChartCard
+              val1={77}
+              name1='On Time'
+              val2={10}
+              name2='Rushed'
+              val3={13}
+              name3='Dragged'
+            />
+            <Box flex={1}>
+              <SubAdviceCard
+                main='It looks like you were on time for only 77% of the piece.'
+                details='You rushed 10% of your notes while you dragged on 13% of your notes.'
+                tips='Remember getting it right is better than playing it fast!'
+                height='100%'
+              />
+            </Box>
+          </StyledAdviceBox>
+        </Box>
+
+        <Box>
+          <Typography align='left' variant='h4' margin='10px' marginRight='20px'>Dynamics</Typography>
+          <StyledAdviceBox sx={{width:'40vw'}}>
+            <PieChartCard
+              val1={77}
+              name1='On Time'
+              val2={10}
+              name2='Rushed'
+              val3={13}
+              name3='Dragged'
+            />
+            <Box flex={1}>
+              <SubAdviceCard
+                main='It looks like you were on time for only 77% of the piece.'
+                details='You rushed 10% of your notes while you dragged on 13% of your notes.'
+                tips='Remember getting it right is better than playing it fast!'
+                height='100%'
+              />
+            </Box>
+          </StyledAdviceBox>
+        </Box>
+      </Box>
+      </ScrollContainer>
+      <Box
+        border='solid'
+        margin='50px'
+        height='1000px'
+      >
+        Insert Sheet Music Here
       </Box>
 
-      Dynamics
-      <Box display='flex' flexDirection={'row'}>
-        <SubAdviceCard />
-        <PieChartCard />
-        <PieChartCard />
-      </Box>
-
-      Articulation
-      <Box display='flex' flexDirection={'row'}>
-        <PieChartCard />
-        <PieChartCard />
-        <SubAdviceCard />
-      </Box>
     </Box>
   );
 };

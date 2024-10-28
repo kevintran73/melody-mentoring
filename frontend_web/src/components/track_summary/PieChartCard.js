@@ -14,43 +14,54 @@ const StyledCard = styled(Card)(() => ({
   height:'100%',
 }));
 
-const card = () => (
-  <Box>
-    <PieChart
-      series={[
-        {
-          data: [
-            { id: 0, value: 10, label: 'series A' },
-            { id: 1, value: 15, label: 'series B' },
-            { id: 2, value: 20, label: 'series C' },
-            { id: 3, value: 55, label: 'series D' },
-          ],
-          innerRadius: 50,
-          outerRadius: 100,
-          paddingAngle: 5,
-          cornerRadius: 5,
-          startAngle: 0,
-          endAngle: 360,
-          cx: 100,
-          highlightScope: { fade: 'global', highlight: 'item' },
-          faded: { innerRadius: 40, additionalRadius: -10 },
-        }
-      ]}
-      width={210}
-      height={200}
-      slotProps={{ legend: { hidden: true } }}
-    />
-    <Box padding='2px'>
-      <Typography fontSize='1rem' component='div'>Title</Typography>
-      <Typography fontSize='0.9rem' sx={{ color: 'text.secondary' }}>Test</Typography>
-      <Typography fontSize='0.8rem' sx={{ color: 'text.secondary' }}>Test2</Typography>
-    </Box>
-  </Box>
-);
-
-const PieChartCard = ({  }) => {
+const PieChartCard = ({ val1, name1, val2, name2, val3, name3 }) => {
   return (
-    <StyledCard variant='outlined'>{card()}</StyledCard>
+    <StyledCard variant='outlined'>
+      <Box
+        width='100%'
+        height='100%'
+        display='flex'
+        flexDirection='column'
+        alignItems='center'
+        justifyContent='center'
+      >
+        <PieChart
+          sx={{
+            transform: 'scale(1)',
+            transformOrigin: 'center',
+            backgroundColor: 'blue',
+            width: '100%',
+            height: '100%',
+          }}
+          series={[
+            {
+              data: [
+                { id: 0, value: val1, label: name1 },
+                { id: 1, value: val2, label: name2 },
+                { id: 2, value: val3, label: name3 },
+              ],
+              innerRadius: 50,
+              outerRadius: 100,
+              paddingAngle: 2,
+              cornerRadius: 5,
+              cx: 100,
+              highlightScope: { fade: 'global', highlight: 'item' },
+              faded: { innerRadius: 40, additionalRadius: -10 },
+            },
+          ]}
+          slotProps={{
+            legend: {
+              hidden: true,
+            },
+          }}
+        />
+        <Box padding='2px' textAlign='center'>
+          <Typography fontSize='1rem' component='div'>{name1} - {val1}%</Typography>
+          <Typography fontSize='1' sx={{ color: 'text.secondary' }}>{name2} - {val2}%</Typography>
+          <Typography fontSize='1' sx={{ color: 'text.secondary' }}>{name3} - {val3}%</Typography>
+        </Box>
+      </Box>
+    </StyledCard>
   );
 };
 

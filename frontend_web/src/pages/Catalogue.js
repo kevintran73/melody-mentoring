@@ -7,7 +7,7 @@ import NavBar from '../components/nav_bar/NavBar';
 import SongCard from '../components/catalogue/SongCard';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import ScrollContainer from 'react-indiana-drag-scroll'
+import ScrollContainer from 'react-indiana-drag-scroll';
 
 import defaultImg from '../assets/default-img.png';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';

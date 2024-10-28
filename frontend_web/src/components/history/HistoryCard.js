@@ -6,6 +6,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import ButtonBase from '@mui/material/ButtonBase';
 import defaultImg from '../../assets/default-img.png';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Img = styled('img')({
   margin: '5px',
@@ -13,6 +14,12 @@ const Img = styled('img')({
 });
 
 const HistoryCard = ({ title, artist, difficulty, date }) => {
+  const navigate = useNavigate();
+
+  const navTrackSummary = () => {
+    return navigate('/track-summary');
+  };
+
   return (
     <Box
       sx={{
@@ -21,8 +28,10 @@ const HistoryCard = ({ title, artist, difficulty, date }) => {
         maxHeight: '125px',
         width: '90%',
         flexGrow: 1,
-        margin: '10px 0'
+        margin: '10px 0',
+        cursor: 'pointer',
       }}
+      onClick={navTrackSummary}
     >
       <Box display='flex'>
         <Box
@@ -30,7 +39,7 @@ const HistoryCard = ({ title, artist, difficulty, date }) => {
             marginRight: '10px'
           }}
         >
-          <Img alt='playlist-card' src={defaultImg} />
+          <Img alt='playlist-card' src={defaultImg}/>
         </Box>
 
         <Box>
