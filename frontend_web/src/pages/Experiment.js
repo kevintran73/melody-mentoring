@@ -8,6 +8,7 @@ import StopRoundedIcon from '@mui/icons-material/StopRounded';
 import ReplayIcon from '@mui/icons-material/Replay';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import DoneIcon from '@mui/icons-material/Done';
 
 import NavBar from '../components/nav_bar/NavBar';
 import OpenSheetMusicDisplay from '../components/experiment/OpenSheetMusicDisplay';
@@ -118,6 +119,11 @@ const StyledVolumeUp = styled(VolumeUpIcon)({
 const StyledVolumeOff = styled(VolumeOffIcon)({
   fontSize: '50px',
   color: '#3b3b3b',
+});
+
+const StyledDone = styled(DoneIcon)({
+  fontSize: '50px',
+  color: '#0fbf3d',
 });
 
 const LoadingOverlay = styled('div')({
@@ -262,7 +268,7 @@ const Experiment = () => {
         )}
         <OpenSheetMusicDisplay
           ref={osmdRef}
-          file={odeToJoy}
+          file={moonlightSonata}
           onLoad={onOsmdLoad}
           onMuteToggle={(b) => setOsmdMuted(b)}
         />
@@ -314,7 +320,13 @@ const Experiment = () => {
           </UnstyledButtonContainer>
         )}
 
-        <ToolbarRightPill></ToolbarRightPill>
+        <ToolbarRightPill>
+          {experimentStarted && mediaBlobUrl && countdown === -1 && (
+            <UnstyledButtonContainer onClick={finishAttempt} title='Finish attempt'>
+              <StyledDone />
+            </UnstyledButtonContainer>
+          )}
+        </ToolbarRightPill>
       </ToolBar>
     </>
   );
