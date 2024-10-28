@@ -3,9 +3,9 @@ import React from 'react';
 import NavBar from '../components/nav_bar/NavBar';
 
 /**
- * Activity page
+ * Profile page
  */
-const Activity = () => {
+const Profile = () => {
   return (
     <>
       <NavBar></NavBar>
@@ -13,4 +13,4 @@ const Activity = () => {
   );
 };
 
-export default Activity;
+export default Profile;
