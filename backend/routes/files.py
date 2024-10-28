@@ -8,7 +8,7 @@ from botocore.exceptions import ClientError
 
 s3 = boto3.client('s3', region_name='ap-southeast-2')
 
-files_bp = Blueprint('media', __name__)
+files_bp = Blueprint('files', __name__)
 
 # media routes
 
