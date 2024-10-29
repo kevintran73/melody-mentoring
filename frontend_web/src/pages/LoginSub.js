@@ -66,7 +66,7 @@ const LoginSub = () => {
       showErrorMessage('Please fill in all fields');
     } else {
       try {
-        const response = await axios.post('http://localhost:5001/login', {
+        const response = await axios.post('http://localhost:5001/auth/login', {
           email: email,
           password: password,
         });

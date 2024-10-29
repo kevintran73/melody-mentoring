@@ -66,7 +66,7 @@ const Register = () => {
     } 
     else {
       try {
-        await axios.post('http://localhost:5001/signup', {
+        await axios.post('http://localhost:5001/auth/signup', {
           username: username,
           email: email,
           password: password,

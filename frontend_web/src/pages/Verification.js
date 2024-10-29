@@ -25,7 +25,7 @@ const Verification = () => {
 
   const handleResend = async () => {
     try {
-      await axios.post(`http://localhost:5001/resendConfirmation`, {
+      await axios.post(`http://localhost:5001/auth/resend-confirmation`, {
         username: username,
       });
       setOpen(true) // open popup
@@ -37,7 +37,7 @@ const Verification = () => {
 
   const handleConfirmation = async () => {
     try {
-      await axios.post(`http://localhost:5001/confirmSignup`, {
+      await axios.post(`http://localhost:5001/auth/confirm-signup`, {
         code: code,
         username: username,
       });     
