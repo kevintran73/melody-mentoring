@@ -107,7 +107,7 @@ class OpenSheetMusicDisplay extends Component {
     let startTime = Tone.now();
 
     // Metronome; play quarter notes
-    for (let i = 1; i <= 4; i += 1) {
+    for (let i = 0; i < 4; i += 1) {
       const eventStartTime = startTime + i * 0.25 * ((60 / tempo) * beatsPerMeasure);
       this.metronome.triggerAttackRelease('C2', '8n', eventStartTime);
     }

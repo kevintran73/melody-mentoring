@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import * as Tone from 'tone';
 
@@ -9,6 +10,7 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import MetronomeIcon from '../components/experiment/MetronomeIcon';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import DoneIcon from '@mui/icons-material/Done';
 
 import NavBar from '../components/nav_bar/NavBar';
@@ -47,9 +49,6 @@ const UnstyledButtonContainer = styled('button')({
 });
 
 const StyledAudio = styled('audio')({
-  // display: 'flex',
-  // alignItems: 'center',
-  // justifyContent: 'center',
   width: '350px',
   position: 'relative',
 });
@@ -144,9 +143,15 @@ const StyledMetronome = styled(MetronomeIcon)({
   color: '#3b3b3b',
 });
 
+const StyledExit = styled(ExitToAppIcon)({
+  fontSize: '50px',
+  color: '#cc0029',
+  transform: 'rotate(180deg)',
+});
+
 const StyledDone = styled(DoneIcon)({
   fontSize: '50px',
-  color: '#0fbf3d',
+  color: '#2bba52',
 });
 
 const LoadingOverlay = styled('div')({
@@ -190,6 +195,8 @@ const CountdownOverlay = ({ innerText }) => {
  * Experiment page
  */
 const Experiment = () => {
+  const navigate = useNavigate();
+
   const [experimentStarted, setExperimentStarted] = React.useState(false);
   const [countdown, setCountdown] = React.useState(null);
 
@@ -273,6 +280,17 @@ const Experiment = () => {
     // Upload mediaBlobUrl to database
   };
 
+  // Exit experiment
+  const onExit = () => {
+    onRecordingStop();
+    clearBlobUrl();
+    setCountdown(null);
+    setExperimentStarted(false);
+
+    // Navigate back to the experiment's song page
+    navigate('/catalogue');
+  };
+
   const toggleMusicMute = () => {
     if (osmdRef.current) {
       osmdRef.current.toggleMuteMusic();
@@ -350,6 +368,9 @@ const Experiment = () => {
           )}
 
           <ToolbarRightPill>
+            <UnstyledButtonContainer onClick={onExit} title='Exit experiment'>
+              <StyledExit />
+            </UnstyledButtonContainer>
             {experimentStarted && mediaBlobUrl && countdown === -1 && (
               <UnstyledButtonContainer onClick={finishAttempt} title='Finish attempt'>
                 <StyledDone />
