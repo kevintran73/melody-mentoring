@@ -12,7 +12,7 @@ class Song(BaseModel):
     difficulty: str             # but internally treated as a float, assigned from [1, 5] (easy -> hard)
     private: bool
     # trackAudio: str           # trackAudio s3 key is just this objects id in s3->track-audio
-    uploaderId: str               # id of the person who uploaded, "None" would be melody mentoring, the default
+    uploaderId: str             # id of the person who uploaded, "None" would be melody mentoring, the default
     composer: str               # name of the composer
 
 class User(BaseModel):
@@ -25,10 +25,6 @@ class User(BaseModel):
     level: 1
     track_attempts: list[str]   # corresponding trackattemptid, oldest first
     private_songs: list[str]
-
-    # TODO fix
-    experimental_upload_videos: list[str] # corresponding s3 file key
-    experimental_upload_audios: list[str]
 
 class Review(BaseModel):
     pass
