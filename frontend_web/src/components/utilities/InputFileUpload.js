@@ -16,16 +16,20 @@ const VisuallyHiddenInput = styled('input')({
 
 const StyledButton = styled(Button)({
   color: '#ffffff',
-  backgroundColor: '#2C2C2C',
-  '&:hover': {
-    backgroundColor: '#3D3D3D',
-  },
 });
 
 /**
  * MUI template for video and audio file input fields
  */
-const InputFileUpload = ({ innerText, onChangeEvent, width = '100%', fontSize = '1rem' }) => {
+const InputFileUpload = ({
+  innerText,
+  onChangeEvent,
+  width = '100%',
+  fontSize = '1rem',
+  accept,
+  backgroundColor,
+  hoverColor,
+}) => {
   return (
     <StyledButton
       id='upload-file'
@@ -33,15 +37,17 @@ const InputFileUpload = ({ innerText, onChangeEvent, width = '100%', fontSize = 
       role={undefined}
       variant='contained'
       tabIndex={-1}
-      sx={{ width, fontSize }}
+      sx={{
+        width,
+        fontSize,
+        backgroundColor: backgroundColor,
+        '&:hover': {
+          backgroundColor: hoverColor,
+        },
+      }}
     >
       {innerText}
-      <VisuallyHiddenInput
-        type='file'
-        accept='audio/*, video/*'
-        multiple={false}
-        onChange={onChangeEvent}
-      />
+      <VisuallyHiddenInput type='file' accept={accept} multiple={false} onChange={onChangeEvent} />
     </StyledButton>
   );
 };
