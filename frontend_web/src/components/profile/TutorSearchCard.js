@@ -52,7 +52,7 @@ const TutorSearchCard = () => {
         <Typography fontSize='1.5rem' component='div'>Want to add more tutors?</Typography>
         {/* <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Test</Typography> */}
       </Box>
-      <StyledButton> Change Profile </StyledButton>
+      <StyledButton> Find a Tutor </StyledButton>
     </StyledCard>
   );
 };

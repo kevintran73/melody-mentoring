@@ -30,6 +30,7 @@ const HistoryCard = ({ title, artist, difficulty, date }) => {
         flexGrow: 1,
         margin: '10px 0',
         cursor: 'pointer',
+        backgroundColor: 'white',
       }}
       onClick={navTrackSummary}
     >

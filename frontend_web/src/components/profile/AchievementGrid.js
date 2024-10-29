@@ -75,7 +75,6 @@ const AchievementGrid = () => {
         flexDirection='column'
         spacing={2}
         sx={{
-          backgroundColor: 'orange',
           justifyContent: 'center',
           alignItems: 'center',
           // flexWrap: 'nowrap',

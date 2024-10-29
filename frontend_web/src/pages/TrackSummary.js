@@ -35,7 +35,7 @@ const StyledMainSummary = styled(Box)(() => ({
 
 const TrackSummary = () => {
   return (
-  <Box>
+  <Box backgroundColor='#f9f9f9'>
       <NavBar></NavBar>
       <StyledMainSummary>
         <Box flex='4' marginRight='30px'>

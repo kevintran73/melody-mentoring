@@ -19,7 +19,7 @@ const StyledCard = styled(Card)(() => ({
   padding: '12px',
   margin: '10px',
   cursor: 'pointer',
-  backgroundColor: 'blue',
+  // backgroundColor: 'blue',
 }));
 
 const RecommendationCard = ({ title, thumbnail, composer, privacy }) => {

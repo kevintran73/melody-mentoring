@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import defaultImg from '../../assets/default-img.png';
 
@@ -23,7 +22,6 @@ const StyledCard = styled(Card)(() => ({
   textAlign: 'center',
   alignItems: 'center',
   padding: '5%' ,
-  backgroundColor: 'green',
 }));
 
 const StyledButton = styled(Button)({

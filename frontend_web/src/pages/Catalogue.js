@@ -10,6 +10,7 @@ import TextField from '@mui/material/TextField';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import RecommendationCard from '../components/catalogue/RecommendationCard';
 import TokenContext from '../context/TokenContext';
+import Card from '@mui/material/Card';
 
 import defaultImg from '../assets/default-img.png';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
@@ -37,13 +38,17 @@ const StyledSearchBar = styled(TextField)({
   marginTop: '2px',
 });
 
-const TopContainer = styled(Box)({
-  backgroundColor: 'red',
+const TopContainer = styled(Card)({
+  // backgroundColor: 'red',
   height: '22vw',
+  width: '60%',
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'center',
   flexDirection: 'column',
   padding: '20px',
+  position: 'relative',
+  left: '20%', 
 });
 
 const PlaylistTitle = ({ title, navPlaylist }) => (
@@ -109,7 +114,7 @@ const Catalogue = () => {
   };
 
   return (
-    <Box>
+    <Box backgroundColor='#f9f9f9'>
       <NavBar></NavBar>
       <Box margin='10px'>
         <StyledSearchBar id='outlined-basic' label='Search' variant='outlined' size='small'/>
@@ -131,7 +136,7 @@ const Catalogue = () => {
         </TopContainer>
 
           {/* Playlist Uploaded */}
-        <Box margin='10px'>
+        <Box>
           <PlaylistTitle title='Your Uploaded Songs >' navPlaylist={navPlaylist}/>
           <ScrollContainer>
             <Box display="flex" flexDirection="row" flexWrap="wrap">

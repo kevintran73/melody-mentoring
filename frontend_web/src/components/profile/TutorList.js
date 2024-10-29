@@ -10,7 +10,6 @@ const StyledCard = styled(Card)(() => ({
   height: '100%', 
   borderWidth: '2px',
   padding: '5px 10px',
-  backgroundColor: 'blue',
 }));
 
 const TutorList = () => {

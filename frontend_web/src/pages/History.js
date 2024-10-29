@@ -23,7 +23,7 @@ const StyledTopContainer = styled(Box)(() => ({
 
 const History = () => {
   return (
-    <>
+    <Box backgroundColor='#E3E3E3'>
       <NavBar></NavBar>
       <StyledTopContainer>
         <Box flex='5' height='100%'>
@@ -40,6 +40,7 @@ const History = () => {
             // marginX: '10vw',
             width: '100%',
             marginBottom: '30px',
+            backgroundColor: 'white',
           }}
           id='outlined-basic' label='Search' variant='outlined'
         />
@@ -49,7 +50,7 @@ const History = () => {
         <HistoryCard title='test' artist='test' difficulty='test' date='test'/>
         <HistoryCard title='test' artist='test' difficulty='test' date='test'/>
       </Box>
-    </>
+    </Box>
   );
 };
 
