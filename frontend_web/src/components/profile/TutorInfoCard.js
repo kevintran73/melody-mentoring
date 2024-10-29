@@ -24,6 +24,7 @@ const TutorInfoCard = ({ img, name, details }) => {
         backgroundColor: '#fff',
         display: 'flex',
         flexDirection: 'row',
+        borderRadius: '16px',
       }}
     >
       <Grid container spacing={2}>

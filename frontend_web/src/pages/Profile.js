@@ -43,15 +43,15 @@ const Profile = () => {
 
         {/* Achievements */}
         <Box flex={1} flexDirection='column' alignItems='center' justifyContent='center' textAlign='center'>
-          <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '20px' }}>
+          <Card sx={{ borderRadius: '16px', height: '100%', display: 'flex', flexDirection: 'column', padding: '20px' }}>
             <Typography variant='h3'> Achievements </Typography>
             <AchievementGrid></AchievementGrid>
           </Card>
         </Box>
 
         {/* Tutors */}
-        <Box flex={1} flexDirection='column' alignItems='center' justifyContent='center' height='100%' flexGrow={1} backgroundColor='red'>
-          <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', padding: '20px', gap: '10px'}}>
+        <Box flex={1} flexDirection='column' alignItems='center' justifyContent='center' height='100%' flexGrow={1}>
+          <Card sx={{ borderRadius: '16px', height: '100%', display: 'flex', flexDirection: 'column', padding: '20px', gap: '10px'}}>
             <Typography variant='h3' textAlign='center'>Tutors</Typography>
             <Box flex='6' width='100%' justifyContent='center' padding='10px'>
               <TutorList />

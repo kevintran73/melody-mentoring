@@ -13,6 +13,7 @@ const StyledCard = styled(Card)(() => ({
   width: '100%',
   flexGrow: 1,
   height:'100%',
+  borderRadius: '16px',
 }));
 
 const card = () => (

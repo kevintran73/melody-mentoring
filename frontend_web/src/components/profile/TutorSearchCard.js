@@ -21,6 +21,7 @@ const StyledCard = styled(Card)(() => ({
   textAlign: 'center',
   alignItems: 'center',
   padding: '2vw',
+  borderRadius: '16px',
 }));
 
 const StyledButton = styled(Button)({

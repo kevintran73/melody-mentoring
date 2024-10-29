@@ -31,6 +31,7 @@ const HistoryCard = ({ title, artist, difficulty, date }) => {
         margin: '10px 0',
         cursor: 'pointer',
         backgroundColor: 'white',
+        borderRadius: '16px',
       }}
       onClick={navTrackSummary}
     >

@@ -51,7 +51,7 @@ const AchievementSection = ({ img, value, minValue, maxValue, name }) => {
         objectFit: 'cover',
         padding: '10px',
         textAlign: 'center', 
-        border: 'solid black', 
+        border: 'solid black 1px', 
         margin: '10px',
       }}  
     >

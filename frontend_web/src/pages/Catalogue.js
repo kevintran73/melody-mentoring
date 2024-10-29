@@ -116,7 +116,7 @@ const Catalogue = () => {
   return (
     <Box backgroundColor='#f9f9f9'>
       <NavBar></NavBar>
-      <Box margin='10px'>
+      <Box margin='30px 10px'>
         <StyledSearchBar id='outlined-basic' label='Search' variant='outlined' size='small'/>
         <StyledButton variant='contained' endIcon={<FilterAltIcon />}>Filter</StyledButton>
 
