@@ -235,14 +235,3 @@ def user_attempts_track():
         return jsonify({
             'error': str(e)
         }), 500
-
-@files_bp.route('/files/user/feedback-for-attempt/<trackAttemptId>', methods=['GET'])
-@token_required
-def get_feedback_for_track_attempt(trackAttemptId):
-    # TODO: check if the user owns that trackattempt
-
-    return jsonify({
-        'message': 'This route is unfinished',
-        'reportRawMetrics': ['All the metrics will be in a list here'],
-        'reportGrokResponse': 'grok says you did good!'
-    }), 200
