@@ -82,7 +82,7 @@ const App = () => {
           <Route path='/profile' element={<Profile />} />
           <Route path='/settings' element={<Settings />} />
           <Route path='/playlist' element={<Playlist />} />
-          <Route path='/track-summary' element={<TrackSummary />} />
+          <Route path='/track-summary/:trackAttemptId' element={<TrackSummary />} />
           <Route path='/experiment/:songId' element={<Experiment />} />
         </Routes>
       </BrowserRouter>
