@@ -199,14 +199,15 @@ def user_attempts_track():
     {
         userId: str
         songId: str
-        audioFilePath: str      # file path to the user's uploaded audio
-        videoFilePath: str      # OPTIONAL file path to the user's uploaded video
     }
 
     Creates TrackAttempt object added to TrackAttempts table
     Appends this song in Users[userid].track_attempts
-    Uploads audio file to s3 users-experiment-audio
-    Uploads video file to s3 users-experiment-video
+
+    The audio and video files have to be uploaded separately,
+    This request returns an additional object under field '<type>Uploader' which can be
+    used to upload the file for this submission. See post below,
+    https://stackoverflow.com/questions/54076283/how-to-upload-a-file-to-s3-using-presigned-url-with-react-js
     '''
     try:
         data = request.json
@@ -240,7 +241,10 @@ def user_attempts_track():
 @files_bp.route('/files/user/feedback-for-attempt/<trackAttemptId>', methods=['GET'])
 @token_required
 def get_feedback_for_track_attempt(trackAttemptId):
-    # check if the user owns that trackattempt
+    # TODO: check if the user owns that trackattempt
+
+
+
     return jsonify({
         'message': 'This route is unfinished',
         'reportRawMetrics': ['All the metrics will be in a list here'],

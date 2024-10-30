@@ -2,6 +2,22 @@ from flask import Blueprint
 import music21
 from dataclasses import dataclass
 from typing import List, Union
+import tempfile
+
+import boto3
+from botocore.client import ClientError
+import io
+import os
+from dotenv import load_dotenv
+
+import librosa
+import numpy as np
+import matplotlib.pyplot as plt
+
+# from s3_bucket_helpers import createUploadHelper, urlFromBucketObj, uploadFileToBucket
+load_dotenv()
+aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
 
 import sys
 
@@ -73,7 +89,7 @@ Returns - {
 }
 '''
 def processXML(file):
-    score = music21.converter.parse(file)
+    score = music21.converter.parse(file, format='musicxml')
 
     # Get BPM and calculate seconds per quarter
     tempo_markings = score.flatten().getElementsByClass(music21.tempo.MetronomeMark)
@@ -105,51 +121,72 @@ for note in data[1]:
 '''
 # sys.exit(1)
 # EVERYTHING BELOW IS FOR PARSING RAW AUDIO
-
-import librosa
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Load the audio file
 file_path = 'testing-files/Ode_to_joy_piano_audio.mp3'
-audio, sr = librosa.load(file_path)
+# requires file in raw bytes e.g.
+# io.BytesIO(file)
+def processUserAudioRaw(file) -> list:
+    audio, sr = librosa.load(file)
+    stft = np.abs(librosa.stft(audio))
+    frequencies = librosa.fft_frequencies(sr=sr)
+    times = librosa.times_like(stft, sr=sr)
 
-# Analyze the STFT
-stft = np.abs(librosa.stft(audio))
-frequencies = librosa.fft_frequencies(sr=sr)
-times = librosa.times_like(stft, sr=sr)
+    res = []
+    onset_frames = librosa.onset.onset_detect(y=audio, sr=sr, delta=0.06, hop_length=512)
+    for onset in onset_frames:
+        time = librosa.frames_to_time(onset, sr=sr)
+        # Slice the STFT for a short window around the onset
+        frame_slice = stft[:, onset:onset + 5]
+        amplitude = np.mean(librosa.amplitude_to_db(frame_slice))
+        freq_index = np.argmax(np.mean(frame_slice, axis=1))
+        freq = frequencies[freq_index]
+        note = librosa.hz_to_note(freq)
 
-# Detect onsets (when notes start)
-onset_frames = librosa.onset.onset_detect(y=audio, sr=sr, delta=0.06, hop_length=512)
-# Get note frequencies and amplitude
-for onset in onset_frames:
-    # Convert onset frame to time
-    time = librosa.frames_to_time(onset, sr=sr)
-    # Slice the STFT for a short window around the onset
-    frame_slice = stft[:, onset:onset + 5]  # Sample of frames around onset
-    # Get loudness
-    amplitude = np.mean(librosa.amplitude_to_db(frame_slice))
-    # Detect main frequency in this slice
-    freq_index = np.argmax(np.mean(frame_slice, axis=1))
-    freq = frequencies[freq_index]
-    # Convert frequency to note
-    note = librosa.hz_to_note(freq)
+        res.append((note, float(round(freq, 2)), float(round(time, 2)), int(amplitude)))
 
-    print(f"Time: {time:.2f}s, Frequency: {freq:.2f} Hz, Note: {note}, Loudness: {amplitude:.2f} dB")
+    return res
+    # print(f"Time: {time:.2f}s, Frequency: {freq:.2f} Hz, Note: {note}, Loudness: {amplitude:.2f} dB")
+# onset_times = librosa.frames_to_time(onset_frames, sr=sr)
 
-onset_times = librosa.frames_to_time(onset_frames, sr=sr)
+# plt.figure(figsize=(14, 6))
+# librosa.display.waveshow(audio, sr=sr, alpha=0.6)
 
-# Plot the waveform
-plt.figure(figsize=(14, 6))
-librosa.display.waveshow(audio, sr=sr, alpha=0.6)
+# for onset in onset_times:
+#     plt.axvline(x=onset, color='r', linestyle='--', label='Onset' if onset == onset_times[0] else "")
 
-# Mark onsets
-for onset in onset_times:
-    plt.axvline(x=onset, color='r', linestyle='--', label='Onset' if onset == onset_times[0] else "")
+# plt.xlabel("Time (s)")
+# plt.ylabel("Amplitude")
+# plt.title("Waveform with Onset Detection")
+# plt.legend()
+# plt.show()
 
-# Add labels and legend
-plt.xlabel("Time (s)")
-plt.ylabel("Amplitude")
-plt.title("Waveform with Onset Detection")
-plt.legend()
-plt.show()
+s3_client = boto3.client(
+    service_name='s3',
+    region_name='ap-southeast-2',
+    aws_access_key_id=aws_access_key_id,
+    aws_secret_access_key=aws_secret_access_key
+)
+
+def generateResultForSubmission():
+    getUserAudioSubmission = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_USER_AUDIO'), Key='Ode_to_joy_piano_audio.mp3')
+    userAudio = getUserAudioSubmission['Body'].read()
+    # A bit cursed but windows gives us permission errors if we try to open the file directly
+    # instead we write to a temporary file and leave it open to process the .mxl file
+    # afterwards we have to do the cleanup. This only applies to music21.converter. Librosa is happy
+    # to parse the file in raw bytes.
+    getTrackAudioRes = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_TRACK_SHEET'), Key='Ode_to_joy_RightHand.mxl')
+    trackAudio = getTrackAudioRes['Body'].read()
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mxl") as tempFile:
+        tempFile.write(trackAudio)
+        tempFilePath = tempFile.name
+    try:
+        data = processXML(tempFilePath)
+        melodyNotes: list[MusicalElement] = data[1]
+        dynamics = data[2]
+        songBPM = data[3]
+        userAttemptData = processUserAudioRaw(io.BytesIO(userAudio))
+        from pprint import pprint
+        pprint(userAttemptData)
+    finally:
+        os.remove(tempFilePath)
+
+generateResultForSubmission()
