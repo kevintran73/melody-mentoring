@@ -246,7 +246,7 @@ def generateGroqResponse(prompt: str) -> str:
     return chat_completion.choices[0].message.content
 
 @trackAttempts_bp.route('/attempts/user/feedback-for-attempt/<trackAttemptId>', methods=['GET'])
-# @token_required
+@token_required
 def get_feedback_for_track_attempt(trackAttemptId):
     # TODO: check if the user owns that trackattempt
     db = boto3.resource(
