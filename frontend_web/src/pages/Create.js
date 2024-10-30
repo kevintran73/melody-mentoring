@@ -28,6 +28,7 @@ const UploadForm = styled('form')({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'start',
+  alignItems: 'center',
   gap: '30px',
   height: 'calc(90vh - 70px - 4rem)',
   marginTop: '2rem',
@@ -138,6 +139,7 @@ const Create = () => {
       await uploadFileToS3(response.data.uploader, songFile);
     } catch (err) {
       showErrorMessage(err.response.data.error);
+      return;
     }
 
     // Reset state variables to default
@@ -157,7 +159,9 @@ const Create = () => {
         <StyledHeader>Create an experiment</StyledHeader>
         <UploadForm onSubmit={handleSubmit} noValidate>
           <ImgContainer>
-            <ImgRight src={thumbnail} />
+            <ImgRight
+              src={thumbnail === defaultImage ? defaultImage : URL.createObjectURL(thumbnail)}
+            />
             <InputFileUpload
               innerText='Upload a thumbnail'
               width='60%'
