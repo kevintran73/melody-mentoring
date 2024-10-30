@@ -13,6 +13,18 @@ const Img = styled('img')({
   width: '100px',
 });
 
+const StyledContainer = styled(Box)({
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+  padding: 1,
+  maxHeight: '125px',
+  width: '90%',
+  flexGrow: 1,
+  margin: '10px 0',
+  cursor: 'pointer',
+  backgroundColor: 'white',
+  borderRadius: '16px',
+});
+
 const HistoryCard = ({ title, artist, difficulty, date }) => {
   const navigate = useNavigate();
 
@@ -21,26 +33,9 @@ const HistoryCard = ({ title, artist, difficulty, date }) => {
   };
 
   return (
-    <Box
-      sx={{
-        border: '0.1px solid grey',
-        padding: 1,
-        maxHeight: '125px',
-        width: '90%',
-        flexGrow: 1,
-        margin: '10px 0',
-        cursor: 'pointer',
-        backgroundColor: 'white',
-        borderRadius: '16px',
-      }}
-      onClick={navTrackSummary}
-    >
+    <StyledContainer onClick={navTrackSummary}>
       <Box display='flex'>
-        <Box
-          sx={{
-            marginRight: '10px'
-          }}
-        >
+        <Box sx={{ marginRight: '10px' }}>
           <Img alt='playlist-card' src={defaultImg}/>
         </Box>
 
@@ -51,13 +46,13 @@ const HistoryCard = ({ title, artist, difficulty, date }) => {
           <Typography fontSize='1.2rem'>
             {artist} • {difficulty}
           </Typography>
-          <Typography fontSize='1.2rem' marginTop='10px'>
+          <Typography fontSize='1.2rem' marginTop='1%'>
             {date}
           </Typography>
         </Box>
 
       </Box>
-    </Box>
+    </StyledContainer>
   );
 }
 

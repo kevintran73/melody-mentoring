@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
 
 const StyledCard = styled(Card)(() => ({
-  width: '350px',
+  width: '17vw',
   borderWidth: '2px',
   padding: '12px',
   height:'100%',
@@ -24,15 +24,16 @@ const PieChartCard = ({ val1, name1, val2, name2, val3, name3 }) => {
         flexDirection='column'
         alignItems='center'
         justifyContent='center'
+        // marginBottom='200px'
       >
         <PieChart
           sx={{
-            transform: 'scale(1)',
+            transform: 'scale(1.2)',
             transformOrigin: 'center',
-            backgroundColor: 'blue',
-            width: '100%',
+            // width: '100%',
             height: '100%',
           }}
+           margin={{ left: 100, right: 100, bottom:20 }}
           series={[
             {
               data: [
@@ -40,25 +41,27 @@ const PieChartCard = ({ val1, name1, val2, name2, val3, name3 }) => {
                 { id: 1, value: val2, label: name2 },
                 { id: 2, value: val3, label: name3 },
               ],
-              innerRadius: 50,
+              innerRadius: 70,
               outerRadius: 100,
               paddingAngle: 2,
               cornerRadius: 5,
-              cx: 100,
+              // cx: 145,
               highlightScope: { fade: 'global', highlight: 'item' },
-              faded: { innerRadius: 40, additionalRadius: -10 },
+              faded: { innerRadius: 60, additionalRadius: -10 },
             },
           ]}
           slotProps={{
             legend: {
               hidden: true,
             },
+
+            
           }}
         />
-        <Box padding='2px' textAlign='center'>
-          <Typography fontSize='1rem' component='div'>{name1} - {val1}%</Typography>
-          <Typography fontSize='1' sx={{ color: 'text.secondary' }}>{name2} - {val2}%</Typography>
-          <Typography fontSize='1' sx={{ color: 'text.secondary' }}>{name3} - {val3}%</Typography>
+        <Box padding='2px' marginBottom='15px' textAlign='center'>
+          <Typography fontSize='1.2rem' component='div'>{name1} - {val1}%</Typography>
+          <Typography fontSize='1rem' sx={{ color: 'text.secondary' }}>{name2} - {val2}%</Typography>
+          <Typography fontSize='1rem' sx={{ color: 'text.secondary' }}>{name3} - {val3}%</Typography>
         </Box>
       </Box>
     </StyledCard>

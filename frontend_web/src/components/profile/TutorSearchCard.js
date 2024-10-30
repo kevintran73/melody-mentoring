@@ -15,7 +15,6 @@ const StyledCard = styled(Card)(() => ({
   // minHeight: '220px',
   borderWidth: '2px',
   // boxShadow: '5px 10px grey',
-  cursor: 'pointer',
   display: 'flex',
   flexDirection: 'column',
   textAlign: 'center',

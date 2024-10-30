@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-
+import axios from 'axios';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import defaultImg from '../../assets/default-img.png';
-
+import TokenContext from '../../context/TokenContext';
 import { styled } from '@mui/system';
 
 const StyledCard = styled(Card)(() => ({
@@ -16,13 +16,14 @@ const StyledCard = styled(Card)(() => ({
   // minHeight: '220px',
   borderWidth: '2px',
   // boxShadow: '5px 10px grey',
-  cursor: 'pointer',
   display: 'flex',
   flexDirection: 'column',
   textAlign: 'center',
   alignItems: 'center',
+  justifyContent: 'center',
   padding: '5%' ,
   borderRadius: '16px',
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
 }));
 
 const StyledButton = styled(Button)({
@@ -42,11 +43,38 @@ const StyledButton = styled(Button)({
 });
 
 const SongCard = () => {
+  const [userData, setUserData] = useState(null);
   // const navigate = useNavigate();
+  const token = useContext(TokenContext);
 
-  // const navSettings = () => {
-  //   return navigate('/settings');
+  useEffect(() => {
+    console.log(token)
+    console.log(token['userId'])
+    const userId = token.userId;
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/profile/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token['accessToken']}`
+          }
+        });
+        setUserData(response.data);
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+
+    fetchUserData();
+  }, [token]);
+
+  // const navPlaylist = () => {
+  //   return navigate('/playlist');
   // };
+
+  // if (!userData) {
+  //   return null;
+  // }
+  // const instrument = userData['instrument'].charAt(0).toUpperCase() + userData['instrument'].slice(1);
 
   return (
     <StyledCard variant='outlined'>
@@ -61,9 +89,11 @@ const SongCard = () => {
         }}
       />
       <Box padding='20px'>
-        <Typography fontSize='2rem' component='div'>Name</Typography>
+        <Typography fontSize='2rem' component='div'>
+          {userData ? userData['username'] : 'N/A'}
+        </Typography>
         <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Date Joined: 10th September 2024</Typography>
-        <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Instruments: Piano</Typography>
+        <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Instruments: {userData ? userData['instrument'] : 'N/A'}</Typography>
         <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Australian </Typography>
       </Box>
       <StyledButton> Change Profile </StyledButton>

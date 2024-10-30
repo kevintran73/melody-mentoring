@@ -72,8 +72,8 @@ const LoginSub = () => {
         });
 
         // stores tokens inside variables using TokenContext's login
-        const { access_token, id_token, refresh_token } = response.data;
-        login(access_token, id_token, refresh_token);
+        const { access_token, id_token, refresh_token, user_id } = response.data;
+        login(access_token, id_token, refresh_token, user_id);
 
         navigate('/catalogue'); // redirect to catalogue page
       } catch (err) {

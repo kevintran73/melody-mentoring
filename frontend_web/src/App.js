@@ -35,14 +35,22 @@ const App = () => {
   }
   const [refreshToken, setRefreshToken] = React.useState(lsRefreshToken);
 
+  let lsUserId = null;
+  if (localStorage.getItem('userId') !== 'null') {
+    lsUserId = localStorage.getItem('userId');
+  }
+  const [userId, setUserId] = React.useState(lsUserId);
+
   // at login, set and store tokens
-  const login = (accessToken, idToken, refreshToken) => {
+  const login = (accessToken, idToken, refreshToken, userId) => {
     setAccessToken(accessToken);
     setIdToken(idToken);
     setRefreshToken(refreshToken);
+    setUserId(userId);
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('idToken', idToken);
     localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('userId', userId);
   };
 
   // at logout, set all tokens to null
@@ -56,7 +64,7 @@ const App = () => {
   };
 
   return (
-    <TokenContext.Provider value={{ accessToken, idToken, refreshToken, login, logout }}>
+    <TokenContext.Provider value={{ accessToken, idToken, refreshToken, userId, login, logout }}>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Navigate to='/login' />} />

@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Card from '@mui/material/Card';
 import { Box, Typography } from '@mui/material';
 import NavBar from '../components/nav_bar/NavBar';
 import PieChartCard from '../components/track_summary/PieChartCard'
@@ -13,25 +13,53 @@ import { styled } from '@mui/system';
  * Track Summary page
  */
 
-const StyledAdviceBox = styled(Box)(() => ({
+const StyledAdviceBox = styled(Card)(() => ({
   borderWidth: '2px',
   padding: '20px',
   margin: '10px',
   display: 'flex',
   flexDirection: 'row',
-  backgroundColor: 'red',
+  backgroundColor: 'white',
   gap: '30px',
   height: '450px',
+  borderRadius: '16px',
+  boxShadow: 5,
 }));
 
-const StyledMainSummary = styled(Box)(() => ({
-  borderWidth: '2px',
+const StyledMainSummary = styled(Card)(() => ({
+  // borderWidth: '2px',
   padding: '20px',
   margin: '30px',
   display: 'flex',
   flexDirection: 'row',
-  backgroundColor: 'red',
+  backgroundColor:'white',
+  borderRadius: '16px',
+  boxShadow: 5,
 }));
+
+// const InfoContainer = (title, ) => (
+//   <Box>
+//     <Typography align='left' variant='h4' margin='10px' marginRight='20px'>Timing</Typography>
+//     <StyledAdviceBox sx={{width:'40vw'}}>
+//       <PieChartCard
+//         val1={77}
+//         name1='On Time'
+//         val2={10}
+//         name2='Rushed'
+//         val3={13}
+//         name3='Dragged'
+//       />
+//       <Box flex={1}>
+//         <SubAdviceCard
+//           main='It looks like you were on time for only 77% of the piece.'
+//           details='You rushed 10% of your notes while you dragged on 13% of your notes.'
+//           tips='Remember getting it right is better than playing it fast!'
+//           height='100%'
+//         />
+//       </Box>
+//     </StyledAdviceBox>
+//   </Box>
+// )
 
 const TrackSummary = () => {
   return (
@@ -49,15 +77,9 @@ const TrackSummary = () => {
         </Box>
       </StyledMainSummary>
 
-      <ScrollContainer
-            hideScrollbars={false}      // Shows the scrollbars for normal scrolling
-            vertical={true}             // Enables vertical scrolling
-            horizontal={true}           // Enables horizontal scrolling
-            activationDistance={5}      // Set a small distance to activate drag
-            ignoreElements=".no-drag"
-      >
-      <Box display='flex' flexDirection='row' justifyContent='space-evenly' backgroundColor='green' gap='10px' margin='10px 40px'>
-        <Box backgroundColor='purple'>
+      <ScrollContainer>
+      <Box display='flex' flexDirection='row' justifyContent='space-evenly' gap='10px' margin='10px 40px'>
+        <Box>
           <Typography align='left' variant='h4' margin='10px' marginRight='20px'>Correct Notes</Typography>
           <StyledAdviceBox sx={{width:'40vw'}}>
             <PieChartCard
@@ -172,6 +194,7 @@ const TrackSummary = () => {
         border='solid'
         margin='50px'
         height='1000px'
+        backgroundColor='white'
       >
         Insert Sheet Music Here
       </Box>

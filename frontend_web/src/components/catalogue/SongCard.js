@@ -10,12 +10,8 @@ import { styled } from '@mui/system';
 
 const StyledCard = styled(Card)(() => ({
   width: '150px',
-  // minWidth: '150px',
   height: '240px', 
-  // height: '400px', 
-  // minHeight: '220px',
-  borderWidth: '2px',
-  // boxShadow: '5px 10px grey',
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
   padding: '12px',
   paddingBottom: '5px',
   margin: '10px',
@@ -24,14 +20,6 @@ const StyledCard = styled(Card)(() => ({
 }));
 
 const SongCard = ({ title, thumbnail, composer, difficulty, privacy, genreTags }) => {
-  // Creates tags and capitalises them
-  // const createTagStrings = (genreTags) => {
-  //   if (!genreTags || genreTags.length === 0) {
-  //     return 'No genre tags available';
-  //   }
-  //   return genreTags.map(tag => tag.charAt(0).toUpperCase() + tag.slice(1)).join(' ');
-  // };
-
   return(
     <StyledCard variant='outlined'>
       <CardMedia
@@ -40,7 +28,6 @@ const SongCard = ({ title, thumbnail, composer, difficulty, privacy, genreTags }
         image={thumbnail ? thumbnail : defaultImg}
         alt='img'
       />
-
       <Box padding='2px' textAlign='center'>
         <Typography fontSize='1rem' component='div'>{title}</Typography>
         <Typography fontSize='0.9rem' sx={{ color: 'text.secondary' }}>{composer ? composer : 'Unknown'}</Typography>

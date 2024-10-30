@@ -18,6 +18,7 @@ const StyledCard = styled(Card)(() => ({
   alignItems:'center',
   alignContent:'space-evenly',
   textAlign:'center',
+  backgroundColor:'white',
   // gap:'10px',
 }));
 

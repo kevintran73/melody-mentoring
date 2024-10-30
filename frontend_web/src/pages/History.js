@@ -41,6 +41,7 @@ const History = () => {
             width: '100%',
             marginBottom: '30px',
             backgroundColor: 'white',
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
           }}
           id='outlined-basic' label='Search' variant='outlined'
         />

@@ -79,19 +79,25 @@ const SongCardTemplate = () => {
 
 const Catalogue = () => {
   const [songs, setSongs] = useState([]);
+  const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
   const token = useContext(TokenContext);
 
-
-
-  // const isTagInGenreTags = (tag, song) => {
-  //   if (Array.isArray(song['genreTag'])) {
-  //     return song.genreTags.includes(tag);
-  //   }
-  //   return false; 
-  // };
-
   useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get('http://localhost:5001/auth/validate-token', {
+          headers: {
+            Authorization: `Bearer ${token['accessToken']}`
+          }
+        });
+        setUserData(response.data.user);
+        console.log(userData)
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+
     const fetchSongs = async () => {
       try {
       const response = await axios.get('http://localhost:5001/catalogue/songs/list-all', {
@@ -106,8 +112,9 @@ const Catalogue = () => {
       }
     };
 
+    fetchUserData();
     fetchSongs();
-  }, []);
+  }, [token]);
 
   const navPlaylist = () => {
     return navigate('/playlist');
@@ -123,7 +130,7 @@ const Catalogue = () => {
         {/* Welcome container */}
         <TopContainer>
           <Typography variant='h2'>
-            Welcome back user!
+            Welcome back, {userData ? userData['Username'] : 'N/A'}!
           </Typography>
           <Typography variant='h4'>
             Interested in trying these songs again?

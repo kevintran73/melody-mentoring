@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Card from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -11,14 +12,14 @@ const Img = styled('img')({
 
 const Thumbnail = ({ title, artist, difficulty, date }) => {
   return (
-    <Box
+    <Card
       sx={{
-        border: '0.1px solid grey',
         padding: 1,
         maxHeight: '400px',
         width: '100%',
         flexGrow: 1,
         margin: '10px 0',
+        boxShadow: 2,
       }}
     >
       <Box>
@@ -44,7 +45,7 @@ const Thumbnail = ({ title, artist, difficulty, date }) => {
           </Typography>
         </Box>
       </Box>
-    </Box>
+    </Card>
   );
 }
 

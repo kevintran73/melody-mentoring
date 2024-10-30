@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
 
 const StyledCard = styled(Card)(() => ({
-  borderWidth: '2px',
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
   padding: '12px',
   paddingBottom: '5px',
   width: '100%',
