@@ -39,7 +39,7 @@ const RightContainer = styled('div')({
   gap: '20px',
 });
 
-const NavBar = ({ isDisabled, ...props }) => {
+const NavBar = ({ isDisabled = false, ...props }) => {
   return (
     <StyledHeader isDisabled={isDisabled} {...props}>
       <NotificationsButton />
