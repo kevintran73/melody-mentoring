@@ -139,6 +139,15 @@ const Create = () => {
     } catch (err) {
       showErrorMessage(err.response.data.error);
     }
+
+    // Reset state variables to default
+    setThumbnail(defaultImage);
+    setSong('');
+    setArtist('');
+    setDiff('');
+    setGenreTags('');
+    setInstrument('');
+    setSongFile('');
   };
 
   return (
