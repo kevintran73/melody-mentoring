@@ -14,7 +14,7 @@ import moonlightSonata from '../assets/Sonate_No._14_Moonlight_3rd_Movement.mxl'
 import ExperimentToolbar from '../components/experiment/ExperimentToolbar';
 import axios from 'axios';
 import TokenContext from '../context/TokenContext';
-import { showErrorMessage } from '../helpers';
+import { showErrorMessage, uploadFileToS3 } from '../helpers';
 
 const PageBlock = styled('div')({
   height: 'calc(100vh - 70px)',
@@ -117,7 +117,7 @@ const Experiment = () => {
   }, [status]);
 
   // Get the sheet music
-  const { accessToken } = React.useContext(TokenContext);
+  const { accessToken, userId } = React.useContext(TokenContext);
   const params = useParams();
   const [sheetFile, setSheetFile] = React.useState('');
   React.useEffect(() => {
@@ -184,8 +184,33 @@ const Experiment = () => {
     initiateCountdown();
   };
 
-  const finishAttempt = () => {
+  const finishAttempt = async () => {
     // Upload mediaBlobUrl to database
+    try {
+      const response = await axios.post(
+        'http://localhost:5001/files/user/new-track-attempt',
+        { userId: userId, songId: params.songId },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      // Convert blob url to File object and upload to S3
+      const blobResponse = await fetch(mediaBlobUrl);
+      const blob = await blobResponse.blob();
+      const blobFile = new File([blob], `${userId}-${params.songId}-attempt-new`, {
+        type: blob.type,
+      });
+      await uploadFileToS3(response.data.audioUploader, blobFile);
+    } catch (err) {
+      showErrorMessage(err.response.data.error);
+      return;
+    }
+
+    return navigate('/uploads');
   };
 
   // Exit experiment
