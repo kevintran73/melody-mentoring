@@ -138,6 +138,8 @@ def get_presigned_url_user_experiment_video(trackAttemptId):
             'error': str(e)
         }), 500
 
+from werkzeug.utils import secure_filename
+
 @files_bp.route('/files/user/create-private-song', methods=['POST'])
 @token_required
 def user_creates_private_song():
@@ -151,7 +153,7 @@ def user_creates_private_song():
         instrument: str
         title: str
         difficulty: float           # assigned a float value from [1, 5]
-        trackAudio: str             # filepath to the audio of the track
+        # trackAudio: str             # filepath to the audio of the track
     }
 
     Creates a song in the Songs table (dynamodb)
@@ -161,7 +163,10 @@ def user_creates_private_song():
     try:
         data = request.json
         songId = addSongtoSongs(data, True)
-        uploadFileToBucket(os.getenv('S3_BUCKET_TRACKS'), data['trackAudio'], songId)
+        file = data['file']
+        filename = secure_filename(file.filename)
+
+        uploadFileToBucket(os.getenv('S3_BUCKET_TRACKS'), filename, songId)
         return jsonify({
             'message': f'New song created by user: {data["userId"]} under the title: {data["title"]}',
         }), 200
