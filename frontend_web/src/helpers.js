@@ -1,4 +1,6 @@
 import { toast } from 'react-toastify';
+import axios from 'axios';
+
 import 'react-toastify/dist/ReactToastify.css';
 
 /**
@@ -46,4 +48,33 @@ export const getBase64 = (file) => {
     reader.onload = () => resolve(reader.result);
     reader.onerror = (error) => reject(error);
   });
+};
+
+/**
+ * Given a presigned post data URL from a backend post request, upload the given file
+ * @param {Object} presignedPostData - from response.data.uploader
+ * @param {File} file
+ */
+export const uploadFileToS3 = async (presignedPostData, file) => {
+  // create a form obj
+  const formData = new FormData();
+
+  // append the fields in presignedPostData in formData
+  Object.keys(presignedPostData.fields).forEach((key) => {
+    formData.append(key, presignedPostData.fields[key]);
+  });
+
+  // append the file
+  formData.append('file', file);
+
+  // post the data on the s3 url
+  axios
+    .post(presignedPostData.url, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    .catch((err) => {
+      showErrorMessage(err);
+    });
 };
