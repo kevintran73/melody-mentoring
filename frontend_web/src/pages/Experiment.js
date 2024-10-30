@@ -1,23 +1,20 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import * as Tone from 'tone';
+import JSZip from 'jszip';
 
 import { Button, styled, Typography, CircularProgress } from '@mui/material';
-import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
-import StopRoundedIcon from '@mui/icons-material/StopRounded';
-import ReplayIcon from '@mui/icons-material/Replay';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import VolumeOffIcon from '@mui/icons-material/VolumeOff';
-import MetronomeIcon from '../components/experiment/MetronomeIcon';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import DoneIcon from '@mui/icons-material/Done';
 
 import NavBar from '../components/nav_bar/NavBar';
 import OpenSheetMusicDisplay from '../components/experiment/OpenSheetMusicDisplay';
 
 import odeToJoy from '../assets/Ode_to_Joy_Easy.mxl';
 import moonlightSonata from '../assets/Sonate_No._14_Moonlight_3rd_Movement.mxl';
+import ExperimentToolbar from '../components/experiment/ExperimentToolbar';
+import axios from 'axios';
+import TokenContext from '../context/TokenContext';
+import { showErrorMessage, uploadFileToS3 } from '../helpers';
 
 const PageBlock = styled('div')({
   height: 'calc(100vh - 70px)',
@@ -37,121 +34,6 @@ const PageOverlay = styled('div')({
   alignItems: 'center',
   justifyContent: 'center',
   zIndex: 1000,
-});
-
-const UnstyledButtonContainer = styled('button')({
-  background: 'none',
-  border: 'none',
-  padding: '0',
-  margin: '0',
-  cursor: 'pointer',
-  zIndex: '998',
-});
-
-const StyledAudio = styled('audio')({
-  width: '350px',
-  position: 'relative',
-});
-
-const ToolBarBlock = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '15px',
-  position: 'fixed',
-  bottom: '20px',
-});
-
-const ToolBar = styled('span')({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '100vw',
-});
-
-const MainToolBarCircle = styled('div')({
-  height: '90px',
-  width: '90px',
-  backgroundColor: '#ededed',
-  borderRadius: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-});
-
-const ToolBarLeftPill = styled('span')({
-  position: 'relative',
-  left: '50px',
-  paddingTop: '10px',
-  paddingBottom: '10px',
-  paddingLeft: '15px',
-  paddingRight: '55px',
-  backgroundColor: '#dfdfdf',
-  borderRadius: '50px',
-  width: '200px',
-  height: '60px',
-  display: 'flex',
-  justifyContent: 'space-evenly',
-  alignItems: 'center',
-});
-
-const ToolbarRightPill = styled('span')({
-  position: 'relative',
-  right: '50px',
-  paddingTop: '10px',
-  paddingBottom: '10px',
-  paddingLeft: '55px',
-  paddingRight: '15px',
-  backgroundColor: '#dfdfdf',
-  borderRadius: '50px',
-  width: '200px',
-  height: '60px',
-  display: 'flex',
-  justifyContent: 'space-evenly',
-  alignItems: 'center',
-});
-
-const StyledPlayArrow = styled(PlayArrowRoundedIcon)({
-  fontSize: '60px',
-  color: '#2161cc',
-});
-
-const StyledStop = styled(StopRoundedIcon)({
-  fontSize: '60px',
-  color: '#ed4d3e',
-});
-
-const StyledReplay = styled(ReplayIcon)({
-  fontSize: '60px',
-  color: '#3b3b3b',
-});
-
-const StyledVolumeUp = styled(VolumeUpIcon)({
-  fontSize: '50px',
-  color: '#3b3b3b',
-});
-
-const StyledVolumeOff = styled(VolumeOffIcon)({
-  fontSize: '50px',
-  color: '#3b3b3b',
-});
-
-const StyledMetronome = styled(MetronomeIcon)({
-  width: '50px',
-  height: '50px',
-  color: '#3b3b3b',
-});
-
-const StyledExit = styled(ExitToAppIcon)({
-  fontSize: '50px',
-  color: '#cc0029',
-  transform: 'rotate(180deg)',
-});
-
-const StyledDone = styled(DoneIcon)({
-  fontSize: '50px',
-  color: '#2bba52',
 });
 
 const LoadingOverlay = styled('div')({
@@ -178,18 +60,6 @@ const CountdownOverlay = ({ innerText }) => {
     </PageOverlay>
   );
 };
-
-// const StopRecordingOverlay = ({ onClickEvent }) => {
-//   return (
-//     <PageOverlay>
-//       <div>
-//         <StopButton onClick={onClickEvent} filled>
-//           Stop Recording
-//         </StopButton>
-//       </div>
-//     </PageOverlay>
-//   );
-// };
 
 /**
  * Experiment page
@@ -246,6 +116,51 @@ const Experiment = () => {
     }
   }, [status]);
 
+  // Get the sheet music
+  const { accessToken, userId } = React.useContext(TokenContext);
+  const params = useParams();
+  const [sheetFile, setSheetFile] = React.useState('');
+  React.useEffect(() => {
+    // Navigate to login page if invalid token
+    if (accessToken === null) {
+      return navigate('/login');
+    }
+
+    const getSheet = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/files/sheets/${params.songId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        // Download the sheet from the URL and store on local browser
+        const sheetResponse = await fetch(response.data.url);
+        const blob = await sheetResponse.blob();
+        const zip = await JSZip.loadAsync(blob);
+        const xmlFile = Object.values(zip.files).find(
+          (file) => file.name.endsWith('.xml') && !file.name.includes('META-INF')
+        );
+
+        // If xmlFile found
+        if (xmlFile) {
+          // Convert the XML file to a string
+          const xmlContent = await xmlFile.async('string');
+          setSheetFile(xmlContent);
+        } else {
+          return navigate('/catalogue');
+        }
+      } catch (err) {
+        showErrorMessage(err.data.response.error);
+
+        // Navigate to catalogue if invalid song id or any other issues with retrieving sheet
+        return navigate('/catalogue');
+      }
+    };
+
+    getSheet();
+  }, [accessToken, params, navigate]);
+
   // Trigger the countdown for a song beginning
   const initiateCountdown = async () => {
     if (pageBlockRef.current) {
@@ -276,8 +191,33 @@ const Experiment = () => {
     initiateCountdown();
   };
 
-  const finishAttempt = () => {
+  const finishAttempt = async () => {
     // Upload mediaBlobUrl to database
+    try {
+      const response = await axios.post(
+        'http://localhost:5001/files/user/new-track-attempt',
+        { userId: userId, songId: params.songId },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      // Convert blob url to File object and upload to S3
+      const blobResponse = await fetch(mediaBlobUrl);
+      const blob = await blobResponse.blob();
+      const blobFile = new File([blob], `${userId}-${params.songId}-attempt-new`, {
+        type: blob.type,
+      });
+      await uploadFileToS3(response.data.audioUploader, blobFile);
+    } catch (err) {
+      showErrorMessage(err.response.data.error);
+      return;
+    }
+
+    return navigate('/uploads');
   };
 
   // Exit experiment
@@ -288,97 +228,48 @@ const Experiment = () => {
     setExperimentStarted(false);
 
     // Navigate back to the experiment's song page
-    navigate('/catalogue');
+    return navigate('/catalogue');
   };
 
-  const toggleMusicMute = () => {
-    if (osmdRef.current) {
-      osmdRef.current.toggleMuteMusic();
-    }
-  };
-
-  const toggleMetronome = () => {
-    if (osmdRef.current) {
-      osmdRef.current.toggleMetronome();
-    }
-  };
-
+  // Display all page elements only if sheet file has been retrieved
   return (
     <>
-      <NavBar></NavBar>
-      <PageBlock ref={pageBlockRef}>
-        {!experimentStarted && countdown !== 0 && countdown !== null && (
-          <CountdownOverlay innerText={countdown} />
-        )}
-        {!osmdLoaded && (
-          <LoadingOverlay>
-            <CircularProgress size='45vh' />
-          </LoadingOverlay>
-        )}
-        <OpenSheetMusicDisplay
-          ref={osmdRef}
-          file={odeToJoy}
-          onLoad={onOsmdLoad}
-          onMuteToggle={(b) => setOsmdMuted(b)}
-          onMetroMuteToggle={(b) => setOsmdMetroMuted(b)}
-        />
-      </PageBlock>
-
-      <ToolBarBlock>
-        {experimentStarted && mediaBlobUrl && countdown === -1 && (
-          <StyledAudio src={mediaBlobUrl} controls />
-        )}
-        <ToolBar>
-          <ToolBarLeftPill>
-            {!osmdMuted && (
-              <UnstyledButtonContainer onClick={toggleMusicMute} title='Mute sound'>
-                <StyledVolumeUp />
-              </UnstyledButtonContainer>
+      <NavBar isDisabled={countdown !== null && countdown !== -1 && !mediaBlobUrl} />
+      {!osmdLoaded && (
+        <LoadingOverlay>
+          <CircularProgress size='45vh' />
+        </LoadingOverlay>
+      )}
+      {sheetFile !== '' && (
+        <>
+          <PageBlock ref={pageBlockRef}>
+            {!experimentStarted && countdown !== 0 && countdown !== null && (
+              <CountdownOverlay innerText={countdown} />
             )}
-            {osmdMuted && (
-              <UnstyledButtonContainer onClick={toggleMusicMute} title='Unmute sound'>
-                <StyledVolumeOff />
-              </UnstyledButtonContainer>
-            )}
-            <UnstyledButtonContainer onClick={toggleMetronome} title='Toggle metronome'>
-              <StyledMetronome crossedOut={osmdMetroMuted} />
-            </UnstyledButtonContainer>
-          </ToolBarLeftPill>
+            <OpenSheetMusicDisplay
+              ref={osmdRef}
+              file={sheetFile}
+              onLoad={onOsmdLoad}
+              onMuteToggle={(b) => setOsmdMuted(b)}
+              onMetroMuteToggle={(b) => setOsmdMetroMuted(b)}
+            />
+          </PageBlock>
 
-          {!experimentStarted && countdown === null && (
-            <UnstyledButtonContainer onClick={initiateCountdown} title='Begin attempt'>
-              <MainToolBarCircle>
-                <StyledPlayArrow />
-              </MainToolBarCircle>
-            </UnstyledButtonContainer>
-          )}
-          {countdown !== null && countdown !== -1 && !mediaBlobUrl && (
-            <UnstyledButtonContainer onClick={onRecordingStop} title='Stop attempt'>
-              <MainToolBarCircle>
-                <StyledStop />
-              </MainToolBarCircle>
-            </UnstyledButtonContainer>
-          )}
-          {experimentStarted && mediaBlobUrl && countdown === -1 && (
-            <UnstyledButtonContainer onClick={retryAttempt} title='Retry attempt'>
-              <MainToolBarCircle>
-                <StyledReplay />
-              </MainToolBarCircle>
-            </UnstyledButtonContainer>
-          )}
-
-          <ToolbarRightPill>
-            <UnstyledButtonContainer onClick={onExit} title='Exit experiment'>
-              <StyledExit />
-            </UnstyledButtonContainer>
-            {experimentStarted && mediaBlobUrl && countdown === -1 && (
-              <UnstyledButtonContainer onClick={finishAttempt} title='Finish attempt'>
-                <StyledDone />
-              </UnstyledButtonContainer>
-            )}
-          </ToolbarRightPill>
-        </ToolBar>
-      </ToolBarBlock>
+          <ExperimentToolbar
+            experimentStarted={experimentStarted}
+            mediaBlobUrl={mediaBlobUrl}
+            countdown={countdown}
+            osmdRef={osmdRef}
+            osmdMuted={osmdMuted}
+            osmdMetroMuted={osmdMetroMuted}
+            initiateCountdown={initiateCountdown}
+            onRecordingStop={onRecordingStop}
+            retryAttempt={retryAttempt}
+            onExit={onExit}
+            finishAttempt={finishAttempt}
+          />
+        </>
+      )}
     </>
   );
 };
