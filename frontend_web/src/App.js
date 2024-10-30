@@ -8,12 +8,13 @@ import LoginSub from './pages/LoginSub';
 import Register from './pages/Register';
 import Catalogue from './pages/Catalogue';
 import Notifications from './pages/Notifications';
-import Activity from './pages/Activity';
+import Summary from './pages/Summary';
 import Settings from './pages/Settings';
 import Create from './pages/Create';
 import Uploads from './pages/Uploads';
 import Playlist from './pages/Playlist';
 import Verification from './pages/Verification';
+import Experiment from './pages/Experiment';
 
 const App = () => {
   let lsAccessToken = null;
@@ -34,14 +35,22 @@ const App = () => {
   }
   const [refreshToken, setRefreshToken] = React.useState(lsRefreshToken);
 
+  let lsUserId = null;
+  if (localStorage.getItem('userId') !== 'null') {
+    lsUserId = localStorage.getItem('userId');
+  }
+  const [userId, setUserId] = React.useState(lsUserId);
+
   // at login, set and store tokens
-  const login = (accessToken, idToken, refreshToken) => {
+  const login = (accessToken, idToken, refreshToken, userId) => {
     setAccessToken(accessToken);
     setIdToken(idToken);
     setRefreshToken(refreshToken);
+    setUserId(userId);
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('idToken', idToken);
     localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('userId', userId);
   };
 
   // at logout, set all tokens to null
@@ -55,7 +64,7 @@ const App = () => {
   };
 
   return (
-    <TokenContext.Provider value={{ accessToken, idToken, refreshToken, login, logout }}>
+    <TokenContext.Provider value={{ accessToken, idToken, refreshToken, userId, login, logout }}>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Navigate to='/login' />} />
@@ -67,9 +76,10 @@ const App = () => {
           <Route path='/create' element={<Create />} />
           <Route path='/catalogue' element={<Catalogue />} />
           <Route path='/uploads' element={<Uploads />} />
-          <Route path='/activity' element={<Activity />} />
+          <Route path='/summary' element={<Summary />} />
           <Route path='/settings' element={<Settings />} />
           <Route path='/playlist' element={<Playlist />} />
+          <Route path='/experiment/:songId' element={<Experiment />} />
         </Routes>
       </BrowserRouter>
     </TokenContext.Provider>

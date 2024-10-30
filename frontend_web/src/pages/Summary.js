@@ -3,9 +3,9 @@ import React from 'react';
 import NavBar from '../components/nav_bar/NavBar';
 
 /**
- * Activity page
+ * Summary page
  */
-const Activity = () => {
+const Summary = () => {
   return (
     <>
       <NavBar></NavBar>
@@ -13,4 +13,4 @@ const Activity = () => {
   );
 };
 
-export default Activity;
+export default Summary;

@@ -4,7 +4,7 @@ import { styled } from '@mui/system';
 
 import CatalogueButton from './CatalogueButton';
 import NotificationsButton from './NotificationsButton';
-import ActivityButton from './ActivityButton';
+import SummaryButton from './SummaryButton';
 import SettingsButton from './SettingsButton';
 import CreateButton from './CreateButton';
 import UploadsButton from './UploadsButton';
@@ -47,7 +47,7 @@ const NavBar = () => {
       </MiddleContainer>
 
       <RightContainer>
-        <ActivityButton />
+        <SummaryButton />
         <SettingsButton />
       </RightContainer>
     </StyledHeader>
