@@ -16,7 +16,6 @@ auth_bp = Blueprint('auth', __name__)
 def validate_token_helper(token):
     try:
         response = client.get_user(AccessToken=token)
-        print(response)
         return response
     except ClientError as e:
         return None
@@ -28,18 +27,17 @@ def token_required(f):
         auth_header = request.headers.get('Authorization', None)
         if not auth_header:
             return jsonify({'error': 'Missing Authorization header'}), 401
-
         token = auth_header.split(" ")[1]
         user = validate_token_helper(token)
 
         if user is None:
             return jsonify({'error': 'Invalid or expired token'}), 403
-        
+
         try:
             userIdFromRequest = kwargs.get('userId') or request.json.get('userId')
         except Exception as e:
             print("Error accessing request.json or route parameter:", e)
-            userIdFromRequest = None 
+            userIdFromRequest = None
 
         if userIdFromRequest:
             print(userIdFromRequest)
@@ -175,7 +173,7 @@ def confirmSignup():
             'profile_picture': f'https://{os.getenv("S3_BUCKET_USER_PICTURE")}.s3.amazonaws.com/default-avatar-icon-of-social-media-user-vector.jpg',
             'instrument': '',
             'miniTestsProgress': [],
-            'trackAttempts': [],
+            'track_attempts': [],
             'private_songs': [],
             'level': '1'
         }
