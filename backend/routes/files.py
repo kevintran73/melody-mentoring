@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 import boto3
 import os
 from .auth import token_required
-from s3_bucket_helpers import urlFromBucketObj, uploadFileToBucket
+from s3_bucket_helpers import createUploadHelper, urlFromBucketObj, uploadFileToBucket
 from dynamodb_helpers import addSongtoSongs, addAttemptToTrackAttempt, getTrackAttempyDetails
 from botocore.exceptions import ClientError
 
@@ -92,7 +92,7 @@ def get_presigned_url_user_experiment_audio(trackAttemptId):
     Route parameters must be of the following format:
     {
         trackAttemptId: str                 # id of the the track attempt
-
+    }
     Gets the url for the audio of a users attempt to play a song
     '''
     try:
@@ -138,6 +138,8 @@ def get_presigned_url_user_experiment_video(trackAttemptId):
             'error': str(e)
         }), 500
 
+from werkzeug.utils import secure_filename
+
 @files_bp.route('/files/user/create-private-song', methods=['POST'])
 @token_required
 def user_creates_private_song():
@@ -151,19 +153,25 @@ def user_creates_private_song():
         instrument: str
         title: str
         difficulty: float           # assigned a float value from [1, 5]
-        trackAudio: str             # filepath to the audio of the track
     }
 
     Creates a song in the Songs table (dynamodb)
     Appends this song in Users[userid].private_songs
-    uploads the trackaudio to s3 "track-audio" bucket
+
+    The track audio has to be uploaded separately,
+    This request returns an additional object under field 'uploader' which can be
+    used to upload the track audio for this submission. See post below,
+    https://stackoverflow.com/questions/54076283/how-to-upload-a-file-to-s3-using-presigned-url-with-react-js
     '''
     try:
         data = request.json
         songId = addSongtoSongs(data, True)
-        uploadFileToBucket(os.getenv('S3_BUCKET_TRACKS'), data['trackAudio'], songId)
+        uploader = createUploadHelper(os.getenv('S3_BUCKET_TRACKS'), songId)
+
+        # uploadFileToBucket(os.getenv('S3_BUCKET_TRACKS'), data['trackAudio'], songId)
         return jsonify({
             'message': f'New song created by user: {data["userId"]} under the title: {data["title"]}',
+            'uploader': uploader
         }), 200
 
     except FileNotFoundError as e:
@@ -202,18 +210,14 @@ def user_attempts_track():
     '''
     try:
         data = request.json
-        # audio files are of course, mandatory for files
-        if not os.path.exists(data['audioFilePath']):
-            raise FileNotFoundError('audio file not found')
-
         attemptId = addAttemptToTrackAttempt(data['userId'], data['songId'])
-        uploadFileToBucket(os.getenv('S3_BUCKET_USER_AUDIO'), data['audioFilePath'], attemptId)
-        # adding a video is optional
-        if 'videoFilePath' in data and data['videoFilePath'] is not None:
-            uploadFileToBucket(os.getenv('S3_BUCKET_USER_VIDEO'), data['videoFilePath'], attemptId)
-        # TODO: return feedbackID
+
+        audioUploader = createUploadHelper(os.getenv('S3_BUCKET_USER_AUDIO'), attemptId)
+        videoUploader = createUploadHelper(os.getenv('S3_BUCKET_USER_VIDEO'), attemptId)
         return jsonify({
-            'message': f'Submitted track attempt for user: {data["userId"]}'
+            'message': f'Submitted track attempt for user: {data["userId"]}, track-attempt: {attemptId}',
+            'audioUploader': audioUploader,
+            'videoUploader': videoUploader,
         }), 200
 
     except FileNotFoundError as e:
@@ -232,3 +236,13 @@ def user_attempts_track():
         return jsonify({
             'error': str(e)
         }), 500
+
+@files_bp.route('/files/user/feedback-for-attempt/<trackAttemptId>', methods=['GET'])
+@token_required
+def get_feedback_for_track_attempt(trackAttemptId):
+    # check if the user owns that trackattempt
+    return jsonify({
+        'message': 'This route is unfinished',
+        'reportRawMetrics': ['All the metrics will be in a list here'],
+        'reportGrokResponse': 'grok says you did good!'
+    }), 200

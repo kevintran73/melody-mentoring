@@ -54,30 +54,28 @@ const Register = () => {
   const [password, setPassword] = React.useState('');
   const [username, setUsername] = React.useState('');
   const navigate = useNavigate();
-  
-  // Handles the signup 
+
+  // Handles the signup
   const register = async (event) => {
     // Prevent page from refreshing
     event.preventDefault();
 
     // check all fields are filled
     if (username === '' || email === '' || password === '') {
-      showErrorMessage("Please fill in all fields")
-    } 
-    else {
+      showErrorMessage('Please fill in all fields');
+    } else {
       try {
-        await axios.post('http://localhost:5001/signup', {
+        await axios.post('http://localhost:5001/auth/signup', {
           username: username,
           email: email,
           password: password,
         });
-  
-        navigate('/verification', { state: {username: username}});  // if signup is succesful, redirct to email verification page
+
+        navigate('/verification', { state: { username: username } }); // if signup is succesful, redirct to email verification page
       } catch (err) {
-        showErrorMessage(err.response.data.error)
+        showErrorMessage(err.response.data.error);
       }
     }
-  
   };
 
   // Handle login if enter key is pressed
@@ -118,7 +116,9 @@ const Register = () => {
         <StyledButton variant='contained' type='submit' id='register-go'>
           Sign up
         </StyledButton>
-        <Link className='underline' to="/login-sub">Already have an account?</Link>
+        <Link className='underline' to='/login-sub'>
+          Already have an account?
+        </Link>
       </RegisterForm>
     </StyledContainer>
   );
