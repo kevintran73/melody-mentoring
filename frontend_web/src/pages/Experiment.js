@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import * as Tone from 'tone';
 
@@ -11,6 +11,9 @@ import OpenSheetMusicDisplay from '../components/experiment/OpenSheetMusicDispla
 import odeToJoy from '../assets/Ode_to_Joy_Easy.mxl';
 import moonlightSonata from '../assets/Sonate_No._14_Moonlight_3rd_Movement.mxl';
 import ExperimentToolbar from '../components/experiment/ExperimentToolbar';
+import axios from 'axios';
+import TokenContext from '../context/TokenContext';
+import { showErrorMessage } from '../helpers';
 
 const PageBlock = styled('div')({
   height: 'calc(100vh - 70px)',
@@ -112,6 +115,36 @@ const Experiment = () => {
     }
   }, [status]);
 
+  // Get the sheet music
+  const { accessToken } = React.useContext(TokenContext);
+  const params = useParams();
+  const [sheetFile, setSheetFile] = React.useState('');
+  React.useEffect(() => {
+    // Navigate to login page if invalid token
+    if (accessToken === null) {
+      return navigate('/login');
+    }
+
+    const getSheet = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/files/sheets/${params.songid}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        setSheetFile(response.data.url);
+      } catch (err) {
+        showErrorMessage(err.data.response.error);
+
+        // Navigate to catalogue if invalid song id or any other issues with retrieving sheet
+        return navigate('/catalogue');
+      }
+    };
+
+    getSheet();
+  }, [accessToken, params, navigate]);
+
   // Trigger the countdown for a song beginning
   const initiateCountdown = async () => {
     if (pageBlockRef.current) {
@@ -154,43 +187,48 @@ const Experiment = () => {
     setExperimentStarted(false);
 
     // Navigate back to the experiment's song page
-    navigate('/catalogue');
+    return navigate('/catalogue');
   };
 
+  // Display all page elements only if sheet file has been retrieved
   return (
     <>
       <NavBar isDisabled={countdown !== null && countdown !== -1 && !mediaBlobUrl} />
-      <PageBlock ref={pageBlockRef}>
-        {!experimentStarted && countdown !== 0 && countdown !== null && (
-          <CountdownOverlay innerText={countdown} />
-        )}
-        {!osmdLoaded && (
-          <LoadingOverlay>
-            <CircularProgress size='45vh' />
-          </LoadingOverlay>
-        )}
-        <OpenSheetMusicDisplay
-          ref={osmdRef}
-          file={odeToJoy}
-          onLoad={onOsmdLoad}
-          onMuteToggle={(b) => setOsmdMuted(b)}
-          onMetroMuteToggle={(b) => setOsmdMetroMuted(b)}
-        />
-      </PageBlock>
+      {sheetFile !== '' && (
+        <>
+          <PageBlock ref={pageBlockRef}>
+            {!experimentStarted && countdown !== 0 && countdown !== null && (
+              <CountdownOverlay innerText={countdown} />
+            )}
+            {!osmdLoaded && (
+              <LoadingOverlay>
+                <CircularProgress size='45vh' />
+              </LoadingOverlay>
+            )}
+            <OpenSheetMusicDisplay
+              ref={osmdRef}
+              file={odeToJoy}
+              onLoad={onOsmdLoad}
+              onMuteToggle={(b) => setOsmdMuted(b)}
+              onMetroMuteToggle={(b) => setOsmdMetroMuted(b)}
+            />
+          </PageBlock>
 
-      <ExperimentToolbar
-        experimentStarted={experimentStarted}
-        mediaBlobUrl={mediaBlobUrl}
-        countdown={countdown}
-        osmdRef={osmdRef}
-        osmdMuted={osmdMuted}
-        osmdMetroMuted={osmdMetroMuted}
-        initiateCountdown={initiateCountdown}
-        onRecordingStop={onRecordingStop}
-        retryAttempt={retryAttempt}
-        onExit={onExit}
-        finishAttempt={finishAttempt}
-      />
+          <ExperimentToolbar
+            experimentStarted={experimentStarted}
+            mediaBlobUrl={mediaBlobUrl}
+            countdown={countdown}
+            osmdRef={osmdRef}
+            osmdMuted={osmdMuted}
+            osmdMetroMuted={osmdMetroMuted}
+            initiateCountdown={initiateCountdown}
+            onRecordingStop={onRecordingStop}
+            retryAttempt={retryAttempt}
+            onExit={onExit}
+            finishAttempt={finishAttempt}
+          />
+        </>
+      )}
     </>
   );
 };
