@@ -127,13 +127,17 @@ const Experiment = () => {
 
     const getSheet = async () => {
       try {
-        const response = await axios.get(`http://localhost:5001/files/sheets/${params.songid}`, {
+        const response = await axios.get(`http://localhost:5001/files/sheets/${params.songId}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
 
-        setSheetFile(response.data.url);
+        // Download the sheet from the URL and store on local browser
+        const sheetResponse = await fetch(response.data.url);
+        const blob = await sheetResponse.blob();
+        const url = URL.createObjectURL(blob);
+        setSheetFile(url);
       } catch (err) {
         showErrorMessage(err.data.response.error);
 
@@ -207,7 +211,7 @@ const Experiment = () => {
             )}
             <OpenSheetMusicDisplay
               ref={osmdRef}
-              file={odeToJoy}
+              file={sheetFile}
               onLoad={onOsmdLoad}
               onMuteToggle={(b) => setOsmdMuted(b)}
               onMetroMuteToggle={(b) => setOsmdMetroMuted(b)}
