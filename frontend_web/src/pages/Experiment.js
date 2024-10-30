@@ -138,11 +138,18 @@ const Experiment = () => {
         const sheetResponse = await fetch(response.data.url);
         const blob = await sheetResponse.blob();
         const zip = await JSZip.loadAsync(blob);
-        const xmlFile = zip.file('score.xml');
+        const xmlFile = Object.values(zip.files).find(
+          (file) => file.name.endsWith('.xml') && !file.name.includes('META-INF')
+        );
 
-        // Convert the XML file to a string
-        const xmlContent = await xmlFile.async('string');
-        setSheetFile(xmlContent);
+        // If xmlFile found
+        if (xmlFile) {
+          // Convert the XML file to a string
+          const xmlContent = await xmlFile.async('string');
+          setSheetFile(xmlContent);
+        } else {
+          return navigate('/catalogue');
+        }
       } catch (err) {
         showErrorMessage(err.data.response.error);
 
