@@ -180,7 +180,7 @@ def user_creates_private_song():
         }), 400
     except Exception as e:
         return jsonify({
-            'error': 'DynamoDB: coudn\'t add item to table'
+            'error': str(e)
         }), 500
 
 @files_bp.route('/files/user/new-track-attempt', methods=['POST'])

@@ -3,6 +3,8 @@ import music21
 from dataclasses import dataclass
 from typing import List, Union
 
+import sys
+
 trackAttempts_bp = Blueprint('trackAttempts', __name__)
 
 @dataclass
@@ -90,10 +92,9 @@ def processXML(file):
         timestamp_seconds = element.offset * (60 / bpm)
         dynamics.append((element.value, timestamp_seconds))
 
-    return left_hand_elements, right_hand_elements, dynamics
-
+    return left_hand_elements, right_hand_elements, dynamics, bpm
 '''
-data = processXML('testing-files/Ode_to_Joy.mxl')
+data = processXML('testing-files/Ode_to_joy_RightHand.mxl')
 print("================== STAFF 1 ==================")
 for note in data[0]:
     print(note)
@@ -102,68 +103,53 @@ print("================== STAFF 2 ==================")
 for note in data[1]:
     print(note)
 '''
-
+# sys.exit(1)
 # EVERYTHING BELOW IS FOR PARSING RAW AUDIO
+
 import librosa
 import numpy as np
+import matplotlib.pyplot as plt
 
-# Notes must be at least this db for them to be heard
-DB_THRESHOLD = 10
-# To avoid false positives of overtones
-FREQ_UPPER_BOUND = 1100
+# Load the audio file
+file_path = 'testing-files/Ode_to_joy_piano_audio.mp3'
+audio, sr = librosa.load(file_path)
 
-filename = "testing-files/Ode_to_Joy_audio.mp3"
-y, sr = librosa.load(filename)
-stft_result = librosa.stft(y)
-stft_db = librosa.amplitude_to_db(np.abs(stft_result))
-
-# freq and time arrays where the index is per sample rate
+# Analyze the STFT
+stft = np.abs(librosa.stft(audio))
 frequencies = librosa.fft_frequencies(sr=sr)
-times = librosa.times_like(stft_db, sr=sr)
+times = librosa.times_like(stft, sr=sr)
 
-# Extract peak frequencies above the dB threshold
-notes_and_times = []
-for i, spectrum in enumerate(stft_db.T):
-    index_of_peak = np.argmax(spectrum)     # Get index of the peak frequency
-    peak_db = spectrum[index_of_peak]       # Get the dB level at the peak
-    frequency = frequencies[index_of_peak]  # Get the frequency at the peak
+# Detect onsets (when notes start)
+onset_frames = librosa.onset.onset_detect(y=audio, sr=sr, delta=0.06, hop_length=512)
+# Get note frequencies and amplitude
+for onset in onset_frames:
+    # Convert onset frame to time
+    time = librosa.frames_to_time(onset, sr=sr)
+    # Slice the STFT for a short window around the onset
+    frame_slice = stft[:, onset:onset + 5]  # Sample of frames around onset
+    # Get loudness
+    amplitude = np.mean(librosa.amplitude_to_db(frame_slice))
+    # Detect main frequency in this slice
+    freq_index = np.argmax(np.mean(frame_slice, axis=1))
+    freq = frequencies[freq_index]
+    # Convert frequency to note
+    note = librosa.hz_to_note(freq)
 
-    if peak_db >= DB_THRESHOLD and frequency < FREQ_UPPER_BOUND:
-        # frequency = frequencies[index_of_peak]
-        time = times[i]
+    print(f"Time: {time:.2f}s, Frequency: {freq:.2f} Hz, Note: {note}, Loudness: {amplitude:.2f} dB")
 
-        note = librosa.hz_to_note(frequency)
-        notes_and_times.append((note, time, peak_db, round(frequency, 1)))
+onset_times = librosa.frames_to_time(onset_frames, sr=sr)
 
+# Plot the waveform
+plt.figure(figsize=(14, 6))
+librosa.display.waveshow(audio, sr=sr, alpha=0.6)
 
-REPEAT_THRESHOLD = 3
-parsed_notes = []
+# Mark onsets
+for onset in onset_times:
+    plt.axvline(x=onset, color='r', linestyle='--', label='Onset' if onset == onset_times[0] else "")
 
-times_appeared = 1
-candidate_note = None
-time_start = None
-
-i = 0
-while i < len(notes_and_times):
-    note, time, db_level, freq = notes_and_times[i]
-    if note != candidate_note:
-        times_appeared = 1
-        time_start = time
-        candidate_note = note
-    else:
-        times_appeared += 1
-        if times_appeared >= REPEAT_THRESHOLD:
-            for j, tup in enumerate(notes_and_times[i + 1:]):
-                if tup[0] != candidate_note:
-                    parsed_notes.append((candidate_note, time_start, tup[1], db_level, freq))
-                    i = i + j
-                    times_appeared = 0
-                    candidate_note = None
-                    break
-    i += 1
-
-# print(parsed_notes)
-
-# Output the detected notes, their times, and dB levels
-for note, time, time_end, db_level, freq in parsed_notes:
-    print(f"Note: {note}, Freq: {freq}, Time-started: {time:.2f} sec, Time-ended: {time_end:.2f} sec dB: {db_level:.2f}")
+# Add labels and legend
+plt.xlabel("Time (s)")
+plt.ylabel("Amplitude")
+plt.title("Waveform with Onset Detection")
+plt.legend()
+plt.show()
