@@ -36,6 +36,7 @@ const UploadForm = styled('form')({
   border: '1px solid gray',
   borderRadius: '10px',
   width: '100%',
+  overflowY: 'auto',
 });
 
 const ImgContainer = styled('div')({
@@ -143,7 +144,8 @@ const Create = () => {
         }
       );
 
-      await uploadFileToS3(response.data.uploader, songFile);
+      await uploadFileToS3(response.data.audioUploader, songFile);
+      await uploadFileToS3(response.data.sheetUploader, sheetFile);
     } catch (err) {
       showErrorMessage(err.response.data.error);
       return;
