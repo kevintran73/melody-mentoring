@@ -179,18 +179,6 @@ const CountdownOverlay = ({ innerText }) => {
   );
 };
 
-// const StopRecordingOverlay = ({ onClickEvent }) => {
-//   return (
-//     <PageOverlay>
-//       <div>
-//         <StopButton onClick={onClickEvent} filled>
-//           Stop Recording
-//         </StopButton>
-//       </div>
-//     </PageOverlay>
-//   );
-// };
-
 /**
  * Experiment page
  */
@@ -305,7 +293,7 @@ const Experiment = () => {
 
   return (
     <>
-      <NavBar></NavBar>
+      <NavBar isDisabled={countdown !== null && countdown !== -1 && !mediaBlobUrl} />
       <PageBlock ref={pageBlockRef}>
         {!experimentStarted && countdown !== 0 && countdown !== null && (
           <CountdownOverlay innerText={countdown} />
