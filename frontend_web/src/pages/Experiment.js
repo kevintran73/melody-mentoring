@@ -203,16 +203,16 @@ const Experiment = () => {
   return (
     <>
       <NavBar isDisabled={countdown !== null && countdown !== -1 && !mediaBlobUrl} />
+      {!osmdLoaded && (
+        <LoadingOverlay>
+          <CircularProgress size='45vh' />
+        </LoadingOverlay>
+      )}
       {sheetFile !== '' && (
         <>
           <PageBlock ref={pageBlockRef}>
             {!experimentStarted && countdown !== 0 && countdown !== null && (
               <CountdownOverlay innerText={countdown} />
-            )}
-            {!osmdLoaded && (
-              <LoadingOverlay>
-                <CircularProgress size='45vh' />
-              </LoadingOverlay>
             )}
             <OpenSheetMusicDisplay
               ref={osmdRef}
