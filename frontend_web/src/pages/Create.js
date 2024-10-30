@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { getBase64, mapCommaStringToArray, showErrorMessage } from '../helpers';
+import { getBase64, mapCommaStringToArray, showErrorMessage, uploadFileToS3 } from '../helpers';
 
 import defaultImage from '../assets/default-img.png';
 import NavBar from '../components/nav_bar/NavBar';
@@ -123,10 +123,9 @@ const Create = () => {
         instrument: instrument,
         title: song,
         difficulty: diff,
-        trackAudio: songFile === '' ? '' : URL.createObjectURL(songFile),
       };
 
-      await axios.post(
+      const response = await axios.post(
         'http://localhost:5001/files/user/create-private-song',
         { ...songInfo },
         {
@@ -135,6 +134,8 @@ const Create = () => {
           },
         }
       );
+
+      await uploadFileToS3(response.data.uploader, songFile);
     } catch (err) {
       showErrorMessage(err.response.data.error);
     }

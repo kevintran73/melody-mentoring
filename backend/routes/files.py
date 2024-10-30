@@ -165,7 +165,7 @@ def user_creates_private_song():
     try:
         data = request.json
         songId = addSongtoSongs(data, True)
-        uploader = createUploadHelper((os.getenv('S3_BUCKET_TRACKS'), songId))
+        uploader = createUploadHelper(os.getenv('S3_BUCKET_TRACKS'), songId)
 
         # uploadFileToBucket(os.getenv('S3_BUCKET_TRACKS'), data['trackAudio'], songId)
         return jsonify({
