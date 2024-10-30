@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import axios from 'axios';
 import Card from '@mui/material/Card';
 import { Box, Typography } from '@mui/material';
 import NavBar from '../components/nav_bar/NavBar';
@@ -6,9 +8,9 @@ import PieChartCard from '../components/track_summary/PieChartCard';
 import SubAdviceCard from '../components/track_summary/SubAdviceCard';
 import Thumbnail from '../components/track_summary/Thumbnail';
 import ScrollContainer from 'react-indiana-drag-scroll';
-
+import TokenContext from '../context/TokenContext';
 import { styled } from '@mui/system';
-import { useParams } from 'react-router-dom';
+import BarChartCard from '../components/track_summary/BarChartCard';
 
 /**
  * Track Summary page
@@ -28,7 +30,6 @@ const StyledAdviceBox = styled(Card)(() => ({
 }));
 
 const StyledMainSummary = styled(Card)(() => ({
-  // borderWidth: '2px',
   padding: '20px',
   margin: '30px',
   display: 'flex',
@@ -38,45 +39,63 @@ const StyledMainSummary = styled(Card)(() => ({
   boxShadow: 5,
 }));
 
-// const InfoContainer = (title, ) => (
-//   <Box>
-//     <Typography align='left' variant='h4' margin='10px' marginRight='20px'>Timing</Typography>
-//     <StyledAdviceBox sx={{width:'40vw'}}>
-//       <PieChartCard
-//         val1={77}
-//         name1='On Time'
-//         val2={10}
-//         name2='Rushed'
-//         val3={13}
-//         name3='Dragged'
-//       />
-//       <Box flex={1}>
-//         <SubAdviceCard
-//           main='It looks like you were on time for only 77% of the piece.'
-//           details='You rushed 10% of your notes while you dragged on 13% of your notes.'
-//           tips='Remember getting it right is better than playing it fast!'
-//           height='100%'
-//         />
-//       </Box>
-//     </StyledAdviceBox>
-//   </Box>
-// )
-
 const TrackSummary = () => {
   const params = useParams();
   const trackAttemptId = params.trackAttemptId;
+  const [summaryParagraphs, setSummaryParagraphs] = useState(null);
+  const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
+  const navigate = useNavigate();
+  const token = useContext(TokenContext);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const fetchSummary = async () => {
+      try {
+        const response = await axios.get('http://localhost:5001/attempts/user/feedback-for-attempt/90d775a8-3cb1-4939-ab06-adadc4a98b18', {
+          headers: {
+            Authorization: `Bearer ${token['accessToken']}`,
+          },
+          signal,
+        });
+        setSummary(response.data);
+        console.log(response.data);
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log('Fetch cancelled:', error.message);
+        } else {
+          console.error('Error fetching user details:', error);
+        }
+      }
+    };
+
+    fetchSummary();
+
+    return () => {
+      controller.abort();
+    };
+  }, [token]);
+
+  useEffect(() => {
+    if (summary) {
+      const summaryParagraphs = summary['groqSays'].split('\n\n');
+      setSummaryParagraphs(summaryParagraphs);
+    }
+  }, [summary]);
 
   return (
     <Box backgroundColor='#f9f9f9'>
-      <NavBar></NavBar>
+      <NavBar />
       <StyledMainSummary>
         <Box flex='4' marginRight='30px'>
-          <Typography align='left' variant='h2' margin='10px' marginLeft='20px'>
-            Title
-          </Typography>
-          <Box border='solid' height='70%'>
-            <Typography variant='h4' margin='10px' marginLeft='20px'>
-              Title
+          {/* <Typography align='left' variant='h2' margin='10px' marginLeft='20px'>
+            Track Attempt Summary
+          </Typography> */}
+          <Box boxShadow={4} height='100%' textAlign='center' display='flex' justifyContent='center' alignItems='center' borderRadius='16px'>
+            <Typography fontSize='2rem' margin='20px 30px'>
+              {summaryParagraphs ? summaryParagraphs[0] : 'Loading'}
             </Typography>
           </Box>
         </Box>
@@ -100,97 +119,59 @@ const TrackSummary = () => {
         >
           <Box>
             <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
-              Correct Notes
+              Rhythm
             </Typography>
             <StyledAdviceBox sx={{ width: '40vw' }}>
-              <PieChartCard
-                val1={77}
-                name1='On Time'
-                val2={10}
-                name2='Rushed'
-                val3={13}
-                name3='Dragged'
-              />
-              <Box flex={1}>
-                <SubAdviceCard
-                  main='It looks like you were on time for only 77% of the piece.'
-                  details='You rushed 10% of your notes while you dragged on 13% of your notes.'
-                  tips='Remember getting it right is better than playing it fast!'
-                  height='100%'
-                />
-              </Box>
+            {summary ? (
+              <>
+                <BarChartCard val1={summary['rhythm']} />
+                <Box flex={1}>
+                  <SubAdviceCard details={summaryParagraphs ? summaryParagraphs[1] : 'Loading'} />
+                </Box>
+              </>) : (
+              <Typography>Loading</Typography>
+            )}
             </StyledAdviceBox>
           </Box>
 
           <Box>
             <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
-              Timing
+              Pitch
             </Typography>
             <StyledAdviceBox sx={{ width: '40vw' }}>
-              <PieChartCard
-                val1={77}
-                name1='On Time'
-                val2={10}
-                name2='Rushed'
-                val3={13}
-                name3='Dragged'
-              />
-              <Box flex={1}>
-                <SubAdviceCard
-                  main='It looks like you were on time for only 77% of the piece.'
-                  details='You rushed 10% of your notes while you dragged on 13% of your notes.'
-                  tips='Remember getting it right is better than playing it fast!'
-                  height='100%'
+              {summary ? (
+              <>
+                <PieChartCard
+                  val1={74}
+                  name1='On Time'
                 />
-              </Box>
+                <Box flex={1}>
+                  <SubAdviceCard details={summaryParagraphs ? summaryParagraphs[2] : 'Loading'} />
+                </Box>  
+              </>) : (
+                <Typography>Loading</Typography>
+              )}
             </StyledAdviceBox>
           </Box>
 
           <Box>
             <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
-              Note Types
+              Intonation
             </Typography>
             <StyledAdviceBox sx={{ width: '40vw' }}>
-              <PieChartCard
-                val1={77}
-                name1='On Time'
-                val2={10}
-                name2='Rushed'
-                val3={13}
-                name3='Dragged'
-              />
-              <Box flex={1}>
-                <SubAdviceCard
-                  main='It looks like you were on time for only 77% of the piece.'
-                  details='You rushed 10% of your notes while you dragged on 13% of your notes.'
-                  tips='Remember getting it right is better than playing it fast!'
-                  height='100%'
-                />
-              </Box>
-            </StyledAdviceBox>
-          </Box>
-
-          <Box>
-            <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
-              Articulation
-            </Typography>
-            <StyledAdviceBox sx={{ width: '40vw' }}>
-              <PieChartCard
-                val1={77}
-                name1='On Time'
-                val2={10}
-                name2='Rushed'
-                val3={13}
-                name3='Dragged'
-              />
-              <Box flex={1}>
-                <SubAdviceCard
-                  main='It looks like you were on time for only 77% of the piece.'
-                  details='You rushed 10% of your notes while you dragged on 13% of your notes.'
-                  tips='Remember getting it right is better than playing it fast!'
-                  height='100%'
-                />
-              </Box>
+              {summary ? (
+                <>
+                  <PieChartCard
+                    val1={summary['intonation'] * 100}
+                    name1='On Time'
+                  />
+                  <Box flex={1}>
+                    <SubAdviceCard details={summaryParagraphs ? summaryParagraphs[3] : 'Loading'} />
+                  </Box>
+                </>
+              ) : (
+                <Typography>Loading</Typography>
+              )}
             </StyledAdviceBox>
           </Box>
 
@@ -199,29 +180,25 @@ const TrackSummary = () => {
               Dynamics
             </Typography>
             <StyledAdviceBox sx={{ width: '40vw' }}>
-              <PieChartCard
-                val1={77}
-                name1='On Time'
-                val2={10}
-                name2='Rushed'
-                val3={13}
-                name3='Dragged'
-              />
-              <Box flex={1}>
-                <SubAdviceCard
-                  main='It looks like you were on time for only 77% of the piece.'
-                  details='You rushed 10% of your notes while you dragged on 13% of your notes.'
-                  tips='Remember getting it right is better than playing it fast!'
-                  height='100%'
-                />
-              </Box>
+              {summary ? (
+                <>
+                  <PieChartCard
+                    val1={summary['dynamics'] * 100}
+                    name1='On Time'
+                  />
+                  <Box flex={1}>
+                    <SubAdviceCard details={summaryParagraphs ? summaryParagraphs[4] : 'Loading'} />
+                  </Box>
+                </>
+              ) : (
+                <Typography>Loading</Typography>
+              )}
             </StyledAdviceBox>
           </Box>
+
         </Box>
       </ScrollContainer>
-      <Box border='solid' margin='50px' height='1000px' backgroundColor='white'>
-        Insert Sheet Music Here
-      </Box>
+/
     </Box>
   );
 };

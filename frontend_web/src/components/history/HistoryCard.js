@@ -29,7 +29,7 @@ const HistoryCard = ({ title, artist, difficulty, date }) => {
   const navigate = useNavigate();
 
   const navTrackSummary = () => {
-    return navigate('/track-summary');
+    return navigate('/track-summary/i');
   };
 
   return (

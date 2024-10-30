@@ -22,27 +22,18 @@ const StyledCard = styled(Card)(() => ({
   // gap:'10px',
 }));
 
-const SubAdviceCard = ({ main, details, tips }) => {
+const SubAdviceCard = ({ details }) => {
   return (
     <StyledCard variant='outlined'>
       <Box
         padding='2px'
         display='flex'
         flexDirection='column'
-        justifyContent='space-evenly'
+        justifyContent='center'
         height='100%'
         // gap='10px'
       >
-        {/* The overview of how they went */}
-        <Typography fontSize='1.1rem' component='div'>{main}</Typography>
-        <Divider variant="middle" />
-
-        {/* More details added and/or include their left vs. right hand */}
-        <Typography fontSize='1rem'>{details}</Typography>
-        <Divider variant="middle" />
-
-        {/* Tips for them to improve */}
-        <Typography fontSize='1rem'>{tips}</Typography>
+        <Typography fontSize='1.05rem' component='div'>{details}</Typography>
       </Box>
     </StyledCard>
   );
