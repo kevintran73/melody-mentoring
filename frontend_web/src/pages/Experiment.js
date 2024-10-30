@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import * as Tone from 'tone';
+import JSZip from 'jszip';
 
 import { Button, styled, Typography, CircularProgress } from '@mui/material';
 
@@ -136,8 +137,12 @@ const Experiment = () => {
         // Download the sheet from the URL and store on local browser
         const sheetResponse = await fetch(response.data.url);
         const blob = await sheetResponse.blob();
-        const url = URL.createObjectURL(blob);
-        setSheetFile(url);
+        const zip = await JSZip.loadAsync(blob);
+        const xmlFile = zip.file('score.xml');
+
+        // Convert the XML file to a string
+        const xmlContent = await xmlFile.async('string');
+        setSheetFile(xmlContent);
       } catch (err) {
         showErrorMessage(err.data.response.error);
 
