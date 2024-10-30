@@ -109,7 +109,7 @@ const Create = () => {
     } else if (isNaN(parseFloat(diff)) || parseFloat(diff) < 1 || parseFloat(diff) > 5) {
       showErrorMessage('Difficulty must be a float from 1 to 5');
       return;
-    } else if (thumbnail === '' || !allowedImageFiles.includes(thumbnail.type)) {
+    } else if (thumbnail !== defaultImage && !allowedImageFiles.includes(thumbnail.type)) {
       showErrorMessage('Thumbnail is an unsupported file type (accepted: .jpeg, .jpg, .png)');
       return;
     }

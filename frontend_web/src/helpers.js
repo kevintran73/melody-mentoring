@@ -65,7 +65,7 @@ export const uploadFileToS3 = async (presignedPostData, file) => {
   });
 
   // append the file
-  formData.append('file', file.src);
+  formData.append('file', file);
 
   // post the data on the s3 url
   axios
