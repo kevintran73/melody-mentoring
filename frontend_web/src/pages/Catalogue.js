@@ -79,6 +79,7 @@ const Catalogue = () => {
           },
         });
         setRole(response.data.role)  // get the role of the user and render the components accordingly
+        console.log(response.data.role)
       } catch (err) {
         showErrorMessage(err.response.data.error);
       }
@@ -148,7 +149,7 @@ const Catalogue = () => {
       </Box>
       </>}
 
-      {role === 'tutor' && <>
+      {role === 'lecturer' && <>
         <Students />
       </>}
 

@@ -54,6 +54,7 @@ const NavBar = () => {
           },
         });
         setRole(response.data.role)  // get the role of the user and render the components accordingly
+       
       } catch (err) {
         showErrorMessage(err.response.data.error);
       }
@@ -71,7 +72,7 @@ const NavBar = () => {
           <CatalogueButton />
           <UploadsButton />
         </>}
-        {role === 'tutor' && <>
+        {role === 'lecturer' && <>
           <StudentsButton />
         </>}
 
