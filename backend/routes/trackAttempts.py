@@ -1,25 +1,24 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
 import music21
 from dataclasses import dataclass
 from typing import List, Union
 import tempfile
+import librosa
+import numpy as np
 
 import boto3
 from botocore.client import ClientError
 import io
 import os
+from .auth import token_required
 from dotenv import load_dotenv
+from groq import Groq
 
-import librosa
-import numpy as np
-import matplotlib.pyplot as plt
+import Levenshtein as lev
 
-# from s3_bucket_helpers import createUploadHelper, urlFromBucketObj, uploadFileToBucket
 load_dotenv()
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
-
-import sys
 
 trackAttempts_bp = Blueprint('trackAttempts', __name__)
 
@@ -109,19 +108,9 @@ def processXML(file):
         dynamics.append((element.value, timestamp_seconds))
 
     return left_hand_elements, right_hand_elements, dynamics, bpm
-'''
-data = processXML('testing-files/Ode_to_joy_RightHand.mxl')
-print("================== STAFF 1 ==================")
-for note in data[0]:
-    print(note)
 
-print("================== STAFF 2 ==================")
-for note in data[1]:
-    print(note)
-'''
-# sys.exit(1)
 # EVERYTHING BELOW IS FOR PARSING RAW AUDIO
-file_path = 'testing-files/Ode_to_joy_piano_audio.mp3'
+
 # requires file in raw bytes e.g.
 # io.BytesIO(file)
 def processUserAudioRaw(file) -> list:
@@ -131,7 +120,8 @@ def processUserAudioRaw(file) -> list:
     times = librosa.times_like(stft, sr=sr)
 
     res = []
-    onset_frames = librosa.onset.onset_detect(y=audio, sr=sr, delta=0.06, hop_length=512)
+    # additional keywords might help:, delta=0.06, hop_length=512
+    onset_frames = librosa.onset.onset_detect(y=audio, sr=sr)
     for onset in onset_frames:
         time = librosa.frames_to_time(onset, sr=sr)
         # Slice the STFT for a short window around the onset
@@ -144,20 +134,6 @@ def processUserAudioRaw(file) -> list:
         res.append((note, float(round(freq, 2)), float(round(time, 2)), int(amplitude)))
 
     return res
-    # print(f"Time: {time:.2f}s, Frequency: {freq:.2f} Hz, Note: {note}, Loudness: {amplitude:.2f} dB")
-# onset_times = librosa.frames_to_time(onset_frames, sr=sr)
-
-# plt.figure(figsize=(14, 6))
-# librosa.display.waveshow(audio, sr=sr, alpha=0.6)
-
-# for onset in onset_times:
-#     plt.axvline(x=onset, color='r', linestyle='--', label='Onset' if onset == onset_times[0] else "")
-
-# plt.xlabel("Time (s)")
-# plt.ylabel("Amplitude")
-# plt.title("Waveform with Onset Detection")
-# plt.legend()
-# plt.show()
 
 s3_client = boto3.client(
     service_name='s3',
@@ -166,15 +142,28 @@ s3_client = boto3.client(
     aws_secret_access_key=aws_secret_access_key
 )
 
-def generateResultForSubmission():
-    getUserAudioSubmission = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_USER_AUDIO'), Key='Ode_to_joy_piano_audio.mp3')
+
+def generateMetricsForSubmission(userAudioKey, trackAudioKey):
+    '''
+    userAudioKey is just the attemptId
+    trackAudioKey is just the songId
+    returns (pitchPercent, intonationPercent, rhythmPercent, dynamicPercent)
+
+    Note: RhythmPercent can be > or < 1
+    * greater than 1 = late
+    * less than 1 = early
+    '''
+    getUserAudioSubmission = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_USER_AUDIO'), Key=userAudioKey)
     userAudio = getUserAudioSubmission['Body'].read()
     # A bit cursed but windows gives us permission errors if we try to open the file directly
     # instead we write to a temporary file and leave it open to process the .mxl file
     # afterwards we have to do the cleanup. This only applies to music21.converter. Librosa is happy
     # to parse the file in raw bytes.
-    getTrackAudioRes = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_TRACK_SHEET'), Key='Ode_to_joy_RightHand.mxl')
+    getTrackAudioRes = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_TRACK_SHEET'), Key=trackAudioKey)
     trackAudio = getTrackAudioRes['Body'].read()
+
+    pitchPercent, intonationPercent, rhythmPercent = 0, 0, 0
+
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mxl") as tempFile:
         tempFile.write(trackAudio)
         tempFilePath = tempFile.name
@@ -184,9 +173,121 @@ def generateResultForSubmission():
         dynamics = data[2]
         songBPM = data[3]
         userAttemptData = processUserAudioRaw(io.BytesIO(userAudio))
-        from pprint import pprint
-        pprint(userAttemptData)
+        # first we need to normalise the timestamps before calculating metrics
+        # take the first note's time and compare with the correct timestamp
+        timeCalibrationDelta = melodyNotes[0].timestamp - userAttemptData[0][2]
+        # if -ve, then we are late and we need to add delta to all elements
+        # if +ve, then we are early and we need to add delta to all elements
+        def amendTiming(element):
+            return (element[0], element[1], round(element[2] + timeCalibrationDelta, 2), element[3])
+        userAttemptData = list(map(amendTiming, userAttemptData))
+
+        '''
+        Pitch: % of correct notes (leveshtein distance)
+        Intonation: % n - no. of notes where the abs(deltaFreq) < 5Hz
+        Rhythm, % of notes which are on time, % of notes with the correct duration
+        Dynamics: % fake this one
+        '''
+        allNotesPlayed = list(map(lambda e: e[0], userAttemptData))
+        allCorrectNotes = list(map(lambda m: m.names[0], melodyNotes))
+        pitchPercent = round(1 - lev.distance(allCorrectNotes, allNotesPlayed) / len(allNotesPlayed), 5)
+
+        # all the notes that appear in a song
+        noteGlossary = {}
+        for note in melodyNotes:
+            if note.names[0] in melodyNotes:
+                continue
+            else:
+                noteGlossary[note.names[0]] = note.frequencies[0]
+
+        ALLOWABLE_INTONATION_DELTA = 6.5
+        # each semitone differs by ~60hz, so we allow ~10% error before a intonation is a problem
+        badIntonationCounter = 0
+        for note in userAttemptData:
+            noteName, freq = note[0], note[1]
+            if noteName in noteGlossary:
+                if abs(freq - noteGlossary[noteName]) >= ALLOWABLE_INTONATION_DELTA:
+                    badIntonationCounter += 1
+        intonationPercent = round(1 - badIntonationCounter / len(allNotesPlayed), 5)
+
+        # for both lists
+        # For each note, find the difference between that and the next note
+        # sum the value for each element
+        def createHopMap(times: list) -> list:
+            res = [times[0]]
+            for i, t in enumerate(times[1:]):
+                res.append(times[i] - times[i - 1])
+
+            return res
+        correctHopMap = createHopMap(list(map(lambda m: m.timestamp, melodyNotes)))
+        userHopMap = createHopMap(list(map(lambda e: e[2], userAttemptData)))
+        rhythmPercent = 1 - (sum(correctHopMap) - sum(userHopMap)) / sum(userHopMap)
+
     finally:
         os.remove(tempFilePath)
 
-generateResultForSubmission()
+    return (pitchPercent, intonationPercent, rhythmPercent, 1)
+
+def generateGroqResponse(prompt: str) -> str:
+    client = Groq(
+        api_key=os.getenv('GROQ_API_KEY'),
+    )
+
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ],
+        model="llama3-8b-8192",
+    )
+
+    return chat_completion.choices[0].message.content
+
+@trackAttempts_bp.route('/attempts/user/feedback-for-attempt/<trackAttemptId>', methods=['GET'])
+@token_required
+def get_feedback_for_track_attempt(trackAttemptId):
+    # TODO: check if the user owns that trackattempt
+    db = boto3.resource(
+        service_name='dynamodb',
+        region_name='ap-southeast-2',
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=aws_secret_access_key
+    )
+
+    trackAttempts = db.Table(os.getenv('DYNAMODB_TABLE_TRACK_ATTEMPTS'))
+    response = trackAttempts.get_item(Key={'id': trackAttemptId})
+    if 'Item' not in response:
+        return jsonify({'error': 'Track attempt not found'}), 404
+
+    trackAttemptData = response['Item']
+    metrics = generateMetricsForSubmission(trackAttemptData['id'], trackAttemptData['songId'])
+    prompt = f'''
+        I want to generate a feedback report for a user playing the piano, do not format your response in a way that addresses my prompt in any way.
+        Their attempt of the song has been measured with the following metrics where a value of 1 is perfect:
+
+        In rhythm, the user scored a value of {metrics[2]}, if it is greater than 1, they were generally dragging, if the value is lower than 1, they were generally rushing
+        In pitch, the user scored a value of {metrics[0]}, if it is 1, then they played all the correct notes, if it is 0 they played none of the correct notes.
+        In intonation, the user scored a value of {metrics[1]}, if it is 1, then their intonation is perfect, if it is 0, their intonation is terrible
+        In dynamics, the user scored a value of {metrics[3]}, if it is 1, then their dynamics are perfect, if it is 0, their dynamics are terrible
+
+        You are solely generating a feedback report for the user to look at.
+        Make sure to include advice for the user specific to their instrument.
+
+        The structure of your report should be one paragraph for an introduction, and then one paragraph for each metric. Each paragraph should be around 150 words.
+        In each paragraph for each metric, include what they did well, what they did poorly, and how they can improve.
+
+        Don't explicitly mention the values of the metric, only describe their implications.
+        Start your feedback with a friendly manner and have the introduction paragraph be exactly one paragraph.
+    '''
+
+    groqSays = generateGroqResponse(prompt)
+
+    return jsonify({
+        'pitch': metrics[0],
+        'intonation': metrics[1],
+        'rhythm': metrics[2],
+        'dynamics': metrics[3],
+        'groqSays': groqSays
+    }), 200
