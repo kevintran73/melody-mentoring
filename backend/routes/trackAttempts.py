@@ -189,4 +189,4 @@ def generateResultForSubmission():
     finally:
         os.remove(tempFilePath)
 
-generateResultForSubmission()
+# generateResultForSubmission()

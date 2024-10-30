@@ -138,8 +138,6 @@ def get_presigned_url_user_experiment_video(trackAttemptId):
             'error': str(e)
         }), 500
 
-from werkzeug.utils import secure_filename
-
 @files_bp.route('/files/user/create-private-song', methods=['POST'])
 @token_required
 def user_creates_private_song():
@@ -158,20 +156,20 @@ def user_creates_private_song():
     Creates a song in the Songs table (dynamodb)
     Appends this song in Users[userid].private_songs
 
-    The track audio has to be uploaded separately,
-    This request returns an additional object under field 'uploader' which can be
-    used to upload the track audio for this submission. See post below,
+    The track/sheet audio has to be uploaded separately,
+    This request returns an additional object under field 'audioUploader' and 'sheetUploader' which can be
+    used to upload the files for this creation. See post below,
     https://stackoverflow.com/questions/54076283/how-to-upload-a-file-to-s3-using-presigned-url-with-react-js
     '''
     try:
         data = request.json
         songId = addSongtoSongs(data, True)
-        uploader = createUploadHelper(os.getenv('S3_BUCKET_TRACKS'), songId)
-
-        # uploadFileToBucket(os.getenv('S3_BUCKET_TRACKS'), data['trackAudio'], songId)
+        audioUploader = createUploadHelper(os.getenv('S3_BUCKET_TRACKS'), songId)
+        sheetUploader = createUploadHelper(os.getenv('S3_BUCKET_TRACK_SHEET'), songId)
         return jsonify({
             'message': f'New song created by user: {data["userId"]} under the title: {data["title"]}',
-            'uploader': uploader
+            'audioUploader': audioUploader,
+            'sheetUploader': sheetUploader,
         }), 200
 
     except FileNotFoundError as e:
@@ -242,8 +240,6 @@ def user_attempts_track():
 @token_required
 def get_feedback_for_track_attempt(trackAttemptId):
     # TODO: check if the user owns that trackattempt
-
-
 
     return jsonify({
         'message': 'This route is unfinished',
