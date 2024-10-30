@@ -28,6 +28,7 @@ const UploadForm = styled('form')({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'start',
+  alignItems: 'center',
   gap: '30px',
   height: 'calc(90vh - 70px - 4rem)',
   marginTop: '2rem',
@@ -35,6 +36,7 @@ const UploadForm = styled('form')({
   border: '1px solid gray',
   borderRadius: '10px',
   width: '100%',
+  overflowY: 'auto',
 });
 
 const ImgContainer = styled('div')({
@@ -83,6 +85,7 @@ const Create = () => {
   const [genreTags, setGenreTags] = React.useState('');
   const [instrument, setInstrument] = React.useState('');
   const [songFile, setSongFile] = React.useState('');
+  const [sheetFile, setSheetFile] = React.useState('');
 
   const { accessToken, userId } = React.useContext(TokenContext);
   if (accessToken === null) {
@@ -96,12 +99,18 @@ const Create = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Fields to validate: title, audio, instrument, difficulty, thumbnail
+    // Fields to validate: title, audio, sheet, instrument, difficulty, thumbnail
     if (song === '') {
       showErrorMessage('Song name cannot be empty');
       return;
     } else if (songFile === '' || !allowedAudioFiles.includes(songFile.type)) {
       showErrorMessage('You must upload a .mp3 or .mpeg file of the song');
+      return;
+    } else if (
+      sheetFile === '' ||
+      (sheetFile.name.lastIndexOf('.mxl') === -1 && sheetFile.name.lastIndexOf('.musicxml') === -1)
+    ) {
+      showErrorMessage('You must upload a .xml or .musicxml file of the sheet');
       return;
     } else if (instrument === '') {
       showErrorMessage('Instrument field cannot be empty');
@@ -135,10 +144,21 @@ const Create = () => {
         }
       );
 
-      await uploadFileToS3(response.data.uploader, songFile);
+      await uploadFileToS3(response.data.audioUploader, songFile);
+      await uploadFileToS3(response.data.sheetUploader, sheetFile);
     } catch (err) {
       showErrorMessage(err.response.data.error);
+      return;
     }
+
+    // Reset state variables to default
+    setThumbnail(defaultImage);
+    setSong('');
+    setArtist('');
+    setDiff('');
+    setGenreTags('');
+    setInstrument('');
+    setSongFile('');
   };
 
   return (
@@ -148,9 +168,12 @@ const Create = () => {
         <StyledHeader>Create an experiment</StyledHeader>
         <UploadForm onSubmit={handleSubmit} noValidate>
           <ImgContainer>
-            <ImgRight src={thumbnail} />
+            <ImgRight
+              src={thumbnail === defaultImage ? defaultImage : URL.createObjectURL(thumbnail)}
+            />
             <InputFileUpload
               innerText='Upload a thumbnail'
+              id='upload-thumbnail-button'
               width='60%'
               fontSize='1.1rem'
               accept='image/*'
@@ -202,13 +225,23 @@ const Create = () => {
             />
             <InputFileUpload
               innerText='Upload song file (.mp3)'
+              id='upload-song-button'
               fontSize='1rem'
               accept='audio/mp3, audio/mpeg'
               backgroundColor='#1b998b'
               hoverColor='#1fad9e'
               onChangeEvent={(p) => setSongFile(p.target.files[0])}
             />
-            <SubmitButton type='submit' id='submit-song-button'>
+            <InputFileUpload
+              innerText='Upload sheet music (.mxl or .musicxml)'
+              id='upload-sheet-button'
+              fontSize='1rem'
+              accept='.mxl, .musicxml'
+              backgroundColor='#1b998b'
+              hoverColor='#1fad9e'
+              onChangeEvent={(s) => setSheetFile(s.target.files[0])}
+            />
+            <SubmitButton type='submit' id='submit-new-experiment-button'>
               Submit
             </SubmitButton>
           </TextFieldsContainer>

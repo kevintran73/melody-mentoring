@@ -9,7 +9,7 @@ import SettingsButton from './SettingsButton';
 import CreateButton from './CreateButton';
 import UploadsButton from './UploadsButton';
 
-const StyledHeader = styled('header')({
+const StyledHeader = styled('header')(({ isDisabled }) => ({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
@@ -17,7 +17,11 @@ const StyledHeader = styled('header')({
   padding: '1rem 1.5rem',
   backgroundColor: '#020E37',
   height: '70px',
-});
+
+  ...(isDisabled && {
+    pointerEvents: 'none',
+  }),
+}));
 
 const MiddleContainer = styled('div')({
   display: 'flex',
@@ -35,9 +39,9 @@ const RightContainer = styled('div')({
   gap: '20px',
 });
 
-const NavBar = () => {
+const NavBar = ({ isDisabled = false, ...props }) => {
   return (
-    <StyledHeader>
+    <StyledHeader isDisabled={isDisabled} {...props}>
       <NotificationsButton />
 
       <MiddleContainer>
