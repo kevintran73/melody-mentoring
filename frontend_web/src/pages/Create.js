@@ -91,6 +91,7 @@ const Create = () => {
 
   // Allowed file types for thumbnail and song
   let allowedImageFiles = ['image/jpeg', 'image/jpg', 'image/png'];
+  let allowedAudioFiles = ['audio/mp3', 'audio/mpeg'];
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -99,10 +100,7 @@ const Create = () => {
     if (song === '') {
       showErrorMessage('Song name cannot be empty');
       return;
-    } else if (
-      songFile === '' ||
-      (songFile.lastIndexOf('.mp3') === -1 && songFile.lastIndexOf('.mpeg') === -1)
-    ) {
+    } else if (songFile === '' || !allowedAudioFiles.includes(songFile.type)) {
       showErrorMessage('You must upload a .mp3 or .mpeg file of the song');
       return;
     } else if (instrument === '') {
@@ -125,7 +123,7 @@ const Create = () => {
         instrument: instrument,
         title: song,
         difficulty: diff,
-        trackAudio: songFile,
+        trackAudio: songFile === '' ? '' : URL.createObjectURL(songFile),
       };
 
       await axios.post(
@@ -133,7 +131,7 @@ const Create = () => {
         { ...songInfo },
         {
           headers: {
-            Authorization: accessToken,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
@@ -207,7 +205,7 @@ const Create = () => {
               accept='audio/mp3, audio/mpeg'
               backgroundColor='#1b998b'
               hoverColor='#1fad9e'
-              onChangeEvent={(p) => setSongFile(p.target.value)}
+              onChangeEvent={(p) => setSongFile(p.target.files[0])}
             />
             <SubmitButton type='submit' id='submit-song-button'>
               Submit

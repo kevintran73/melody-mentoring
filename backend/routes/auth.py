@@ -176,7 +176,7 @@ def confirmSignup():
             'instrument': '',
             'miniTestsProgress': [],
             'trackAttempts': [],
-            'privateSongs': [],
+            'private_songs': [],
             'level': '1'
         }
 
