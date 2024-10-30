@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -13,6 +13,11 @@ import defaultImg from '../assets/default-img.png';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 import { maxHeight, styled } from '@mui/system';
+import Students from '../components/tutor_interface/Students';
+
+import TokenContext from '../context/TokenContext';
+import axios from 'axios';
+import { showErrorMessage } from '../helpers';
 
 /**
  * Catalogue/songs page
@@ -61,6 +66,25 @@ const SongCardTemplate = () => {
 
 const Catalogue = () => {
   const navigate = useNavigate();
+  const [role, setRole] = React.useState(null)
+  const { userId, accessToken } = React.useContext(TokenContext);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/profile/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,  // Attach token to the headers
+          },
+        });
+        setRole(response.data.role)  // get the role of the user and render the components accordingly
+      } catch (err) {
+        showErrorMessage(err.response.data.error);
+      }
+    }
+    fetchData()
+  }, []);
 
   const navPlaylist = () => {
     return navigate('/playlist');
@@ -69,7 +93,8 @@ const Catalogue = () => {
   return (
     <Box>
       <NavBar></NavBar>
-      <Box margin='10px'>
+      {role === 'student' && <>
+        <Box margin='10px'>
         <StyledSearchBar id='outlined-basic' label='Search' variant='outlined' size='small'/>
         <StyledButton variant='contained' endIcon={<FilterAltIcon />}>Filter</StyledButton>
         <PlaylistTitle title='Playlist 1 >' navPlaylist={navPlaylist}/>
@@ -121,6 +146,12 @@ const Catalogue = () => {
           </Box>
         </ScrollContainer>
       </Box>
+      </>}
+
+      {role === 'tutor' && <>
+        <Students />
+      </>}
+
     </Box>
   );
 };
