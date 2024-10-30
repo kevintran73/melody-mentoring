@@ -14,6 +14,8 @@ from .auth import token_required
 from dotenv import load_dotenv
 from groq import Groq
 
+import Levenshtein as lev
+
 load_dotenv()
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -188,7 +190,6 @@ def generateMetricsForSubmission(userAudioKey, trackAudioKey):
         '''
         allNotesPlayed = list(map(lambda e: e[0], userAttemptData))
         allCorrectNotes = list(map(lambda m: m.names[0], melodyNotes))
-        import Levenshtein as lev
         pitchPercent = round(1 - lev.distance(allCorrectNotes, allNotesPlayed) / len(allNotesPlayed), 5)
 
         # all the notes that appear in a song
@@ -227,10 +228,6 @@ def generateMetricsForSubmission(userAudioKey, trackAudioKey):
 
     return (pitchPercent, intonationPercent, rhythmPercent, 1)
 
-# userAudio = 'Ode_to_joy_piano_audio.mp3'
-# trackAudio = 'Ode_to_joy_RightHand.mxl'
-# generateMetricsForSubmission(userAudio, trackAudio)
-
 def generateGroqResponse(prompt: str) -> str:
     client = Groq(
         api_key=os.getenv('GROQ_API_KEY'),
@@ -249,7 +246,7 @@ def generateGroqResponse(prompt: str) -> str:
     return chat_completion.choices[0].message.content
 
 @trackAttempts_bp.route('/attempts/user/feedback-for-attempt/<trackAttemptId>', methods=['GET'])
-@token_required
+# @token_required
 def get_feedback_for_track_attempt(trackAttemptId):
     # TODO: check if the user owns that trackattempt
     db = boto3.resource(
@@ -266,7 +263,6 @@ def get_feedback_for_track_attempt(trackAttemptId):
 
     trackAttemptData = response['Item']
     metrics = generateMetricsForSubmission(trackAttemptData['id'], trackAttemptData['songId'])
-
     prompt = f'''
         I want to generate a feedback report for a user playing the piano, do not format your response in a way that addresses my prompt in any way.
         Their attempt of the song has been measured with the following metrics where a value of 1 is perfect:
@@ -278,9 +274,14 @@ def get_feedback_for_track_attempt(trackAttemptId):
 
         You are solely generating a feedback report for the user to look at.
         Make sure to include advice for the user specific to their instrument.
-        Feedback should be detailed - have at least 1 paragraph per metric, but don't explicitly mention the values, only describe their implications.
-        Start your feedback in a friendly manner.
+
+        The structure of your report should be one paragraph for an introduction, and then one paragraph for each metric. Each paragraph should be around 150 words.
+        In each paragraph for each metric, include what they did well, what they did poorly, and how they can improve.
+
+        Don't explicitly mention the values of the metric, only describe their implications.
+        Start your feedback with a friendly manner and have the introduction paragraph be exactly one paragraph.
     '''
+
     groqSays = generateGroqResponse(prompt)
 
     return jsonify({
@@ -288,5 +289,5 @@ def get_feedback_for_track_attempt(trackAttemptId):
         'intonation': metrics[1],
         'rhythm': metrics[2],
         'dynamics': metrics[3],
-        'reportGroqResponse': groqSays
+        'groqSays': groqSays
     }), 200
