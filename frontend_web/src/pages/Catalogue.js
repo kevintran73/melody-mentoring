@@ -26,9 +26,9 @@ const StyledButton = styled(Button)({
   backgroundColor: '#2C2C2C',
   fontSize: '1rem',
   padding: '8px 8px',
-  position:'absolute',
-  right:'10px',
-  marginTop:'0px',
+  position: 'absolute',
+  right: '10px',
+  marginTop: '0px',
   textTransform: 'none',
 });
 
@@ -48,7 +48,7 @@ const TopContainer = styled(Card)({
   flexDirection: 'column',
   padding: '20px',
   position: 'relative',
-  left: '20%', 
+  left: '20%',
 });
 
 const PlaylistTitle = ({ title, navPlaylist }) => (
@@ -65,7 +65,7 @@ const PlaylistTitle = ({ title, navPlaylist }) => (
 const SongCardTemplate = () => {
   return (
     <Box>
-      <SongCard 
+      <SongCard
         title='Song Title'
         thumbnail={defaultImg}
         composer='Some Name'
@@ -74,8 +74,8 @@ const SongCardTemplate = () => {
         genreTags={['pop', '70s']}
       />
     </Box>
-  )
-}
+  );
+};
 
 const Catalogue = () => {
   const [songs, setSongs] = useState([]);
@@ -88,11 +88,11 @@ const Catalogue = () => {
       try {
         const response = await axios.get('http://localhost:5001/auth/validate-token', {
           headers: {
-            Authorization: `Bearer ${token['accessToken']}`
-          }
+            Authorization: `Bearer ${token['accessToken']}`,
+          },
         });
         setUserData(response.data.user);
-        console.log(response.data.user)
+        console.log(response.data.user);
       } catch (error) {
         console.error('Error fetching user details:', error);
       }
@@ -100,11 +100,11 @@ const Catalogue = () => {
 
     const fetchSongs = async () => {
       try {
-      const response = await axios.get('http://localhost:5001/catalogue/songs/list-all', {
-        headers: {
-          Authorization: `Bearer ${token['accessToken']}`
-        }
-      });
+        const response = await axios.get('http://localhost:5001/catalogue/songs/list-all', {
+          headers: {
+            Authorization: `Bearer ${token['accessToken']}`,
+          },
+        });
         const data = response.data.songs;
         setSongs(data);
       } catch (error) {
@@ -124,46 +124,49 @@ const Catalogue = () => {
     <Box backgroundColor='#f9f9f9'>
       <NavBar></NavBar>
       <Box margin='30px 10px'>
-        <StyledSearchBar id='outlined-basic' label='Search' variant='outlined' size='small'/>
-        <StyledButton variant='contained' endIcon={<FilterAltIcon />}>Filter</StyledButton>
+        <StyledSearchBar id='outlined-basic' label='Search' variant='outlined' size='small' />
+        <StyledButton variant='contained' endIcon={<FilterAltIcon />}>
+          Filter
+        </StyledButton>
 
         {/* Welcome container */}
         <TopContainer>
           <Typography variant='h2'>
             Welcome back, {userData ? userData['Username'] : 'N/A'}!
           </Typography>
-          <Typography variant='h4'>
-            Interested in trying these songs again?
-          </Typography>
+          <Typography variant='h4'>Interested in trying these songs again?</Typography>
           <Box display='flex' gap='2vw'>
-            <RecommendationCard title='Test' thumbnail={defaultImg} composer='Test'/>
-            <RecommendationCard title='Test' thumbnail={defaultImg} composer='Test2'/>
-            <RecommendationCard title='Test' thumbnail={defaultImg} composer='Test3'/>
+            <RecommendationCard title='Test' thumbnail={defaultImg} composer='Test' />
+            <RecommendationCard title='Test' thumbnail={defaultImg} composer='Test2' />
+            <RecommendationCard title='Test' thumbnail={defaultImg} composer='Test3' />
           </Box>
         </TopContainer>
 
-          {/* Playlist Uploaded */}
+        {/* Playlist Uploaded */}
         <Box>
-          <PlaylistTitle title='Your Uploaded Songs >' navPlaylist={navPlaylist}/>
+          <PlaylistTitle title='Your Uploaded Songs >' navPlaylist={navPlaylist} />
           <ScrollContainer>
-            <Box display="flex" flexDirection="row" flexWrap="wrap">
-              {songs.filter((song) => song['private']).map((song, i) => (
-                <SongCard
-                  title={song['title']}
-                  composer={song['composer']}
-                  privacy={song['private']}
-                  thumbnail={song['thumbnail']}
-                  difficulty={song['difficulty']}
-                  genreTags={song['genreTags']}
-                />
-              ))}
+            <Box display='flex' flexDirection='row' flexWrap='wrap'>
+              {songs
+                .filter((song) => song['private'])
+                .map((song, i) => (
+                  <SongCard
+                    title={song['title']}
+                    composer={song['composer']}
+                    privacy={song['private']}
+                    thumbnail={song['thumbnail']}
+                    difficulty={song['difficulty']}
+                    genreTags={song['genreTags']}
+                    songId={song['id']}
+                  />
+                ))}
             </Box>
           </ScrollContainer>
         </Box>
 
         {/* Playlist 1 */}
         <Box>
-          <PlaylistTitle title='Playlist 1 >' navPlaylist={navPlaylist}/>
+          <PlaylistTitle title='Playlist 1 >' navPlaylist={navPlaylist} />
           <ScrollContainer>
             <Box display='flex' flexDirection={'row'}>
               {Array.apply(null, { length: 15 }).map((i) => (
@@ -176,70 +179,79 @@ const Catalogue = () => {
 
       {/* Playlist 70s */}
       <Box margin='10px'>
-        <PlaylistTitle title='70s Playlist >' navPlaylist={navPlaylist}/>
+        <PlaylistTitle title='70s Playlist >' navPlaylist={navPlaylist} />
         <ScrollContainer>
-          <Box display="flex" flexDirection="row">
-            {songs.filter((song) => !song['private'] && song.genreTags.includes('70s')).map((song) => (
-              <Box>
-                <SongCard
-                  title={song['title']}
-                  composer={song['composer']}
-                  privacy={song['private']}
-                  thumbnail={song['thumbnail']}
-                  difficulty={song['difficulty']}
-                  genreTags={song['genreTags']}
-                />
-              </Box>
-            ))}
+          <Box display='flex' flexDirection='row'>
+            {songs
+              .filter((song) => !song['private'] && song.genreTags.includes('70s'))
+              .map((song) => (
+                <Box>
+                  <SongCard
+                    title={song['title']}
+                    composer={song['composer']}
+                    privacy={song['private']}
+                    thumbnail={song['thumbnail']}
+                    difficulty={song['difficulty']}
+                    genreTags={song['genreTags']}
+                    songId={song['id']}
+                  />
+                </Box>
+              ))}
           </Box>
         </ScrollContainer>
       </Box>
 
       {/* Playlist Pop */}
       <Box margin='10px'>
-        <PlaylistTitle title='Pop Playlist >' navPlaylist={navPlaylist}/>
+        <PlaylistTitle title='Pop Playlist >' navPlaylist={navPlaylist} />
         <ScrollContainer>
-          <Box display="flex" flexDirection="row">
-            {songs.filter((song) => !song['private'] && song.genreTags.includes('pop')).map((song) => (
-              <Box>
-                <SongCard
-                  title={song['title']}
-                  composer={song['composer']}
-                  privacy={song['private']}
-                  thumbnail={song['thumbnail']}
-                  difficulty={song['difficulty']}
-                  genreTags={song['genreTags']}
-                />
-              </Box>
-            ))}
+          <Box display='flex' flexDirection='row'>
+            {songs
+              .filter((song) => !song['private'] && song.genreTags.includes('pop'))
+              .map((song) => (
+                <Box>
+                  <SongCard
+                    title={song['title']}
+                    composer={song['composer']}
+                    privacy={song['private']}
+                    thumbnail={song['thumbnail']}
+                    difficulty={song['difficulty']}
+                    genreTags={song['genreTags']}
+                    songId={song['id']}
+                  />
+                </Box>
+              ))}
           </Box>
         </ScrollContainer>
       </Box>
 
       {/* Playlist Public */}
       <Box margin='10px'>
-        <PlaylistTitle title='Playlist (Public) Test >' navPlaylist={navPlaylist}/>
+        <PlaylistTitle title='Playlist (Public) Test >' navPlaylist={navPlaylist} />
         <ScrollContainer>
-          <Box display="flex" flexDirection="row">
-            {songs.filter((song) => !song['private']).map((song) => (
-              <Box>
-                <SongCard
-                  title={song['title']}
-                  composer={song['composer']}
-                  privacy={song['private']}
-                  thumbnail={song['thumbnail']}
-                  difficulty={song['difficulty']}
-                  genreTags={song['genreTags']}
-                />
-              </Box>
-            ))}
+          <Box display='flex' flexDirection='row'>
+            {songs
+              .filter((song) => !song['private'])
+              .map((song) => (
+                <Box>
+                  <SongCard
+                    title={song['title']}
+                    composer={song['composer']}
+                    privacy={song['private']}
+                    thumbnail={song['thumbnail']}
+                    difficulty={song['difficulty']}
+                    genreTags={song['genreTags']}
+                    songId={song['id']}
+                  />
+                </Box>
+              ))}
           </Box>
         </ScrollContainer>
       </Box>
 
       {/* Playlist 3 */}
       <Box margin='10px'>
-        <PlaylistTitle title='Playlist 3 >' navPlaylist={navPlaylist}/>
+        <PlaylistTitle title='Playlist 3 >' navPlaylist={navPlaylist} />
         <ScrollContainer>
           <Box display='flex' flexDirection={'row'}>
             {Array.apply(null, { length: 15 }).map((i) => (
@@ -248,7 +260,6 @@ const Catalogue = () => {
           </Box>
         </ScrollContainer>
       </Box>
-
     </Box>
   );
 };
