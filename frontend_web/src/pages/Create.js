@@ -217,7 +217,7 @@ const Create = () => {
               hoverColor='#1fad9e'
               onChangeEvent={(p) => setSongFile(p.target.files[0])}
             />
-            <SubmitButton type='submit' id='submit-song-button'>
+            <SubmitButton type='submit' id='submit-new-experiment-button'>
               Submit
             </SubmitButton>
           </TextFieldsContainer>
