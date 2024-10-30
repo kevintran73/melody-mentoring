@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 import boto3
 import os
 from .auth import token_required
-from s3_bucket_helpers import urlFromBucketObj, uploadFileToBucket
+from s3_bucket_helpers import createUploadHelper, urlFromBucketObj, uploadFileToBucket
 from dynamodb_helpers import addSongtoSongs, addAttemptToTrackAttempt, getTrackAttempyDetails
 from botocore.exceptions import ClientError
 
@@ -153,6 +153,8 @@ def user_creates_private_song():
         instrument: str
         title: str
         difficulty: float           # assigned a float value from [1, 5]
+
+        # deprecated, dont add this
         # trackAudio: str             # filepath to the audio of the track
     }
 
@@ -163,12 +165,12 @@ def user_creates_private_song():
     try:
         data = request.json
         songId = addSongtoSongs(data, True)
-        file = data['file']
-        filename = secure_filename(file.filename)
+        uploader = createUploadHelper((os.getenv('S3_BUCKET_TRACKS'), songId))
 
-        uploadFileToBucket(os.getenv('S3_BUCKET_TRACKS'), filename, songId)
+        # uploadFileToBucket(os.getenv('S3_BUCKET_TRACKS'), data['trackAudio'], songId)
         return jsonify({
             'message': f'New song created by user: {data["userId"]} under the title: {data["title"]}',
+            'uploader': uploader
         }), 200
 
     except FileNotFoundError as e:
