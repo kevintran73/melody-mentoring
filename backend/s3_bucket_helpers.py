@@ -9,6 +9,15 @@ load_dotenv()
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
 
+def createUploadHelper(bucketName, key):
+    s3_client = boto3.client(
+        service_name='s3',
+        region_name='ap-southeast-2',
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=aws_secret_access_key
+    )
+    return s3_client.generate_presigned_post(bucketName, key, ExpiresIn=3600)
+
 def uploadFileToBucket(bucketName, filePath, key):
     s3_client = boto3.client(
         service_name='s3',

@@ -11,9 +11,11 @@ import Notifications from './pages/Notifications';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Create from './pages/Create';
+import Profile from './pages/Profile';
 import History from './pages/History';
 import Playlist from './pages/Playlist';
 import Verification from './pages/Verification';
+import Experiment from './pages/Experiment';
 import TrackSummary from './pages/TrackSummary';
 
 const App = () => {

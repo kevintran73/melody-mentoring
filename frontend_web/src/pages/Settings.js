@@ -24,7 +24,7 @@ const PageBlock = styled('div')({
 });
 
 const CategoryBlock = styled('div')({
-  height: '85%',
+  height: 'calc(90vh - 70px - 6rem)',
   marginTop: '2rem',
   padding: '1rem 2rem',
   border: '1px solid gray',

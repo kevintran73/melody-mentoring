@@ -5,7 +5,6 @@ import { styled } from '@mui/system';
 import CatalogueButton from './CatalogueButton';
 import NotificationsButton from './NotificationsButton';
 import ProfileButton from './ProfileButton';
-import SettingsButton from './SettingsButton';
 import CreateButton from './CreateButton';
 import HistoryButton from './HistoryButton';
 
