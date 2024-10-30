@@ -92,7 +92,7 @@ const Catalogue = () => {
           }
         });
         setUserData(response.data.user);
-        console.log(userData)
+        console.log(response.data.user)
       } catch (error) {
         console.error('Error fetching user details:', error);
       }
@@ -105,7 +105,7 @@ const Catalogue = () => {
           Authorization: `Bearer ${token['accessToken']}`
         }
       });
-        const data = response.data;
+        const data = response.data.songs;
         setSongs(data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -178,7 +178,7 @@ const Catalogue = () => {
       <Box margin='10px'>
         <PlaylistTitle title='70s Playlist >' navPlaylist={navPlaylist}/>
         <ScrollContainer>
-          <Box display="flex" flexDirection="row" flexWrap="wrap">
+          <Box display="flex" flexDirection="row">
             {songs.filter((song) => !song['private'] && song.genreTags.includes('70s')).map((song) => (
               <Box>
                 <SongCard
@@ -199,7 +199,7 @@ const Catalogue = () => {
       <Box margin='10px'>
         <PlaylistTitle title='Pop Playlist >' navPlaylist={navPlaylist}/>
         <ScrollContainer>
-          <Box display="flex" flexDirection="row" flexWrap="wrap">
+          <Box display="flex" flexDirection="row">
             {songs.filter((song) => !song['private'] && song.genreTags.includes('pop')).map((song) => (
               <Box>
                 <SongCard

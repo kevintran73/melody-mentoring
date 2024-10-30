@@ -7,6 +7,7 @@ import NotificationsButton from './NotificationsButton';
 import ProfileButton from './ProfileButton';
 import CreateButton from './CreateButton';
 import HistoryButton from './HistoryButton';
+import SettingsButton from './SettingsButton';
 
 const StyledHeader = styled('header')({
   display: 'flex',

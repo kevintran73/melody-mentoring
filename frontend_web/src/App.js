@@ -11,7 +11,6 @@ import Notifications from './pages/Notifications';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Create from './pages/Create';
-import Profile from './pages/Profile';
 import History from './pages/History';
 import Playlist from './pages/Playlist';
 import Verification from './pages/Verification';
@@ -82,6 +81,7 @@ const App = () => {
           <Route path='/settings' element={<Settings />} />
           <Route path='/playlist' element={<Playlist />} />
           <Route path='/track-summary' element={<TrackSummary />} />
+          <Route path='/experiment/:songId' element={<Experiment />} />
         </Routes>
       </BrowserRouter>
     </TokenContext.Provider>
