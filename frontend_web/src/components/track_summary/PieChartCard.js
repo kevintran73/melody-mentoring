@@ -29,10 +29,10 @@ const PieChartCard = ({ val1, name1, val2, name2, val3, name3 }) => {
         <Gauge 
           value={val1} 
           sx={{
-            minWidth: '300px',
+            minWidth: '200px',
             // width: '70%',
             height: '100%',
-            fontSize: 100,
+            fontSize: 60,
           }}
         />
       </Box>

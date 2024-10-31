@@ -40,7 +40,7 @@ const StyledSearchBar = styled(TextField)({
 
 const TopContainer = styled(Card)({
   // backgroundColor: 'red',
-  height: '22vw',
+  height: '24vw',
   width: '60%',
   display: 'flex',
   alignItems: 'center',
@@ -49,6 +49,9 @@ const TopContainer = styled(Card)({
   padding: '20px',
   position: 'relative',
   left: '20%',
+  margin: '20px 0px'
+  // top: '20%',
+  // margin: '20px',
 });
 
 const PlaylistTitle = ({ title, navPlaylist }) => (
@@ -123,11 +126,14 @@ const Catalogue = () => {
   return (
     <Box backgroundColor='#f9f9f9'>
       <NavBar></NavBar>
-      <Box margin='30px 10px'>
-        <StyledSearchBar id='outlined-basic' label='Search' variant='outlined' size='small' />
+      <Box margin='10px'>
+      <StyledSearchBar id='outlined-basic' label='Search' variant='outlined' size='small' />
         <StyledButton variant='contained' endIcon={<FilterAltIcon />}>
           Filter
         </StyledButton>
+        </Box>
+      <Box margin='60px 20px'>
+
 
         {/* Welcome container */}
         <TopContainer>

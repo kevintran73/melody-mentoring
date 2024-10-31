@@ -121,7 +121,7 @@ const TrackSummary = () => {
             <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
               Rhythm
             </Typography>
-            <StyledAdviceBox sx={{ width: '40vw' }}>
+            <StyledAdviceBox sx={{ width: '50vw' }}>
             {summary ? (
               <>
                 <BarChartCard val1={summary['rhythm']} />
@@ -138,7 +138,7 @@ const TrackSummary = () => {
             <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
               Pitch
             </Typography>
-            <StyledAdviceBox sx={{ width: '40vw' }}>
+            <StyledAdviceBox sx={{ width: '50vw' }}>
               {summary ? (
               <>
                 <PieChartCard
@@ -158,7 +158,7 @@ const TrackSummary = () => {
             <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
               Intonation
             </Typography>
-            <StyledAdviceBox sx={{ width: '40vw' }}>
+            <StyledAdviceBox sx={{ width: '50vw' }}>
               {summary ? (
                 <>
                   <PieChartCard
@@ -179,7 +179,7 @@ const TrackSummary = () => {
             <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
               Dynamics
             </Typography>
-            <StyledAdviceBox sx={{ width: '40vw' }}>
+            <StyledAdviceBox sx={{ width: '50vw' }}>
               {summary ? (
                 <>
                   <PieChartCard
