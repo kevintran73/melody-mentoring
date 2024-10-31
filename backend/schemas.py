@@ -3,7 +3,7 @@ from enum import Enum
 
 class Role(str, Enum):
     STUDENT = 'student'
-    LECTURER = 'lecturer'
+    TUTOR = 'tutor'
 
 class S3PresignedURL(BaseModel):
     url: str # "https://bucketName.s3.amazonaws.com/sheetfilekey.pdf?AWSAccessKeyId=notTheNormalAccessKey&Signature=INSERTSIGNATURE&Expires=1728212979"
