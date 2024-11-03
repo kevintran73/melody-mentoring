@@ -55,8 +55,6 @@ const BarChartCard = ({ val1 }) => {
         marginLeft='10px'
       >
         <Typography>Rushing</Typography>
-        {/* <Divider variant="middle" height='100%' width='20px' />
-         */}
         <Typography>Dragging</Typography>
       </Box>
       <BarChart
@@ -75,7 +73,6 @@ const BarChartCard = ({ val1 }) => {
         ]}
         yAxis={[{ min:-1, max: 1 }]}
         bottomAxis={null}
-        // leftAxis={null}
         leftAxis={{ disableTicks: true }}
       />
       </Box>

@@ -19,7 +19,6 @@ const StyledCard = styled(Card)(() => ({
   alignContent:'space-evenly',
   textAlign:'center',
   backgroundColor:'white',
-  // gap:'10px',
 }));
 
 const SubAdviceCard = ({ details }) => {
@@ -31,7 +30,6 @@ const SubAdviceCard = ({ details }) => {
         flexDirection='column'
         justifyContent='center'
         height='100%'
-        // gap='10px'
       >
         <Typography fontSize='1.05rem' component='div'>{details}</Typography>
       </Box>

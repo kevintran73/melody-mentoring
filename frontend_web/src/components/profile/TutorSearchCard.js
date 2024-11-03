@@ -34,23 +34,14 @@ const StyledButton = styled(Button)({
   marginTop: '10px',
   '&:hover': {
     backgroundColor: 'blue',
-    // borderColor: '#0062cc',
-    // boxShadow: 'none',
   },
 });
 
 const TutorSearchCard = () => {
-  // const navigate = useNavigate();
-
-  // const navSettings = () => {
-  //   return navigate('/settings');
-  // };
-
   return (
     <StyledCard variant='outlined'>
       <Box>
         <Typography fontSize='1.5rem' component='div'>Want to add more tutors?</Typography>
-        {/* <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Test</Typography> */}
       </Box>
       <StyledButton> Find a Tutor </StyledButton>
     </StyledCard>

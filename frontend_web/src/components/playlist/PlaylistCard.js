@@ -43,16 +43,8 @@ const PlaylistCard = ({ title, artist, difficulty }) => {
               <Typography variant='body2' gutterBottom>
                 {artist} • {difficulty}
               </Typography>
-              {/* <Typography variant='body2' sx={{ color: 'text.secondary' }}>
-                ID: 1030114
-              </Typography> */}
             </Grid>
           </Grid>
-          {/* <Grid item>
-            <Typography variant='subtitle1' component='div'>
-              $19.00
-            </Typography>
-          </Grid> */}
         </Grid>
       </Grid>
     </Paper>

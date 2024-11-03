@@ -24,13 +24,11 @@ const PieChartCard = ({ val1, name1, val2, name2, val3, name3 }) => {
         flexDirection='column'
         alignItems='center'
         justifyContent='center'
-        // marginBottom='200px'
       >
         <Gauge 
           value={val1} 
           sx={{
             minWidth: '200px',
-            // width: '70%',
             height: '100%',
             fontSize: 60,
           }}

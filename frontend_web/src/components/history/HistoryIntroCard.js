@@ -25,7 +25,6 @@ const HistoryIntroCard = ({ title }) => {
     <StyledCard variant='outlined'>
       <Typography variant='h3' component='div'>{title}</Typography>
       <Typography variant='h5'>You've been doing consistently well over the past few days!</Typography>
-      {/* <Typography fontSize='0.8rem' sx={{ color: 'text.secondary' }}>Test2</Typography> */}
     </StyledCard>
   );
 };

@@ -42,7 +42,6 @@ const TutorInfoCard = ({ img, name, details }) => {
                 {name}
               </Typography>
               <Typography variant='body2' gutterBottom>
-                {/* {artist} • {difficulty} */}
                 {details}
               </Typography>
             </Grid>

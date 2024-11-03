@@ -26,9 +26,6 @@ const History = () => {
     <Box backgroundColor='#E3E3E3'>
       <NavBar></NavBar>
       <StyledTopContainer>
-        {/* <Box flex='5' height='100%'>
-          <GraphCard />
-        </Box> */}
         <Box flex='2' height='100%'>
           <HistoryIntroCard title='Fantastic work!' />
         </Box>
@@ -37,7 +34,6 @@ const History = () => {
       <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column' marginX='10vw'>
         <TextField 
           sx={{
-            // marginX: '10vw',
             width: '100%',
             marginBottom: '30px',
             backgroundColor: 'white',

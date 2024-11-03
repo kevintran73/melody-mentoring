@@ -11,11 +11,8 @@ import { styled } from '@mui/system';
 
 const StyledCard = styled(Card)(() => ({
   width: '100%',
-  // minWidth: '150px',
   height: '100%', 
-  // minHeight: '220px',
   borderWidth: '2px',
-  // boxShadow: '5px 10px grey',
   display: 'flex',
   flexDirection: 'column',
   textAlign: 'center',
@@ -37,14 +34,11 @@ const StyledButton = styled(Button)({
   marginTop: '10px',
   '&:hover': {
     backgroundColor: 'blue',
-    // borderColor: '#0062cc',
-    // boxShadow: 'none',
   },
 });
 
 const SongCard = () => {
   const [userData, setUserData] = useState(null);
-  // const navigate = useNavigate();
   const token = useContext(TokenContext);
 
   useEffect(() => {
@@ -67,15 +61,6 @@ const SongCard = () => {
     fetchUserData();
   }, [token]);
 
-  // const navPlaylist = () => {
-  //   return navigate('/playlist');
-  // };
-
-  // if (!userData) {
-  //   return null;
-  // }
-  // const instrument = userData['instrument'].charAt(0).toUpperCase() + userData['instrument'].slice(1);
-
   return (
     <StyledCard variant='outlined'>
       <Box
@@ -84,7 +69,6 @@ const SongCard = () => {
         alt='test'
         sx={{
           width: '100%',
-          // height: '100%',
           objectFit: 'cover',
         }}
       />

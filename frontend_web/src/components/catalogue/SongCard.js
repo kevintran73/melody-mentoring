@@ -45,8 +45,6 @@ const SongCard = ({ title, thumbnail, composer, difficulty, privacy, genreTags, 
         <Typography fontSize='0.8rem' sx={{ color: 'text.secondary' }}>
           Difficulty: {difficulty}
         </Typography>
-        {/* <Typography fontSize='0.8rem' sx={{ color: 'text.secondary' }}>Privacy: {privacy ? 'Private' : 'Public'}</Typography> */}
-        {/* <Typography fontSize='0.8rem' sx={{ color: 'text.secondary' }}>Genre Tags: {createTagStrings(genreTags)}</Typography> */}
       </Box>
     </StyledCard>
   );

@@ -44,7 +44,7 @@ const TrackSummary = () => {
   const trackAttemptId = params.trackAttemptId;
   const [summaryParagraphs, setSummaryParagraphs] = useState(null);
   const [summary, setSummary] = useState(null);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const token = useContext(TokenContext);
 
@@ -90,9 +90,6 @@ const TrackSummary = () => {
       <NavBar />
       <StyledMainSummary>
         <Box flex='4' marginRight='30px'>
-          {/* <Typography align='left' variant='h2' margin='10px' marginLeft='20px'>
-            Track Attempt Summary
-          </Typography> */}
           <Box boxShadow={4} height='100%' textAlign='center' display='flex' justifyContent='center' alignItems='center' borderRadius='16px'>
             <Typography fontSize='2rem' margin='20px 30px'>
               {summaryParagraphs ? summaryParagraphs[0] : 'Loading'}

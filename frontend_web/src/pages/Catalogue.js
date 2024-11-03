@@ -39,7 +39,6 @@ const StyledSearchBar = styled(TextField)({
 });
 
 const TopContainer = styled(Card)({
-  // backgroundColor: 'red',
   height: '24vw',
   width: '60%',
   display: 'flex',
@@ -50,8 +49,6 @@ const TopContainer = styled(Card)({
   position: 'relative',
   left: '20%',
   margin: '20px 0px'
-  // top: '20%',
-  // margin: '20px',
 });
 
 const PlaylistTitle = ({ title, navPlaylist }) => (
