@@ -106,20 +106,14 @@ def sign_up():
         username = data['username']
         email = data['email']
         password = data['password']
-        role = data.get('role', 'student')  # Default to 'student' if 'role' is missing
         response = client.sign_up(
             ClientId=os.getenv('AWS_COGNITO_CLIENTID'),
             Username=username,
             Password=password,
-            role=role
             UserAttributes=[
                 {
                     'Name': 'email',
                     'Value': email
-                },
-                {
-                    'Name': 'role',
-                    'Value': role
                 }
             ]
         )
