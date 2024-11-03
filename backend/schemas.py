@@ -1,4 +1,9 @@
 from pydantic import BaseModel
+from enum import Enum
+
+class Role(str, Enum):
+    STUDENT = 'student'
+    TUTOR = 'tutor'
 
 class S3PresignedURL(BaseModel):
     url: str # "https://bucketName.s3.amazonaws.com/sheetfilekey.pdf?AWSAccessKeyId=notTheNormalAccessKey&Signature=INSERTSIGNATURE&Expires=1728212979"
@@ -25,6 +30,7 @@ class User(BaseModel):
     level: 1
     track_attempts: list[str]   # corresponding trackattemptid, oldest first
     private_songs: list[str]
+    role: Role
 
 class Review(BaseModel):
     pass

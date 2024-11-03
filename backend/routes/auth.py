@@ -96,6 +96,7 @@ def sign_up():
         username: str                 # username of the new user
         email: str                    # email of the new user
         password: str                 # password of the new user
+        role: str                     # either 'student' or 'lecturer'
     }
 
     Returns basic info on the user aswell as if the sign up was successful
@@ -105,15 +106,21 @@ def sign_up():
         username = data['username']
         email = data['email']
         password = data['password']
+        role = data.get('role', 'student')  # Default to 'student' if 'role' is missing
         response = client.sign_up(
             ClientId=os.getenv('AWS_COGNITO_CLIENTID'),
             Username=username,
             Password=password,
+            role=role
             UserAttributes=[
                 {
                     'Name': 'email',
                     'Value': email
                 },
+                {
+                    'Name': 'role',
+                    'Value': role
+                }
             ]
         )
 
@@ -157,12 +164,14 @@ def confirmSignup():
             Username=username
         )
 
-        email = ''
+        email, role = ''
 
         # Users account is recorded in dynamodb only after it is confirmed
         for attribute in response['UserAttributes']:
             if attribute['Name'] == 'email':
                 email = attribute['Value']
+            if attribute['Name'] == 'role':
+                role = attribute['Value']
 
         users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
 
@@ -170,6 +179,7 @@ def confirmSignup():
             'id': str(uuid.uuid4()),
             'username': username,
             'email': email,
+            'role': role,
             'profile_picture': f'https://{os.getenv("S3_BUCKET_USER_PICTURE")}.s3.amazonaws.com/default-avatar-icon-of-social-media-user-vector.jpg',
             'instrument': '',
             'miniTestsProgress': [],
