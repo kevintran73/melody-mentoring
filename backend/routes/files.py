@@ -190,7 +190,7 @@ def user_creates_private_song():
         }), 500
 
 @files_bp.route('/files/user/new-track-attempt', methods=['POST'])
-# @token_required
+@token_required
 def user_attempts_track():
     '''POST route when a user attempts a track
     Body of request must be in the format:
