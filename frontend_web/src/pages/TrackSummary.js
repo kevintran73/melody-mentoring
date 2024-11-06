@@ -61,7 +61,6 @@ const TrackSummary = () => {
           signal,
         });
         setSummary(response.data);
-        console.log(response.data);
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log('Fetch cancelled:', error.message);

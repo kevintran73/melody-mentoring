@@ -32,8 +32,6 @@ const BarChartCard = ({ val1 }) => {
     val3 = 1 - val4;
   }
 
-  console.log(val4, val2, val3)
-
   return (
     <StyledCard variant='outlined'>
       <Box

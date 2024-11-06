@@ -92,7 +92,6 @@ const Catalogue = () => {
           },
         });
         setUserData(response.data.user);
-        console.log(response.data.user);
       } catch (error) {
         console.error('Error fetching user details:', error);
       }

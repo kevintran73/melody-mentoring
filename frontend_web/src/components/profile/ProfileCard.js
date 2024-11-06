@@ -42,8 +42,6 @@ const SongCard = () => {
   const token = useContext(TokenContext);
 
   useEffect(() => {
-    console.log(token)
-    console.log(token['userId'])
     const userId = token.userId;
     const fetchUserData = async () => {
       try {
