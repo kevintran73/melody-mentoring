@@ -20,14 +20,20 @@ class Song(BaseModel):
     uploaderId: str             # id of the person who uploaded, "None" would be melody mentoring, the default
     composer: str               # name of the composer
 
+class Achievement(BaseModel):
+    name: str 
+    easy_required: int
+    medium_required: int
+    hard_required: int
+    achieved: bool
+
 class User(BaseModel):
     id: str                     # uuid
     username: str
     email: str
     profile_picture: S3PresignedURL
     instrument: str
-    miniTestsProgress: list[str]
-    level: 1
+    achievements: list[Achievement]
     track_attempts: list[str]   # corresponding trackattemptid, oldest first
     private_songs: list[str]
     role: Role

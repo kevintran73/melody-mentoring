@@ -169,6 +169,32 @@ def confirmSignup():
 
         users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
 
+        achievements = [{
+            "name": "bronze", 
+            "easy_required": 3,
+            "medium_required": 0,
+            "hard_required": 0,
+            "achieved": False
+        }, {
+            "name": "silver", 
+            "easy_required": 6,
+            "medium_required": 3,
+            "hard_required": 0,
+            "achieved": False
+        }, {
+            "name": "gold", 
+            "easy_required": 10,
+            "medium_required": 7,
+            "hard_required": 1,
+            "achieved": False
+        }, {
+            "name": "diamond", 
+            "easy_required": 15,
+            "medium_required": 10,
+            "hard_required": 3,
+            "achieved": False
+        }]
+
         user = {
             'id': str(uuid.uuid4()),
             'username': username,
@@ -176,10 +202,9 @@ def confirmSignup():
             'role': role,
             'profile_picture': f'https://{os.getenv("S3_BUCKET_USER_PICTURE")}.s3.amazonaws.com/default-avatar-icon-of-social-media-user-vector.jpg',
             'instrument': '',
-            'miniTestsProgress': [],
+            'achievements': achievements,
             'track_attempts': [],
             'private_songs': [],
-            'level': '1'
         }
 
         users.put_item(Item=user)
