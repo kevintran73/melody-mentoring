@@ -21,6 +21,16 @@ const PageBlock = styled('div')({
   paddingLeft: '2rem',
   paddingRight: '2rem',
   overflowY: 'auto',
+
+  '@media (max-width: 700px)': {
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
+  },
+
+  '@media (max-width: 500px)': {
+    paddingLeft: '0',
+    paddingRight: '0',
+  },
 });
 
 const PageOverlay = styled('div')({
@@ -237,7 +247,7 @@ const Experiment = () => {
       <NavBar isDisabled={countdown !== null && countdown !== -1 && !mediaBlobUrl} />
       {!osmdLoaded && (
         <LoadingOverlay>
-          <CircularProgress size='45vh' />
+          <CircularProgress size='40vh' />
         </LoadingOverlay>
       )}
       {sheetFile !== '' && (
