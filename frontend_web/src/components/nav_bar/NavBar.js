@@ -4,10 +4,10 @@ import { styled } from '@mui/system';
 
 import CatalogueButton from './CatalogueButton';
 import NotificationsButton from './NotificationsButton';
-import SummaryButton from './SummaryButton';
-import SettingsButton from './SettingsButton';
+import ProfileButton from './ProfileButton';
 import CreateButton from './CreateButton';
-import UploadsButton from './UploadsButton';
+import HistoryButton from './HistoryButton';
+import SettingsButton from './SettingsButton';
 
 const StyledHeader = styled('header')(({ isDisabled }) => ({
   display: 'flex',
@@ -47,11 +47,11 @@ const NavBar = ({ isDisabled = false, ...props }) => {
       <MiddleContainer>
         <CreateButton />
         <CatalogueButton />
-        <UploadsButton />
+        <HistoryButton />
       </MiddleContainer>
 
       <RightContainer>
-        <SummaryButton />
+        <ProfileButton />
         <SettingsButton />
       </RightContainer>
     </StyledHeader>

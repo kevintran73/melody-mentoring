@@ -1,20 +1,18 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
+import defaultImg from '../../assets/default-img.png';
 
 import { styled } from '@mui/system';
+import { useNavigate } from 'react-router-dom';
 
 const StyledCard = styled(Card)(() => ({
   width: '150px',
-  // minWidth: '150px',
-  height: '220px', 
-  // minHeight: '220px',
-  borderWidth: '2px',
-  // boxShadow: '5px 10px grey',
+  height: '240px',
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
   padding: '12px',
   paddingBottom: '5px',
   margin: '10px',
@@ -22,30 +20,34 @@ const StyledCard = styled(Card)(() => ({
   cursor: 'pointer',
 }));
 
-const card = (title, img, artist, difficulty) => (
-  <Box>
-    <CardMedia
+const SongCard = ({ title, thumbnail, composer, difficulty, privacy, genreTags, songId }) => {
+  const navigate = useNavigate();
+
+  const navExperiment = () => {
+    return navigate(`/experiment/${songId}`);
+  };
+
+  return (
+    <StyledCard variant='outlined' onClick={navExperiment}>
+      <CardMedia
         component='img'
         height='150'
-        image={img}
+        image={thumbnail ? thumbnail : defaultImg}
         alt='img'
-    />
-    <Box padding='2px'>
-      <Typography fontSize='1rem' component='div'>{title}</Typography>
-      <Typography fontSize='0.9rem' sx={{ color: 'text.secondary' }}>{artist}</Typography>
-      <Typography fontSize='0.8rem' sx={{ color: 'text.secondary' }}>{difficulty}</Typography>
-    </Box>
-  </Box>
-);
-
-const SongCard = ({ title, img, artist, difficulty }) => {
-  // const navigate = useNavigate();
-
-  // const navSettings = () => {
-  //   return navigate('/settings');
-  // };
-
-  return <StyledCard variant='outlined'>{card(title, img, artist, difficulty)}</StyledCard>;
+      />
+      <Box padding='2px' textAlign='center'>
+        <Typography fontSize='1rem' component='div'>
+          {title}
+        </Typography>
+        <Typography fontSize='0.9rem' sx={{ color: 'text.secondary' }}>
+          {composer ? composer : 'Unknown'}
+        </Typography>
+        <Typography fontSize='0.8rem' sx={{ color: 'text.secondary' }}>
+          Difficulty: {difficulty}
+        </Typography>
+      </Box>
+    </StyledCard>
+  );
 };
 
 export default SongCard;

@@ -70,7 +70,6 @@ const LoginSub = () => {
           email: email,
           password: password,
         });
-
         // stores tokens inside variables using TokenContext's login
         const { access_token, id_token, refresh_token, user_id } = response.data;
         login(access_token, id_token, refresh_token, user_id);
