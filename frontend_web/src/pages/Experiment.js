@@ -4,13 +4,11 @@ import { useReactMediaRecorder } from 'react-media-recorder';
 import * as Tone from 'tone';
 import JSZip from 'jszip';
 
-import { Button, styled, Typography, CircularProgress } from '@mui/material';
+import { styled, Typography, CircularProgress, useMediaQuery } from '@mui/material';
 
 import NavBar from '../components/nav_bar/NavBar';
 import OpenSheetMusicDisplay from '../components/experiment/OpenSheetMusicDisplay';
 
-import odeToJoy from '../assets/Ode_to_Joy_Easy.mxl';
-import moonlightSonata from '../assets/Sonate_No._14_Moonlight_3rd_Movement.mxl';
 import ExperimentToolbar from '../components/experiment/ExperimentToolbar';
 import axios from 'axios';
 import TokenContext from '../context/TokenContext';
@@ -28,8 +26,8 @@ const PageBlock = styled('div')({
   },
 
   '@media (max-width: 500px)': {
-    paddingLeft: '0',
-    paddingRight: '0',
+    paddingLeft: '0.5rem',
+    paddingRight: '0.5rem',
   },
 });
 
@@ -171,6 +169,9 @@ const Experiment = () => {
     getSheet();
   }, [accessToken, params, navigate]);
 
+  // Check if mobile resolution for sheet music
+  const isSmallScreen = useMediaQuery('(max-width: 500px)');
+
   // Trigger the countdown for a song beginning
   const initiateCountdown = async () => {
     if (pageBlockRef.current) {
@@ -256,13 +257,24 @@ const Experiment = () => {
             {!experimentStarted && countdown !== 0 && countdown !== null && (
               <CountdownOverlay innerText={countdown} />
             )}
-            <OpenSheetMusicDisplay
-              ref={osmdRef}
-              file={sheetFile}
-              onLoad={onOsmdLoad}
-              onMuteToggle={(b) => setOsmdMuted(b)}
-              onMetroMuteToggle={(b) => setOsmdMetroMuted(b)}
-            />
+            {!isSmallScreen ? (
+              <OpenSheetMusicDisplay
+                ref={osmdRef}
+                file={sheetFile}
+                onLoad={onOsmdLoad}
+                onMuteToggle={(b) => setOsmdMuted(b)}
+                onMetroMuteToggle={(b) => setOsmdMetroMuted(b)}
+              />
+            ) : (
+              <OpenSheetMusicDisplay
+                drawingParams='compacttight'
+                ref={osmdRef}
+                file={sheetFile}
+                onLoad={onOsmdLoad}
+                onMuteToggle={(b) => setOsmdMuted(b)}
+                onMetroMuteToggle={(b) => setOsmdMetroMuted(b)}
+              />
+            )}
           </PageBlock>
 
           <ExperimentToolbar
