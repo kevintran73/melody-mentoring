@@ -45,3 +45,6 @@ class TrackAttempt(BaseModel):
     # videoKey: str               # video s3 key is this object's id in s3->user-experiment-video
     isoUploadTime: str            # time of upload
     reviews: list[Review]
+
+class Recommendations(BaseModel):
+    tutors: list[str]
