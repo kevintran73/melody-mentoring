@@ -37,8 +37,11 @@ class User(BaseModel):
     experimental_upload_audios: list[str]
 
 class Review(BaseModel):
-    pass
-    # TODO
+    id: str
+    lecturer: str                 # user id for lecturer
+    trackAttemptId: str
+    feedback: str                 # A feedback string
+    rating: str                   # A float between 1 and 5 determining closeness to the song
 
 class TrackAttempt(BaseModel):
     id: str
