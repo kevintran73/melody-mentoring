@@ -16,6 +16,8 @@ from groq import Groq
 
 import Levenshtein as lev
 
+from dynamodb_helpers import updateAchievements
+
 load_dotenv()
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -283,6 +285,7 @@ def get_feedback_for_track_attempt(trackAttemptId):
     '''
 
     groqSays = generateGroqResponse(prompt)
+    updateAchievements(trackAttemptId, metrics)
 
     return jsonify({
         'pitch': metrics[0],
