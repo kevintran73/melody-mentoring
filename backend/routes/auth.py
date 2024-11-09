@@ -158,7 +158,8 @@ def confirmSignup():
             Username=username
         )
 
-        email, role = ''
+        email = ''
+        role = ''
 
         # Users account is recorded in dynamodb only after it is confirmed
         for attribute in response['UserAttributes']:
@@ -203,6 +204,9 @@ def confirmSignup():
             'profile_picture': f'https://{os.getenv("S3_BUCKET_USER_PICTURE")}.s3.amazonaws.com/default-avatar-icon-of-social-media-user-vector.jpg',
             'instrument': '',
             'achievements': achievements,
+            'easy_completed': [],
+            'medium_completed': [],
+            'hard_completed': [],
             'track_attempts': [],
             'private_songs': [],
         }

@@ -36,6 +36,9 @@ class User(BaseModel):
     achievements: list[Achievement]
     track_attempts: list[str]   # corresponding trackattemptid, oldest first
     private_songs: list[str]
+    easy_completed: list[str]   # SongIds for completed tracks
+    medium_completed: list[str] # SongIds for completed tracks
+    hard_completed: list[str]   # SongIds for completed tracks
     role: Role
 
 class Review(BaseModel):
