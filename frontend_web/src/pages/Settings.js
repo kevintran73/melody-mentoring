@@ -36,11 +36,11 @@ const StyledButtonGroup = styled(ButtonGroup)({
 });
 
 const StyledButton = styled(Button)({
-  backgroundColor: '#878787',
+  backgroundColor: '#404040',
   color: '#ffffff',
 
   ':hover': {
-    backgroundColor: '#707070',
+    backgroundColor: '#515151',
   },
 
   '@media (max-width: 500px)': {
