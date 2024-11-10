@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import NavBar from '../components/nav_bar/NavBar';
 import Box from '@mui/material/Box';
 import AchievementGrid from '../components/profile/AchievementGrid';
@@ -8,6 +8,8 @@ import TutorSearchCard from '../components/profile/TutorSearchCard';
 import TutorList from '../components/profile/TutorList';
 import Card from '@mui/material/Card';
 import { styled } from '@mui/system';
+import axios from 'axios';
+import TokenContext from '../context/TokenContext';
 
 const StyledContainer = styled(Box)(() => ({
   height: '100vh',
@@ -31,14 +33,53 @@ const StyledCardsContainer = styled(Box)(() => ({
  * Profile page
  */
 const Profile = () => {
+  const [profileInfo, setProfileInfo] = useState([]);
+  // const navigate = useNavigate();
+  const { accessToken, userId } = React.useContext(TokenContext);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/profile/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setProfileInfo(response.data);
+        console.log(response.data)
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+
+    fetchProfile();
+  }, [accessToken]);
+
   return (
     <StyledContainer>
       <NavBar />
-
+      Test
+      <Box
+        component="img"
+        src={profileInfo["profile_picture"]}
+        // alt='test'
+        sx={{
+          width: '100%',
+          objectFit: 'cover',
+        }}
+      />
+      {profileInfo["profile_picture"]}
+      Test
       <StyledCardsContainer>
         {/* Profile Card */}
         <Box flex={1}>
-          <ProfileCard></ProfileCard>
+          <ProfileCard 
+            username={profileInfo["username"]}
+            profilePic={profileInfo["profile_picture"]}
+            email={profileInfo["email"]}
+            instrument={profileInfo["instrument"]}
+            level={profileInfo["level"]}
+          />
         </Box>
 
         {/* Achievements */}

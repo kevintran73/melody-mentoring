@@ -6,6 +6,8 @@ import GraphCard from '../components/history/GraphCard';
 import { TextField, Typography } from '@mui/material';
 import HistoryIntroCard from '../components/history/HistoryIntroCard';
 import { styled } from '@mui/system';
+import axios from 'axios';
+import TokenContext from '../context/TokenContext';
 
 /**
  * Uploads page
@@ -22,6 +24,28 @@ const StyledTopContainer = styled(Box)(() => ({
 }));
 
 const History = () => {
+  const [trackAttempts, setTrackAttempts] = useState([]);
+  // const navigate = useNavigate();
+  const { accessToken, userId } = React.useContext(TokenContext);
+
+  useEffect(() => {
+    const fetchTrackAttempts = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/profile/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setTrackAttempts(response.data.track_attempts);
+        console.log(response.data)
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+
+    fetchTrackAttempts();
+  }, [accessToken]);
+
   return (
     <Box backgroundColor='#E3E3E3'>
       <NavBar></NavBar>

@@ -37,34 +37,13 @@ const StyledButton = styled(Button)({
   },
 });
 
-const SongCard = () => {
-  const [userData, setUserData] = useState(null);
-  const token = useContext(TokenContext);
-
-  useEffect(() => {
-    const userId = token.userId;
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5001/profile/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token['accessToken']}`
-          }
-        });
-        setUserData(response.data);
-      } catch (error) {
-        console.error('Error fetching user details:', error);
-      }
-    };
-
-    fetchUserData();
-  }, [token]);
-
+const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
   return (
     <StyledCard variant='outlined'>
       <Box
         component="img"
-        src={defaultImg}
-        alt='test'
+        image={profilePic ? profilePic : defaultImg}
+        // alt='test'
         sx={{
           width: '100%',
           objectFit: 'cover',
@@ -72,11 +51,15 @@ const SongCard = () => {
       />
       <Box padding='20px'>
         <Typography fontSize='2rem' component='div'>
-          {userData ? userData['username'] : 'N/A'}
+          {username}
         </Typography>
-        <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Date Joined: 10th September 2024</Typography>
-        <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Instruments: {userData ? userData['instrument'] : 'N/A'}</Typography>
-        <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Australian </Typography>
+        {/* <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Date Joined: 10th September 2024</Typography> */}
+        <Typography>{profilePic}</Typography>
+        <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Email: {email}</Typography>
+        <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Instrument: {instrument}</Typography>
+        <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Level: {level}</Typography>
+        <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Role: Student</Typography>
+        {/* <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Australian </Typography> */}
       </Box>
       <StyledButton> Change Profile </StyledButton>
     </StyledCard>
