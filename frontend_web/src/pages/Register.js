@@ -25,14 +25,28 @@ const RegisterForm = styled('form')({
   display: 'flex',
   flexDirection: 'column',
   gap: '40px',
-  paddingTop: '5vh',
-  paddingLeft: '3vw',
-  paddingRight: '3vw',
-  paddingBottom: '5vh',
-  width: '40vw',
-  height: '75vh',
+  padding: '30px 40px',
+  width: 'calc(100vw - 100px)',
+  height: 'calc(100vh - 100px)',
   border: '1px solid #D9D9D9',
   borderRadius: '1rem',
+
+  '@media (max-width: 1000px)': {
+    width: '500px',
+  },
+
+  '@media (max-width: 550px)': {
+    width: '400px',
+  },
+
+  '@media (max-width: 450px)': {
+    width: '320px',
+    padding: '15px 20px',
+  },
+
+  '@media (max-height: 650px)': {
+    gap: '25px',
+  },
 });
 
 const StyledTextField = styled(TextField)({
