@@ -35,7 +35,7 @@ const LeftContainer = styled('div')({
   alignItems: 'center',
   justifyContent: 'center',
 
-  '@media (max-width: 700px)': {
+  '@media (max-width: 750px)': {
     width: '80vw',
   },
 });
@@ -93,7 +93,7 @@ const Login = () => {
   const { accessToken } = React.useContext(TokenContext);
   const navigate = useNavigate();
 
-  const isSmallScreen = useMediaQuery('(max-width: 700px)');
+  const isSmallScreen = useMediaQuery('(max-width: 750px)');
 
   // Navigate to default page if active token
   /*
