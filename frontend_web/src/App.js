@@ -81,7 +81,7 @@ const App = () => {
           <Route path='/history' element={<History />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/settings' element={<Settings />} />
-          <Route path='/playlist' element={<Playlist />} />
+          <Route path='/playlist/:playlistType' element={<Playlist />} />
           <Route path='/track-summary/:trackAttemptId' element={<TrackSummary />} />
           <Route path='/experiment/:songId' element={<Experiment />} />
         </Routes>
