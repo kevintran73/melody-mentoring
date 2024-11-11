@@ -4,6 +4,7 @@ from botocore.exceptions import ClientError
 import os
 from functools import wraps
 import uuid
+from datetime import datetime, timedelta
 
 client = boto3.client('cognito-idp', region_name='ap-southeast-2')
 dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
@@ -158,7 +159,8 @@ def confirmSignup():
             Username=username
         )
 
-        email, role = ''
+        email = ''
+        role = ''
 
         # Users account is recorded in dynamodb only after it is confirmed
         for attribute in response['UserAttributes']:
@@ -169,17 +171,47 @@ def confirmSignup():
 
         users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
 
+        achievements = [{
+            "name": "bronze", 
+            "easy_required": 3,
+            "medium_required": 0,
+            "hard_required": 0,
+            "achieved": False
+        }, {
+            "name": "silver", 
+            "easy_required": 6,
+            "medium_required": 3,
+            "hard_required": 0,
+            "achieved": False
+        }, {
+            "name": "gold", 
+            "easy_required": 10,
+            "medium_required": 7,
+            "hard_required": 1,
+            "achieved": False
+        }, {
+            "name": "diamond", 
+            "easy_required": 15,
+            "medium_required": 10,
+            "hard_required": 3,
+            "achieved": False
+        }]
+
         user = {
             'id': str(uuid.uuid4()),
             'username': username,
             'email': email,
             'role': role,
-            'profile_picture': f'https://{os.getenv("S3_BUCKET_USER_PICTURE")}.s3.amazonaws.com/default-avatar-icon-of-social-media-user-vector.jpg',
+            'profile_picture': 'data:image/jpeg;base64,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',
             'instrument': '',
-            'miniTestsProgress': [],
+            'achievements': achievements,
+            'last_login': datetime.now().isoformat(),
+            'current_streak': 0,
+            'easy_completed': [],
+            'medium_completed': [],
+            'hard_completed': [],
             'track_attempts': [],
             'private_songs': [],
-            'level': '1'
         }
 
         users.put_item(Item=user)
@@ -311,3 +343,50 @@ def logout():
         return jsonify({
             'error': 'Missing required fields (access_token)'
         }), 400
+
+@auth_bp.route('/auth/update-streak', methods=['POST'])
+@token_required
+def update_streak():
+    '''POST route to update the streak if it's been a day since the last login
+    Body must contain the following things:
+    {
+        userId: str                 # userId of the user to update streak for
+    }
+    '''
+    try:
+        data = request.json
+        userId = data['userId']
+
+        users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
+        response = users.get_item(Key={'id': userId})
+
+        if 'Item' not in response:
+            return jsonify({'error': 'User not found'}), 404
+
+        user = response['Item']
+
+        last_login = datetime.fromisoformat(user['last_login']).date()
+
+        now = datetime.now().date()
+       
+        if (now - last_login) == timedelta(days=1):
+            user['current_streak'] += 1
+        elif (now - last_login) == timedelta(days=1):
+            user['current_streak'] = 0
+
+        users.put_item(Item=user)
+        user['last_login'] = now.isoformat()
+        return jsonify({
+                'message': 'Streak updated successfully!',
+                'current_streak': user['current_streak']
+            }), 200
+
+    except KeyError:
+        return jsonify({
+            'error': 'Missing required fields (userId)'
+        }), 400
+
+    except Exception as e:
+        return jsonify({
+            'error': str(e)
+        }), 500
