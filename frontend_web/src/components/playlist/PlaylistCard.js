@@ -20,6 +20,7 @@ const PlaylistCard = ({ title, composer, difficulty, thumbnail, onClick }) => {
       onClick={onClick}
       sx={(theme) => ({
         border: '0.1px solid grey',
+        cursor: 'pointer',
         padding: 1,
         marginY: '10px',
         width: '90%',
@@ -41,7 +42,7 @@ const PlaylistCard = ({ title, composer, difficulty, thumbnail, onClick }) => {
                 {title}
               </Typography>
               <Typography variant='body2' gutterBottom>
-                {composer} • {difficulty}
+                {composer} • Difficulty: {difficulty}
               </Typography>
             </Grid>
           </Grid>
