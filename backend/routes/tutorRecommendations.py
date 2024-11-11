@@ -13,7 +13,7 @@ tutor_recommendationdbp = Blueprint('tutor_recommendation', __name__)
 @tutor_recommendationdbp.route('/tutor-recommendations/<userId>', methods=['GET'])
 @token_required
 def getTutorRecommendations(userId):
-    '''GET route to access the details of a particular user
+    '''GET route to generate tutor recommendations for a specific user
     Route parameters must be of the following format:
     {
         userId: str                 # id of user we need the tutor recommendations for
