@@ -179,6 +179,7 @@ def confirmSignup():
             'miniTestsProgress': [],
             'track_attempts': [],
             'private_songs': [],
+            'favourite_songs': [],
             'level': '1'
         }
 
