@@ -25,6 +25,7 @@ const StyledTopContainer = styled(Box)(() => ({
 
 const History = () => {
   const [trackAttempts, setTrackAttempts] = useState([]);
+  const [songDetails, setSongDetails] = useState([]);
   // const navigate = useNavigate();
   const { accessToken, userId } = React.useContext(TokenContext);
 
@@ -36,11 +37,58 @@ const History = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-        setTrackAttempts(response.data.track_attempts);
-        console.log(response.data)
+        fetchTrackDetails(response.data.track_attempts)
       } catch (error) {
         console.error('Error fetching user details:', error);
       }
+    };
+
+    const fetchTrackDetails = async (attemptIds) => {
+      try {
+        const attemptPromises = attemptIds.map((attemptId) =>
+          axios.get(`http://localhost:5001/track-attempt/${attemptId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        ))
+        const trackResponses = await Promise.allSettled(attemptPromises);
+        const trackDetails = trackResponses.map((response) => response.value.data);
+        setTrackAttempts(trackDetails)
+        fetchSongDetails(trackDetails)
+      } catch (error) {
+        console.error('Error fetching track details:', error);
+      }
+    };
+
+    const fetchSongDetails = async (trackData) => {
+      const allSongDetails = [];
+
+      for (const track of trackData) {
+        try {
+          const response = await axios.get(`http://localhost:5001/catalogue/songs/find/${track['songId']}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          const date = new Date(track.isoUploadTime);
+          const dateTimeFormat = new Intl.DateTimeFormat('en', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          });
+          const updatedDate = dateTimeFormat.format(date)
+
+          const newSongDetail = {
+            ...response.data,
+            date: updatedDate,
+          };
+          allSongDetails.push(newSongDetail);
+        } catch (error) {
+          console.error('Error fetching track details:', error);
+        }
+      }
+      setSongDetails(allSongDetails)
     };
 
     fetchTrackAttempts();
@@ -65,11 +113,17 @@ const History = () => {
           }}
           id='outlined-basic' label='Search' variant='outlined'
         />
-        <HistoryCard title='September' artist='Earth, Wind & Fire' difficulty='Medium' date='11:07PM Sunday 27 October 2024'/>
-        <HistoryCard title='test' artist='test' difficulty='test' date='test'/>
-        <HistoryCard title='test' artist='test' difficulty='test' date='test'/>
-        <HistoryCard title='test' artist='test' difficulty='test' date='test'/>
-        <HistoryCard title='test' artist='test' difficulty='test' date='test'/>
+        {/* <HistoryCard title='September' composer='Earth, Wind & Fire' difficulty='Medium' date='11:07PM Sunday 27 October 2024'/>
+        <HistoryCard title='test' composer='test' difficulty='test' date='test'/> */}
+            {songDetails.map((songDetail, i) => (
+              <HistoryCard
+                title={songDetail['title']}
+                composer={songDetail['composer']}
+                difficulty={songDetail['difficulty']}
+                date={songDetail['date']}
+                thumbnail={songDetail['thumbnail']}
+              />
+            ))}
       </Box>
     </Box>
   );

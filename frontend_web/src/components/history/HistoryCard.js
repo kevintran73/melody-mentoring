@@ -11,6 +11,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const Img = styled('img')({
   margin: '5px',
   width: '100px',
+  height: '100px',
+  objectFit: 'cover',
+  borderRadius: '8px',
 });
 
 const StyledContainer = styled(Box)({
@@ -25,7 +28,7 @@ const StyledContainer = styled(Box)({
   borderRadius: '16px',
 });
 
-const HistoryCard = ({ title, artist, difficulty, date }) => {
+const HistoryCard = ({ title, composer, difficulty, date, thumbnail }) => {
   const navigate = useNavigate();
 
   const navTrackSummary = () => {
@@ -36,7 +39,7 @@ const HistoryCard = ({ title, artist, difficulty, date }) => {
     <StyledContainer onClick={navTrackSummary}>
       <Box display='flex'>
         <Box sx={{ marginRight: '10px' }}>
-          <Img alt='playlist-card' src={defaultImg}/>
+          <Img alt='playlist-card' src={thumbnail ? thumbnail : defaultImg}/>
         </Box>
 
         <Box>
@@ -44,7 +47,7 @@ const HistoryCard = ({ title, artist, difficulty, date }) => {
             {title}
           </Typography>
           <Typography fontSize='1.2rem'>
-            {artist} • {difficulty}
+            {composer} • {difficulty}
           </Typography>
           <Typography fontSize='1.2rem' marginTop='1%'>
             {date}
