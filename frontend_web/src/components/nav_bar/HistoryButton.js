@@ -25,26 +25,26 @@ const IconCaption = styled('p')(({ colour }) => ({
   margin: '0',
 }));
 
-const UploadsButton = () => {
+const HistoryButton = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Change colour of button if on uploads page
+  // Change colour of button if on history page
   let colour = '#B6B6B6';
-  if (location.pathname === '/uploads') {
+  if (location.pathname === '/history') {
     colour = '#FFFFFF';
   }
 
   const navCreate = () => {
-    return navigate('/uploads');
+    return navigate('/history');
   };
 
   return (
     <IconContainer onClick={navCreate}>
       <StyledBook colour={colour} />
-      <IconCaption colour={colour}>Uploads</IconCaption>
+      <IconCaption colour={colour}>History</IconCaption>
     </IconContainer>
   );
 };
 
-export default UploadsButton;
+export default HistoryButton;

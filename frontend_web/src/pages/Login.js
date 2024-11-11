@@ -17,7 +17,6 @@ const StyledContainer = styled('div')({
 
 const ImgContainer = styled('div')({
   width: '40vw',
-  // height: '90vh',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',

@@ -66,14 +66,13 @@ const LoginSub = () => {
       showErrorMessage('Please fill in all fields');
     } else {
       try {
-        const response = await axios.post('http://localhost:5001/login', {
+        const response = await axios.post('http://localhost:5001/auth/login', {
           email: email,
           password: password,
         });
-
         // stores tokens inside variables using TokenContext's login
-        const { access_token, id_token, refresh_token } = response.data;
-        login(access_token, id_token, refresh_token);
+        const { access_token, id_token, refresh_token, user_id } = response.data;
+        login(access_token, id_token, refresh_token, user_id);
 
         navigate('/catalogue'); // redirect to catalogue page
       } catch (err) {

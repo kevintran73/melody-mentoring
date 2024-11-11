@@ -12,21 +12,21 @@ const StyledPerson = styled(PersonIcon)(({ colour }) => ({
   cursor: 'pointer',
 }));
 
-const ActivityButton = () => {
+const ProfileButton = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   // Change colour of button if on activity page
   let colour = '#B6B6B6';
-  if (location.pathname === '/activity') {
+  if (location.pathname === '/profile') {
     colour = '#FFFFFF';
   }
 
-  const navActivity = () => {
-    return navigate('/activity');
+  const navProfile = () => {
+    return navigate('/profile');
   };
 
-  return <StyledPerson colour={colour} onClick={navActivity} />;
+  return <StyledPerson colour={colour} onClick={navProfile} />;
 };
 
-export default ActivityButton;
+export default ProfileButton;

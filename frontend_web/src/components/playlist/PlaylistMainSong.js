@@ -10,10 +10,8 @@ import { styled } from '@mui/system';
 const StyledMainSong = styled(Box)(() => ({
   width: '27vw',
   minWidth: '200px',
-  // height: '25vw', 
   minHeight: '280px',
   borderWidth: '2px',
-  // boxShadow: '5px 10px grey',
   padding: '10px',
   marginTop: '85px',
 }));
@@ -29,8 +27,6 @@ const StyledButton = styled(Button)({
   marginTop: '10px',
   '&:hover': {
     backgroundColor: 'blue',
-    // borderColor: '#0062cc',
-    // boxShadow: 'none',
   },
 });
 

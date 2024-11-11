@@ -16,7 +16,6 @@ auth_bp = Blueprint('auth', __name__)
 def validate_token_helper(token):
     try:
         response = client.get_user(AccessToken=token)
-        print(response)
         return response
     except ClientError as e:
         return None
@@ -28,7 +27,6 @@ def token_required(f):
         auth_header = request.headers.get('Authorization', None)
         if not auth_header:
             return jsonify({'error': 'Missing Authorization header'}), 401
-
         token = auth_header.split(" ")[1]
         user = validate_token_helper(token)
 
@@ -113,15 +111,10 @@ def sign_up():
             ClientId=os.getenv('AWS_COGNITO_CLIENTID'),
             Username=username,
             Password=password,
-            role=role
             UserAttributes=[
                 {
                     'Name': 'email',
                     'Value': email
-                },
-                {
-                    'Name': 'role',
-                    'Value': role
                 }
             ]
         )
@@ -185,8 +178,8 @@ def confirmSignup():
             'profile_picture': f'https://{os.getenv("S3_BUCKET_USER_PICTURE")}.s3.amazonaws.com/default-avatar-icon-of-social-media-user-vector.jpg',
             'instrument': '',
             'miniTestsProgress': [],
-            'trackAttempts': [],
-            'privateSongs': [],
+            'track_attempts': [],
+            'private_songs': [],
             'level': '1'
         }
 
