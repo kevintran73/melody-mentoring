@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import NavBar from '../components/nav_bar/NavBar';
+import { CircularProgress } from '@mui/material';
 import Box from '@mui/material/Box';
 import HistoryCard from '../components/history/HistoryCard';
 import GraphCard from '../components/history/GraphCard';
@@ -10,7 +11,7 @@ import axios from 'axios';
 import TokenContext from '../context/TokenContext';
 
 /**
- * Uploads page
+ * History page
  */
 
 const StyledTopContainer = styled(Box)(() => ({
@@ -23,10 +24,32 @@ const StyledTopContainer = styled(Box)(() => ({
   gap: '1vw',
 }));
 
+const StyledSearchBar = styled(TextField)({
+  marginBottom: '10px',
+  width: '90%',
+  width: '100%',
+  marginBottom: '30px',
+  backgroundColor: 'white',
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+});
+
+const LoadingOverlayMain = styled(Box)({
+  // position: 'fixed',
+  // top: 0,
+  // left: 0,
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+  zIndex: 1000,
+});
+
+
 const History = () => {
   const [trackAttempts, setTrackAttempts] = useState([]);
   const [songDetails, setSongDetails] = useState([]);
-  // const navigate = useNavigate();
   const { accessToken, userId } = React.useContext(TokenContext);
 
   useEffect(() => {
@@ -72,27 +95,36 @@ const History = () => {
             },
           });
           const date = new Date(track.isoUploadTime);
-          const dateTimeFormat = new Intl.DateTimeFormat('en', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          });
-          const updatedDate = dateTimeFormat.format(date)
 
           const newSongDetail = {
             ...response.data,
-            date: updatedDate,
+            date: date,
+            trackAttemptId: track['id'],
           };
+          console.log(newSongDetail)
           allSongDetails.push(newSongDetail);
         } catch (error) {
           console.error('Error fetching track details:', error);
         }
       }
+      allSongDetails.sort((a, b) => b.date - a.date);
       setSongDetails(allSongDetails)
     };
 
     fetchTrackAttempts();
-  }, [accessToken]);
+  }, []);
+
+  //Allows for filtering based on search input
+  const [searchInput, setSearchInput] = useState('');
+
+  const handleSearchChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+
+  const filteredPlaylist = songDetails.filter(song => 
+    (song.title.toLowerCase().includes(searchInput.toLowerCase()) ||
+    song.composer.toLowerCase().includes(searchInput.toLowerCase()))
+  );
 
   return (
     <Box backgroundColor='#E3E3E3'>
@@ -104,26 +136,22 @@ const History = () => {
       </StyledTopContainer>
       
       <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column' marginX='10vw'>
-        <TextField 
-          sx={{
-            width: '100%',
-            marginBottom: '30px',
-            backgroundColor: 'white',
-            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-          }}
-          id='outlined-basic' label='Search' variant='outlined'
-        />
-        {/* <HistoryCard title='September' composer='Earth, Wind & Fire' difficulty='Medium' date='11:07PM Sunday 27 October 2024'/>
-        <HistoryCard title='test' composer='test' difficulty='test' date='test'/> */}
-            {songDetails.map((songDetail, i) => (
-              <HistoryCard
-                title={songDetail['title']}
-                composer={songDetail['composer']}
-                difficulty={songDetail['difficulty']}
-                date={songDetail['date']}
-                thumbnail={songDetail['thumbnail']}
-              />
-            ))}
+        <StyledSearchBar id='outlined-basic' label='Search' variant='outlined' onChange={handleSearchChange} value={searchInput} />
+        {filteredPlaylist.map((songDetail, i) => (
+          <HistoryCard
+            key={i}
+            title={songDetail['title']}
+            composer={songDetail['composer']}
+            difficulty={songDetail['difficulty']}
+            date={new Intl.DateTimeFormat('en', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            }).format(songDetail.date)}
+            thumbnail={songDetail['thumbnail']}
+            trackAttemptId={songDetail['trackAttemptId']}
+          />
+        ))}
       </Box>
     </Box>
   );

@@ -58,8 +58,8 @@ const Profile = () => {
   return (
     <StyledContainer>
       <NavBar />
-      Test
-      <Box
+      {/* Test */}
+      {/* <Box
         component="img"
         src={profileInfo["profile_picture"]}
         // alt='test'
@@ -67,9 +67,9 @@ const Profile = () => {
           width: '100%',
           objectFit: 'cover',
         }}
-      />
-      {profileInfo["profile_picture"]}
-      Test
+      /> */}
+      {/* {profileInfo["profile_picture"]} */}
+      {/* Test */}
       <StyledCardsContainer>
         {/* Profile Card */}
         <Box flex={1}>

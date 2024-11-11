@@ -42,7 +42,7 @@ const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
     <StyledCard variant='outlined'>
       <Box
         component="img"
-        image={profilePic ? profilePic : defaultImg}
+        src={profilePic ? profilePic : defaultImg}
         // alt='test'
         sx={{
           width: '100%',
@@ -54,7 +54,6 @@ const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
           {username}
         </Typography>
         {/* <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Date Joined: 10th September 2024</Typography> */}
-        <Typography>{profilePic}</Typography>
         <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Email: {email}</Typography>
         <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Instrument: {instrument}</Typography>
         <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Level: {level}</Typography>

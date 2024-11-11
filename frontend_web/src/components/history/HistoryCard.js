@@ -28,11 +28,11 @@ const StyledContainer = styled(Box)({
   borderRadius: '16px',
 });
 
-const HistoryCard = ({ title, composer, difficulty, date, thumbnail }) => {
+const HistoryCard = ({ title, composer, difficulty, date, thumbnail, trackAttemptId }) => {
   const navigate = useNavigate();
 
   const navTrackSummary = () => {
-    return navigate('/track-summary/i');
+    return navigate(`/track-summary/${trackAttemptId}`);
   };
 
   return (

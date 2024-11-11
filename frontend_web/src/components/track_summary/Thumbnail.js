@@ -10,7 +10,7 @@ const Img = styled('img')({
   width: '200px',
 });
 
-const Thumbnail = ({ title, artist, difficulty, date }) => {
+const Thumbnail = ({ title, thumbnail, composer, difficulty, date }) => {
   return (
     <Card
       sx={{
@@ -32,13 +32,13 @@ const Thumbnail = ({ title, artist, difficulty, date }) => {
             alignItems:'center',
           }}
         >
-          <Img alt='playlist-card' src={defaultImg} />
+          <Img alt='playlist-card' src={thumbnail ? thumbnail : defaultImg} />
 
           <Typography fontSize='1.8rem' component='div'>
             {title}
           </Typography>
           <Typography fontSize='1.2rem'>
-            {artist} • {difficulty}
+            {composer} • {difficulty}
           </Typography>
           <Typography fontSize='1.2rem'>
             {date}
