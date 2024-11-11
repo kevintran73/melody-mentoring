@@ -16,7 +16,7 @@ from groq import Groq
 
 import Levenshtein as lev
 
-from dynamodb_helpers import updateAchievements
+from dynamodb_helpers import updateAchievements, getTrackAttempyDetails
 
 load_dotenv()
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
@@ -294,3 +294,10 @@ def get_feedback_for_track_attempt(trackAttemptId):
         'dynamics': metrics[3],
         'groqSays': groqSays
     }), 200
+
+@trackAttempts_bp.route('/track-attempt/<trackAttemptId>', methods=['GET'])
+@token_required
+def get_details_for_track_attempt(trackAttemptId):
+    details = getTrackAttempyDetails(trackAttemptId)
+
+    return jsonify(details), 200
