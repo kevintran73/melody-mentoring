@@ -63,12 +63,12 @@ def getReview(trackAttemptId):
 
     try:
         reviews = dynamodb.Table(os.getenv('DYNAMODB_TABLE_REVIEWS'))
-        response = reviews.get_item(Key={'trackAttemptId': trackAttemptId})
+        response = reviews_table.query(
+            KeyConditionExpression=Key('trackAttemptId').eq(trackAttemptId)
+        )
 
-        if 'Item' not in response:
-            return jsonify({'error': 'Review not found'}), 404
-
-        review_data = response['Item']
+        if 'Items' not in response or not response['Items']:
+            return jsonify({'error': 'Reviews not found'}), 404
 
         return jsonify(review_data), 200
 
