@@ -20,7 +20,6 @@ def getUserDetails(userId):
     }
 
     Gets the details of the user from dynamodb
-    Makes sure that the details are being retrieved from the actual user
     '''
     try:
         users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
@@ -47,34 +46,26 @@ def updateProfilePicture():
     Body must be of the following format:
     {
         userId: str                 # id of user whose profile picture we want to update
-        file: (IMAGE FILE TYPE)     # file of the new profile picture
+        picture: str                # base64 url for the image
     }
 
     Updates the users profile picture
     '''
     try:
-        data = request.form
+        data = request.json
         userId = data['userId']
-        file = request.files['file']
-
-        s3.upload_fileobj(
-            file,
-            os.getenv('S3_BUCKET_USER_PICTURE'),
-            f'profile-pictures/{userId}',
-        )
-
-        file_url = f"https://{os.getenv('S3_BUCKET_USER_PICTURE')}.s3.amazonaws.com/profile-pictures/{userId}"
+        picture = data['picture']
 
         users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
         users.update_item(
             Key={'id': userId},
             UpdateExpression='SET profile_picture = :url',
-            ExpressionAttributeValues={':url': file_url}
+            ExpressionAttributeValues={':url': picture}
         )
 
         return jsonify({
             'message': 'Profile picture updated successfully!',
-            'profile_picture_url': file_url
+            'profile_picture_url': picture
         }), 200
 
     except ClientError as e:
