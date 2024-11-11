@@ -58,7 +58,7 @@ const Account = () => {
 
   const handleLogout = async (event) => {
     try {
-      const response = axios.post('http://localhost:5001/logout', {
+      const response = axios.post('http://localhost:5001/auth/logout', {
         access_token: accessToken,
       });
 

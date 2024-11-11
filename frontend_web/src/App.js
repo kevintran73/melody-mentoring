@@ -15,6 +15,7 @@ import Uploads from './pages/Uploads';
 import Playlist from './pages/Playlist';
 import Verification from './pages/Verification';
 import Experiment from './pages/Experiment';
+import Review from './pages/Review';
 
 const App = () => {
   let lsAccessToken = null;
@@ -41,16 +42,24 @@ const App = () => {
   }
   const [userId, setUserId] = React.useState(lsUserId);
 
+  let lsRole = null;
+  if (localStorage.getItem('role') !== 'null') {
+    lsRole = localStorage.getItem('role');
+  }
+  const [role, setRole] = React.useState(lsRole);
+
   // at login, set and store tokens
-  const login = (accessToken, idToken, refreshToken, userId) => {
+  const login = (accessToken, idToken, refreshToken, userId, role) => {
     setAccessToken(accessToken);
     setIdToken(idToken);
     setRefreshToken(refreshToken);
     setUserId(userId);
+    setRole(role)
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('idToken', idToken);
     localStorage.setItem('refreshToken', refreshToken);
     localStorage.setItem('userId', userId);
+    localStorage.setItem('role', role);
   };
 
   // at logout, set all tokens to null
@@ -66,7 +75,7 @@ const App = () => {
   };
 
   return (
-    <TokenContext.Provider value={{ accessToken, idToken, refreshToken, userId, login, logout }}>
+    <TokenContext.Provider value={{ accessToken, idToken, refreshToken, userId, role, login, logout }}>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Navigate to='/login' />} />
@@ -82,6 +91,7 @@ const App = () => {
           <Route path='/settings' element={<Settings />} />
           <Route path='/playlist' element={<Playlist />} />
           <Route path='/experiment/:songId' element={<Experiment />} />
+          <Route path='/review/:trackId' element={<Review />} />
         </Routes>
       </BrowserRouter>
     </TokenContext.Provider>

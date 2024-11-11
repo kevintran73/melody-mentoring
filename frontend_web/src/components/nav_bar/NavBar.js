@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { styled } from '@mui/system';
 
@@ -8,6 +8,10 @@ import SummaryButton from './SummaryButton';
 import SettingsButton from './SettingsButton';
 import CreateButton from './CreateButton';
 import UploadsButton from './UploadsButton';
+import StudentsButton from './StudentButton';
+import TokenContext from '../../context/TokenContext';
+import axios from 'axios';
+import { showErrorMessage } from '../../helpers';
 
 const StyledHeader = styled('header')(({ isDisabled }) => ({
   display: 'flex',
@@ -40,18 +44,30 @@ const RightContainer = styled('div')({
 });
 
 const NavBar = ({ isDisabled = false, ...props }) => {
+
+  const { role } = React.useContext(TokenContext);
+
+
   return (
     <StyledHeader isDisabled={isDisabled} {...props}>
       <NotificationsButton />
 
       <MiddleContainer>
         <CreateButton />
-        <CatalogueButton />
-        <UploadsButton />
+        {role === 'student' && <>
+          <CatalogueButton />
+          <UploadsButton />
+        </>}
+        {role === 'lecturer' && <>
+          <StudentsButton />
+        </>}
+
       </MiddleContainer>
 
       <RightContainer>
+      {role === 'student' && <>
         <SummaryButton />
+      </>}
         <SettingsButton />
       </RightContainer>
     </StyledHeader>

@@ -53,12 +53,16 @@ const Register = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [username, setUsername] = React.useState('');
+  const [isChecked, setIsChecked] = useState(false);
+
   const navigate = useNavigate();
 
   // Handles the signup
   const register = async (event) => {
     // Prevent page from refreshing
     event.preventDefault();
+
+    const role = isChecked ? 'lecturer' : 'student'
 
     // check all fields are filled
     if (username === '' || email === '' || password === '') {
@@ -69,9 +73,10 @@ const Register = () => {
           username: username,
           email: email,
           password: password,
+          role: role,
         });
 
-        navigate('/verification', { state: { username: username } }); // if signup is succesful, redirct to email verification page
+        navigate('/verification', { state: { username: username, role: role } }); // if signup is succesful, redirct to email verification page
       } catch (err) {
         showErrorMessage(err.response.data.error);
       }
@@ -113,6 +118,16 @@ const Register = () => {
           id='register-password'
           required
         />
+       
+        <div>
+          <label>Are you a tutor? </label>
+          <input 
+            type='checkbox' 
+            checked={isChecked}
+            onChange={(e) => setIsChecked(e.target.checked)}
+          />
+        </div>
+
         <StyledButton variant='contained' type='submit' id='register-go'>
           Sign up
         </StyledButton>

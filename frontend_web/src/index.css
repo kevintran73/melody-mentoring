@@ -15,3 +15,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.slick-slide {
+  padding: 0 10px; /* Adds a gap between each slide */
+}
+.slick-list > .slick-track  {
+  margin-left: 0;
+}
