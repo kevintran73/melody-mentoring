@@ -26,10 +26,14 @@ const RegisterForm = styled('form')({
   flexDirection: 'column',
   gap: '40px',
   padding: '30px 40px',
-  width: 'calc(100vw - 100px)',
+  width: 'calc(100vw - 1000px)',
   height: 'calc(100vh - 100px)',
   border: '1px solid #D9D9D9',
   borderRadius: '1rem',
+
+  '@media (max-width: 1500px)': {
+    width: '600px',
+  },
 
   '@media (max-width: 1000px)': {
     width: '500px',
