@@ -62,7 +62,7 @@ const Register = () => {
     // Prevent page from refreshing
     event.preventDefault();
 
-    const role = isChecked ? 'lecturer' : 'student'
+    const role = isChecked ? 'tutor' : 'student'
 
     // check all fields are filled
     if (username === '' || email === '' || password === '') {
