@@ -27,9 +27,14 @@ def get_presigned_url_track_sheet(songId):
     try:
         url = urlFromBucketObj(os.getenv('S3_BUCKET_TRACK_SHEET'), songId)
 
-        return jsonify({
-            'url': url
-        }), 200
+        if url:
+            return jsonify({
+                'url': url
+            }), 200
+        else:
+            return jsonify({
+                'error': 'song not found'
+            }), 404
 
     except Exception as e:
         return jsonify({
@@ -48,15 +53,16 @@ def get_presigned_url_user_experiment_audio(trackAttemptId):
     Gets the url for the audio of a users attempt to play a song
     '''
     try:
-        trackAttemptDetails = getTrackAttempyDetails(trackAttemptId)
-        userId = trackAttemptDetails['userId']
-        songId = trackAttemptDetails['songId']
+        url = urlFromBucketObj(os.getenv('S3_BUCKET_USER_AUDIO'), trackAttemptId)
 
-        url = urlFromBucketObj(os.getenv('S3_BUCKET_USER_AUDIO'), f'{userId}/{songId}/{trackAttemptId}')
-
-        return jsonify({
-            'url': url
-        }), 200
+        if url:
+            return jsonify({
+                'url': url
+            }), 200
+        else:
+            return jsonify({
+                'error': 'track attempt not found'
+            }), 404
 
     except Exception as e:
         return jsonify({
@@ -75,15 +81,16 @@ def get_presigned_url_user_experiment_video(trackAttemptId):
     Gets the url for the video of a users attempt to play a song
     '''
     try:
-        trackAttemptDetails = getTrackAttempyDetails(trackAttemptId)
-        userId = trackAttemptDetails['userId']
-        songId = trackAttemptDetails['songId']
+        url = urlFromBucketObj(os.getenv('S3_BUCKET_USER_VIDEO'), trackAttemptId)
 
-        url = urlFromBucketObj(os.getenv('S3_BUCKET_USER_VIDEO'), f'{userId}/{songId}/{trackAttemptId}')
-
-        return jsonify({
-            'url': url
-        }), 200
+        if url:
+            return jsonify({
+                'url': url
+            }), 200
+        else:
+            return jsonify({
+                'error': 'track attempt not found'
+            }), 404
 
     except Exception as e:
         return jsonify({
