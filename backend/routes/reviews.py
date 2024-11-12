@@ -4,6 +4,7 @@ from .auth import token_required
 
 review_bp = Blueprint('reviews', __name__)
 client = boto3.client('cognito-idp', region_name='ap-southeast-2')
+dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
 
 @review_bp.route('/review/request', methods=['POST'])
 @token_required

@@ -3,7 +3,7 @@ import boto3
 from .auth import token_required
 
 tutor_bp = Blueprint('tutor', __name__)
-client = boto3.client('cognito-idp', region_name='ap-southeast-2')
+dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
 
 @tutor_bp.route('/tutor/request/<studentId>/<tutorId>', methods=['POST'])
 @token_required
