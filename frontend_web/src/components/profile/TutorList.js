@@ -7,17 +7,28 @@ import defaultImg from '../../assets/default-img.png';
 
 const StyledCard = styled(Card)(() => ({
   width: '100%',
-  height: '100%', 
+  height: '40vh', 
   borderWidth: '2px',
-  padding: '5px 10px',
+  padding: '10px 10px',
+  gap: '7px',
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'scroll',
+  borderRadius: '16px',
 }));
 
 const TutorList = () => {
   return (
-    <Box height='100%'>
+    <Box height='100%' sx={{ overflow: 'scroll' }}>
       <StyledCard>
-        <TutorInfoCard img={defaultImg} name='Tim' details='Testing details'/>
-        <TutorInfoCard img={defaultImg} name='Jim' details='Testing other details'/>
+        <TutorInfoCard img={defaultImg} name='Tim' details='Tutor details'/>
+        <TutorInfoCard img={defaultImg} name='Jim' details='Jims other details'/>
+        <TutorInfoCard img={defaultImg} name='Tim' details='Tutor details'/>
+        <TutorInfoCard img={defaultImg} name='Jim' details='Jims other details'/>
+        <TutorInfoCard img={defaultImg} name='Tim' details='Tutor details'/>
+        <TutorInfoCard img={defaultImg} name='Jim' details='Jims other details'/>
+        <TutorInfoCard img={defaultImg} name='Tim' details='Tutor details'/>
+        <TutorInfoCard img={defaultImg} name='Jim' details='Jims other details'/>
       </StyledCard>
     </Box>
   );
