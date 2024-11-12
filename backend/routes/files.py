@@ -37,29 +37,6 @@ def get_presigned_url_picture(userId):
             'error': str(e)
         }), 500
 
-# Route that will help to request the audio relating to a specic song
-@files_bp.route('/files/audio/<songId>', methods=['GET'])
-@token_required
-def get_presigned_url_track_audio(songId):
-    '''GET route to access the audio of a particular song
-    Route parameters must be of the following format:
-    {
-        songId: str                 # id of the song being accessed
-    }
-
-    Gets the url for the audio of the particular song stored in the s3 bucket
-    '''
-    try:
-        url = urlFromBucketObj(os.getenv('S3_BUCKET_TRACKS'), songId)
-        return jsonify({
-            'url': url
-        }), 200
-
-    except Exception as e:
-        return jsonify({
-            'error': str(e)
-        }), 500
-
 # Route that will help to request the sheet music for a specigic song
 @files_bp.route('/files/sheets/<songId>', methods=['GET'])
 @token_required
