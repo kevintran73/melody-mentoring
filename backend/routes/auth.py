@@ -159,8 +159,7 @@ def confirmSignup():
             Username=username
         )
 
-        email = ''
-        role = ''
+        email, role = '', ''
 
         # Users account is recorded in dynamodb only after it is confirmed
         for attribute in response['UserAttributes']:
