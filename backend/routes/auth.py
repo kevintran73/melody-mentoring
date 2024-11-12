@@ -180,6 +180,10 @@ def confirmSignup():
             'track_attempts': [],
             'private_songs': [],
             'favourite_songs': [],
+            'students': [],
+            'tutors': [],
+            'requests': [],
+            'assigned': [],
             'level': '1'
         }
 

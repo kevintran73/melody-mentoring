@@ -31,11 +31,15 @@ class User(BaseModel):
     track_attempts: list[str]   # corresponding trackattemptid, oldest first
     private_songs: list[str]
     favourite_songs: list[str]
+    students: list[str] # list of students a tutor marks
+    tutors: list[str] # list of tutors
+    requests: list[str] # list of students requesting to become a tutors student
+    assigned: list[str] # list of songs that are assigned to a student
     role: Role
 
 class Review(BaseModel):
     id: str
-    lecturer: str                 # user id for lecturer
+    tutor: str                    # user id for tutor
     trackAttemptId: str
     feedback: str                 # A feedback string
     rating: str                   # A float between 1 and 5 determining closeness to the song
