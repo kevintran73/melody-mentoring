@@ -1,41 +1,60 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import NavBar from '../components/nav_bar/NavBar'
-import { Button, Select, TextField } from '@mui/material'
+import { Button, TextField } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send';
 import { showErrorMessage } from '../helpers';
 import { useParams } from 'react-router-dom';
-
-
-const options = [
-  {value: 'daniel', label: 'Daniel'},
-  {value: 'jennifer', label: 'Jennifer'},
-  {value: 'jerome', label: 'Jerome'},
-];
+import axios from 'axios';
 
 const Review = () => {
-  const [review, setReview] = React.useState('')
+  const [review, setReview] = useState('')
   const { trackAttemptId } = useParams()
-  const [students, setStudents] = React.useState([])
-
+  const [recording, setRecording] = useState()
+ 
   // Fetch the recording from S3 bucket and/or feedback report of the track attempt for the tutor to review 
+  /* 
+  useEffect(() => {
+    const fetchRecording = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/files/user/audio/${trackAttemptId}`, {
+          headers: {
+            Authorization: `Bearer ${token['accessToken']}`,
+          },
+        });
+        setRecording(response.data.url);
+      } catch (error) {
+        console.error('Error fetching recording:', error);
+      }
+    };
 
-  const handleClick = () => {
+     
+    fetchFeedbackReport()
+
+    fetchRecording()
+
+  }, [token]);
+  */
+
+  const handleClick = async () => {
     if (review === '') {
       showErrorMessage('Try again')
     } else {
+      try {
+        alert(review)
+        // call route that posts review 
 
-      // Post the review for track attempt
-
-      alert(review)
+      } catch (error) {
+        console.error(error)
+      } 
     }
   }
+
   return (
     <>
       <NavBar></NavBar>
       <div className='m-10 flex flex-col'>
-        <h1 className='text-3xl font-medium'>Review recording</h1>
+        <h1 className='text-3xl font-medium'>Review Track Attempt</h1>
         <div className='my-8'>Recording & Post song summary</div>
-
     
         <div className='flex flex-col items-start gap-4 my-8'>
           <TextField 

@@ -13,6 +13,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TokenContext from '../context/TokenContext';
 import { Navigate } from 'react-router-dom';
+import ReactSelect from 'react-select';
+
 
 const StyledHeader = styled('h1')({
   fontSize: '2rem',
@@ -74,6 +76,12 @@ const SubmitButton = styled(Button)({
   },
 });
 
+const options = [
+  {value: 'daniel', label: 'Daniel'},
+  {value: 'jennifer', label: 'Jennifer'},
+  {value: 'jerome', label: 'Jerome'},
+];
+
 /**
  * Create experiment page
  */
@@ -86,8 +94,9 @@ const Create = () => {
   const [instrument, setInstrument] = React.useState('');
   const [songFile, setSongFile] = React.useState('');
   const [sheetFile, setSheetFile] = React.useState('');
+  const [selectedOptions, setSelectedOptions] = React.useState([]);
 
-  const { accessToken, userId } = React.useContext(TokenContext);
+  const { accessToken, userId, role } = React.useContext(TokenContext);
   if (accessToken === null) {
     return <Navigate to='/login' />;
   }
@@ -161,11 +170,17 @@ const Create = () => {
     setSongFile('');
   };
 
+  const handleChange = (selected) => {
+    setSelectedOptions(selected || []);
+    // when form is submitted, pass in array[] of student userIds
+  }
+
   return (
     <>
       <NavBar></NavBar>
       <PageBlock>
-        <StyledHeader>Create an experiment</StyledHeader>
+        {role === 'student' && <StyledHeader>Create an experiment</StyledHeader>}
+        {role === 'tutor' && <StyledHeader>Create and Assign Song</StyledHeader>}
         <UploadForm onSubmit={handleSubmit} noValidate>
           <ImgContainer>
             <ImgRight
@@ -223,6 +238,19 @@ const Create = () => {
               value={genreTags}
               onChange={(g) => setGenreTags(g.target.value)}
             />
+
+            
+            {role === 'tutor' && <>
+              <ReactSelect
+              placeholder="Select students..."
+              isMulti
+              options={options}
+              value={selectedOptions}
+              onChange={handleChange}
+              />
+            </>}
+
+
             <InputFileUpload
               innerText='Upload song file (.mp3)'
               id='upload-song-button'

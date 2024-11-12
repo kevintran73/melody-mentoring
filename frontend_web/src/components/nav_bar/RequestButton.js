@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import ClassIcon from '@mui/icons-material/Class';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import { styled } from '@mui/system';
 
 const IconContainer = styled('div')({
@@ -11,7 +11,7 @@ const IconContainer = styled('div')({
   cursor: 'pointer',
 });
 
-const StyledMusic = styled(ClassIcon)(({ colour }) => ({
+const StyledMusic = styled(GroupAddIcon)(({ colour }) => ({
   color: colour,
   width: '32px',
   height: '32px',
@@ -23,22 +23,22 @@ const IconCaption = styled('p')(({ colour }) => ({
   margin: '0',
 }));
 
-const StudentsButton = () => {
+const RequestButton = () => {
   const navigate = useNavigate();
   const location = useLocation();
   // Change colour of button if on dashboard page
   let colour = '#B6B6B6';
-  if (location.pathname === '/dashboard') {
+  if (location.pathname === '/requests') {
     colour = '#FFFFFF';
   }
   const navCatalogue = () => {
-    return navigate('/dashboard');
+    return navigate('/requests');
   };
   return (
     <IconContainer onClick={navCatalogue}>
       <StyledMusic colour={colour} />
-      <IconCaption colour={colour}>Students</IconCaption>
+      <IconCaption colour={colour}>Requests</IconCaption>
     </IconContainer>
   );
 };
-export default StudentsButton;
+export default RequestButton;

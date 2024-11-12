@@ -10,6 +10,7 @@ import HistoryButton from './HistoryButton';
 import SettingsButton from './SettingsButton';
 import StudentsButton from './StudentButton';
 import TokenContext from '../../context/TokenContext';
+import RequestButton from './RequestButton';
 
 const StyledHeader = styled('header')(({ isDisabled }) => ({
   display: 'flex',
@@ -48,15 +49,16 @@ const NavBar = ({ isDisabled = false, ...props }) => {
   return (
     <StyledHeader isDisabled={isDisabled} {...props}>
       <NotificationsButton />
-
+    
       <MiddleContainer>
         <CreateButton />
         {role === 'student' && <>
           <CatalogueButton />
           <HistoryButton />
         </>}
-        {role === 'lecturer' && <>
+        {role === 'tutor' && <>
           <StudentsButton />
+          <RequestButton />
         </>}
       </MiddleContainer>
 

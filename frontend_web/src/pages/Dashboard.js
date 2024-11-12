@@ -63,7 +63,7 @@ const Dashboard = () => {
     <div>
       <NavBar></NavBar>
       <div className='m-10 flex flex-col'>
-      <h1 className='text-3xl font-medium mb-10'>Your Students' Attempts</h1>
+      <h1 className='text-3xl font-medium mb-10'>My Students</h1>
       {students.map((student) => (
         <div className='mb-10'>
           <h1 className='text-2xl font-medium mb-4'>{student.name}'s Attempts</h1>
@@ -84,7 +84,7 @@ const Dashboard = () => {
         </Slider>
         </div>
       ))}
-    </div>
+      </div>
     </div>
   )
 }

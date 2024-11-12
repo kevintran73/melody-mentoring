@@ -18,6 +18,7 @@ import Experiment from './pages/Experiment';
 import Review from './pages/Review';
 import TrackSummary from './pages/TrackSummary';
 import Dashboard from './pages/Dashboard';
+import Request from './pages/Request';
 
 const App = () => {
   let lsAccessToken = null;
@@ -96,6 +97,7 @@ const App = () => {
           <Route path='/experiment/:songId' element={<Experiment />} />
           <Route path='/review/:trackAttemptId' element={<Review />} />
           <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/requests' element={<Request />} />
         </Routes>
       </BrowserRouter>
     </TokenContext.Provider>
