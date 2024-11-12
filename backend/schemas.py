@@ -30,6 +30,7 @@ class User(BaseModel):
     level: 1
     track_attempts: list[str]   # corresponding trackattemptid, oldest first
     private_songs: list[str]
+    favourite_songs: list[str]
     role: Role
 
 class Review(BaseModel):

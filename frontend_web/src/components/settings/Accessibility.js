@@ -20,7 +20,6 @@ const SectionDesc = styled('p')({
   fontSize: '1rem',
   color: '#2b2b2b',
   width: 'auto',
-  whiteSpace: 'nowrap',
 });
 
 const SectionBlock = styled('div')({
@@ -28,6 +27,12 @@ const SectionBlock = styled('div')({
   flexDirection: 'row',
   alignItems: 'center',
   gap: '50px',
+
+  '@media (max-width: 750px)': {
+    alignItems: 'flex-start',
+    flexDirection: 'column',
+    gap: '5px',
+  },
 });
 
 const DividerLine = styled('hr')({

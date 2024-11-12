@@ -21,8 +21,7 @@ const SectionHeader = styled('h2')({
 const SectionDesc = styled('p')({
   fontSize: '1rem',
   color: '#2b2b2b',
-  width: 'auto',
-  whiteSpace: 'nowrap',
+  width: '100%',
 });
 
 const SectionBlock = styled('div')({
@@ -58,7 +57,7 @@ const Account = () => {
 
   const handleLogout = async (event) => {
     try {
-      const response = axios.post('http://localhost:5001/logout', {
+      const response = axios.post('http://localhost:5001/auth/logout', {
         access_token: accessToken,
       });
 
