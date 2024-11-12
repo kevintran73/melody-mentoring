@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify
 import boto3
 import os
+import random
+from typing import List, Dict
 from .auth import token_required
 from botocore.exceptions import ClientError
-from typing import List, Dict
 
 dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
 s3 = boto3.client('s3', region_name='ap-southeast-2')
@@ -50,7 +51,7 @@ def getTutorRecommendations(userId):
 # Helper function to generate recommendations
 def generate_recommendations(student: Dict, tutors: List[Dict]) -> Dict:
     """
-    Generates tutor recommendations for a student based on instrument match, limited to 10 recommendations.
+    Generates tutor recommendations for a student based on instrument match, limited to 10 random recommendations.
 
     Parameters:
         student (dict): The student user data.
@@ -61,10 +62,13 @@ def generate_recommendations(student: Dict, tutors: List[Dict]) -> Dict:
     """
     student_instrument = student.get('instrument')
 
-    # Filter tutors with the same instrument and limit to the first 10 matches
+    # Filter tutors with the same instrument
     matched_tutors = [
         tutor['id'] for tutor in tutors if tutor.get('instrument') == student_instrument
-    ][:10]  # Limit to the first 10 tutors
+    ]
+
+    # Randomly select up to 10 tutors
+    random_tutors = random.sample(matched_tutors, min(10, len(matched_tutors)))
 
     # Return recommendations as a list of matched tutor IDs
-    return {"tutors": matched_tutors}
+    return {"tutors": random_tutors}
