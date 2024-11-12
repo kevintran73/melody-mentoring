@@ -8,14 +8,16 @@ import LoginSub from './pages/LoginSub';
 import Register from './pages/Register';
 import Catalogue from './pages/Catalogue';
 import Notifications from './pages/Notifications';
-import Summary from './pages/Summary';
+import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Create from './pages/Create';
-import Uploads from './pages/Uploads';
+import History from './pages/History';
 import Playlist from './pages/Playlist';
 import Verification from './pages/Verification';
 import Experiment from './pages/Experiment';
 import Review from './pages/Review';
+import TrackSummary from './pages/TrackSummary';
+import Dashboard from './pages/Dashboard';
 
 const App = () => {
   let lsAccessToken = null;
@@ -86,12 +88,14 @@ const App = () => {
           <Route path='/notifications' element={<Notifications />} />
           <Route path='/create' element={<Create />} />
           <Route path='/catalogue' element={<Catalogue />} />
-          <Route path='/uploads' element={<Uploads />} />
-          <Route path='/summary' element={<Summary />} />
+          <Route path='/history' element={<History />} />
+          <Route path='/profile' element={<Profile />} />
           <Route path='/settings' element={<Settings />} />
           <Route path='/playlist' element={<Playlist />} />
+          <Route path='/track-summary/:trackAttemptId' element={<TrackSummary />} />
           <Route path='/experiment/:songId' element={<Experiment />} />
           <Route path='/review/:trackId' element={<Review />} />
+          <Route path='/dashboard' element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </TokenContext.Provider>

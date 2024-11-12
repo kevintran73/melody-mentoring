@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import PeopleIcon from '@mui/icons-material/People';
+
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+
 import { styled } from '@mui/system';
 
 const IconContainer = styled('div')({
@@ -11,7 +13,7 @@ const IconContainer = styled('div')({
   cursor: 'pointer',
 });
 
-const StyledMusic = styled(PeopleIcon)(({ colour }) => ({
+const StyledBook = styled(MenuBookIcon)(({ colour }) => ({
   color: colour,
   width: '32px',
   height: '32px',
@@ -23,22 +25,26 @@ const IconCaption = styled('p')(({ colour }) => ({
   margin: '0',
 }));
 
-const StudentsButton = () => {
+const HistoryButton = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  // Change colour of button if on dashboard page
+
+  // Change colour of button if on history page
   let colour = '#B6B6B6';
-  if (location.pathname === '/dashboard') {
+  if (location.pathname === '/history') {
     colour = '#FFFFFF';
   }
-  const navCatalogue = () => {
-    return navigate('/dashboard');
+
+  const navCreate = () => {
+    return navigate('/history');
   };
+
   return (
-    <IconContainer onClick={navCatalogue}>
-      <StyledMusic colour={colour} />
-      <IconCaption colour={colour}>Students</IconCaption>
+    <IconContainer onClick={navCreate}>
+      <StyledBook colour={colour} />
+      <IconCaption colour={colour}>History</IconCaption>
     </IconContainer>
   );
 };
-export default StudentsButton;
+
+export default HistoryButton;

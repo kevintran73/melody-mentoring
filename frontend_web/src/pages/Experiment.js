@@ -217,7 +217,7 @@ const Experiment = () => {
       return;
     }
 
-    return navigate('/uploads');
+    return navigate('/history');
   };
 
   // Exit experiment

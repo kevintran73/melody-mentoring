@@ -114,7 +114,7 @@ def sign_up():
                 {
                     'Name': 'email',
                     'Value': email
-                },
+                }
             ]
         )
 
@@ -178,6 +178,7 @@ def confirmSignup():
             'miniTestsProgress': [],
             'track_attempts': [],
             'private_songs': [],
+            'favourite_songs': [],
             'level': '1'
         }
 

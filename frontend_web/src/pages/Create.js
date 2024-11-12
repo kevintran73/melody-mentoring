@@ -30,7 +30,7 @@ const UploadForm = styled('form')({
   justifyContent: 'start',
   alignItems: 'center',
   gap: '30px',
-  height: 'calc(90vh - 70px - 4rem)',
+  height: 'calc(100vh)',
   marginTop: '2rem',
   padding: '2rem 2rem',
   border: '1px solid gray',
