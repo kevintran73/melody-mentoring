@@ -38,7 +38,7 @@ class APITestCase(unittest.TestCase):
         }
 
         user_details_response = requests.get(f'{self.BASE_URL}/profile/dsada', headers=headers)
-        self.assertEqual(user_details_response.status_code, 500)
+        self.assertEqual(user_details_response.status_code, 404)
     
     def test_upload_profile_picture_success(self):
         payload = {
@@ -107,8 +107,6 @@ class APITestCase(unittest.TestCase):
         }
         response = requests.put(f'{self.BASE_URL}/profile/profile-picture', json=payload, headers=headers)
 
-        # Check the response status and content
-        print(response.json())
         self.assertEqual(response.status_code, 403)
 
 if __name__ == '__main__':
