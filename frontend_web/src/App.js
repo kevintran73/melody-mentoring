@@ -94,7 +94,7 @@ const App = () => {
           <Route path='/playlist' element={<Playlist />} />
           <Route path='/track-summary/:trackAttemptId' element={<TrackSummary />} />
           <Route path='/experiment/:songId' element={<Experiment />} />
-          <Route path='/review/:trackId' element={<Review />} />
+          <Route path='/review/:trackAttemptId' element={<Review />} />
           <Route path='/dashboard' element={<Dashboard />} />
         </Routes>
       </BrowserRouter>

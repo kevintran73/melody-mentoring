@@ -11,37 +11,36 @@ import NextArrow from '../components/tutor_interface/NextArrow';
 const students = [
   {
     name: 'Daniel',
-    img: pic
+    img: pic,
+    songs: [
+      {
+        songName: 'song 1',
+        artist: 'Artist',
+        difficulty: 'Easy',
+        img: pic,
+      },
+      {
+        songName: 'Song 2',
+        artist: 'Artist',
+        difficulty: 'Medium',
+        img: pic,
+      },
+    ]
   },
   {
     name: 'Victor',
-    img: pic
-  },
-  {
-    name: 'Kevin',
-    img: pic
+    img: pic,
+    songs: [
+      {
+        songName: 'Hello',
+        artist: 'Artist',
+        difficulty: 'Hard',
+        img: pic,
+      },
+    ]
   },
 ]
-const songs = [
-  {
-    songName: 'Song',
-    artist: 'Artist',
-    difficulty: 'Easy',
-    img: pic,
-  },
-  {
-    songName: 'Song',
-    artist: 'Artist',
-    difficulty: 'Easy',
-    img: pic,
-  },
-  {
-    songName: 'Song',
-    artist: 'Artist',
-    difficulty: 'Easy',
-    img: pic,
-  },
-]
+
 
 const Dashboard = () => {
 
@@ -69,7 +68,7 @@ const Dashboard = () => {
         <div className='mb-10'>
           <h1 className='text-2xl font-medium mb-4'>{student.name}'s Attempts</h1>
         <Slider {...settings}>
-          {songs.map((song) => (
+          {student.songs.map((song) => (
             <div className='text-black border-2 rounded-xl shadow-lg cursor-pointer flex flex-col ' onClick={() => handleClick(song.songName)}>
               <div className='flex justify-center my-2'>
                 <img src={song.img} alt="" className='h-[100px] rounded-xl' />
