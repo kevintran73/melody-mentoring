@@ -8,6 +8,13 @@ class Role(str, Enum):
 class S3PresignedURL(BaseModel):
     url: str # "https://bucketName.s3.amazonaws.com/sheetfilekey.pdf?AWSAccessKeyId=notTheNormalAccessKey&Signature=INSERTSIGNATURE&Expires=1728212979"
 
+class Playlist(BaseModel):
+    id: str
+    thumbnail: str
+    genreTags: list[str]
+    title: str
+    private: bool
+
 class Song(BaseModel):
     id: str
     thumbnail: str
