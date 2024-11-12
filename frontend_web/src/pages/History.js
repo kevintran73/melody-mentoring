@@ -48,7 +48,7 @@ const LoadingOverlayMain = styled(Box)({
 
 
 const History = () => {
-  const [trackAttempts, setTrackAttempts] = useState([]);
+  // const [trackAttempts, setTrackAttempts] = useState([]);
   const [songDetails, setSongDetails] = useState([]);
   const { accessToken, userId } = React.useContext(TokenContext);
 
@@ -77,7 +77,7 @@ const History = () => {
         ))
         const trackResponses = await Promise.allSettled(attemptPromises);
         const trackDetails = trackResponses.map((response) => response.value.data);
-        setTrackAttempts(trackDetails)
+        // setTrackAttempts(trackDetails)
         fetchSongDetails(trackDetails)
       } catch (error) {
         console.error('Error fetching track details:', error);
@@ -152,6 +152,18 @@ const History = () => {
             trackAttemptId={songDetail['trackAttemptId']}
           />
         ))}
+        <HistoryCard
+            title={'Ode to Joy (Test)'}
+            composer={'Beethoven'}
+            difficulty={1.2}
+            // date={new Intl.DateTimeFormat('en', {
+            //   year: 'numeric',
+            //   month: 'long',
+            //   day: 'numeric',
+            // }).format(songDetail.date)}
+            // thumbnail={songDetail['thumbnail']}
+            trackAttemptId={'90d775a8-3cb1-4939-ab06-adadc4a98b18'}
+          />
       </Box>
     </Box>
   );

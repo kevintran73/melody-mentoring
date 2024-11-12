@@ -19,21 +19,24 @@ const StyledCard = styled(Card)(() => ({
   backgroundColor:'white',
 }));
 
-const SubAdviceCard = ({ details }) => {
+const ReviewCard = ({ tutor, feedback, rating }) => {
   return (
     <StyledCard variant='outlined'>
       <Box
         padding='2px'
         display='flex'
         flexDirection='column'
+        alignItems='center'
         justifyContent='center'
-        width='100%'
+        width='400px'
         height='100%'
       >
-        <Typography fontSize='1.05rem' component='div'>{details}</Typography>
+        <Typography fontSize='1.05rem' component='div'>{tutor}</Typography>
+        <Typography fontSize='1.05rem' component='div'>{feedback}</Typography>
+        <Typography fontSize='1.05rem' component='div'>{rating}</Typography>
       </Box>
     </StyledCard>
   );
 };
 
-export default SubAdviceCard;
+export default ReviewCard;

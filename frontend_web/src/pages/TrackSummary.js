@@ -3,18 +3,33 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Card from '@mui/material/Card';
 import { Box, Typography, CircularProgress } from '@mui/material';
+import { styled } from '@mui/system';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import IconButton from '@mui/material/IconButton';
+import ScrollContainer from 'react-indiana-drag-scroll';
+import TokenContext from '../context/TokenContext';
+
 import NavBar from '../components/nav_bar/NavBar';
 import PieChartCard from '../components/track_summary/PieChartCard';
 import SubAdviceCard from '../components/track_summary/SubAdviceCard';
 import Thumbnail from '../components/track_summary/Thumbnail';
-import ScrollContainer from 'react-indiana-drag-scroll';
-import TokenContext from '../context/TokenContext';
-import { styled } from '@mui/system';
 import BarChartCard from '../components/track_summary/BarChartCard';
+import ReviewCard from '../components/track_summary/ReviewCard';
 
 /**
  * Track Summary page
  */
+
+const StyledBackButton = styled(IconButton)({
+  backgroundColor: '#020E37',
+  color:'white',
+  margin: '10px 0px 0px 20px',
+  '&:hover': {
+    backgroundColor: 'blue',
+    // borderColor: '#0062cc',
+    // boxShadow: 'none',
+  },
+});
 
 const StyledAdviceBox = styled(Card)(() => ({
   borderWidth: '2px',
@@ -32,7 +47,7 @@ const StyledAdviceBox = styled(Card)(() => ({
 
 const StyledMainSummary = styled(Card)(() => ({
   padding: '20px',
-  margin: '30px',
+  margin: '10px 30px 20px 30px',
   display: 'flex',
   flexDirection: 'row',
   backgroundColor: 'white',
@@ -66,14 +81,36 @@ const LoadingOverlayMain = styled(Box)({
   zIndex: 1000,
 });
 
+const StyledReviewBox = styled(Card)(() => ({
+  borderWidth: '2px',
+  padding: '20px',
+  margin: '10px',
+  display: 'flex',
+  flexDirection: 'row',
+  backgroundColor: 'white',
+  gap: '30px',
+  height: '450px',
+  width: '400px',
+  borderRadius: '16px',
+  boxShadow: 5,
+  position: 'relative',
+}));
+
+
 const TrackSummary = () => {
   const params = useParams();
   const [summaryParagraphs, setSummaryParagraphs] = useState(null);
   const [summary, setSummary] = useState(null);
   const [songDetails, setSongDetails] = useState(null);
-  // const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState(null);
+  const { accessToken } = React.useContext(TokenContext);
+
   const navigate = useNavigate();
-  const { accessToken, userId } = React.useContext(TokenContext);
+
+  const navHistory = () => {
+    return navigate('/history');
+  };
+
 
   useEffect(() => {
     const controller = new AbortController();
@@ -81,16 +118,15 @@ const TrackSummary = () => {
 
     const fetchSummary = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/attempts/user/feedback-for-attempt/90d775a8-3cb1-4939-ab06-adadc4a98b18', {
-        // const response = await axios.get(`http://localhost:5001/attempts/user/feedback-for-attempt/${params.trackAttemptId}`, {
+        // const response = await axios.get('http://localhost:5001/attempts/user/feedback-for-attempt/90d775a8-3cb1-4939-ab06-adadc4a98b18', {
+        const response = await axios.get(`http://localhost:5001/attempts/user/feedback-for-attempt/${params.trackAttemptId}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
           signal,
         });
         setSummary(response.data);
-        // fetchTrackDetails(params.trackAttemptId);
-        fetchTrackDetails('90d775a8-3cb1-4939-ab06-adadc4a98b18');
+        fetchTrackDetails(params.trackAttemptId);
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log('Fetch cancelled:', error.message);
@@ -108,6 +144,7 @@ const TrackSummary = () => {
           },
         });
         fetchSongDetails(response.data);
+        setReviews(response.data.reviews)
         console.log(response.data)
       } catch (error) {
         console.error('Error fetching track details:', error);
@@ -157,6 +194,11 @@ const TrackSummary = () => {
   return (
     <Box backgroundColor='#f9f9f9'>
       <NavBar />
+
+      <StyledBackButton onClick={navHistory}>
+        <ArrowBackIcon />
+      </StyledBackButton>
+
       <StyledMainSummary>
         <Box flex='4' marginRight='30px'>
           <Box boxShadow={4} height='100%' textAlign='center' display='flex' justifyContent='center' alignItems='center' borderRadius='16px'>
@@ -286,7 +328,55 @@ const TrackSummary = () => {
 
         </Box>
       </ScrollContainer>
-/
+
+      <Box margin='10px 40px'>
+        <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
+          Tutor Reviews
+        </Typography>
+        {reviews ? (
+          <ScrollContainer>
+            <Box
+              display='flex'
+              flexDirection='row'
+              // justifyContent='space-evenly'
+              gap='10px'
+              // margin='10px 40px'
+            >
+              {reviews.map((review, i) => (
+                <Box>
+                  <StyledReviewBox sx={{ margin: '10px' }} key={i}>
+                    <ReviewCard tutor={review.tutor} feedback={review.feedback} rating={review.rating} />
+                  </StyledReviewBox>
+                </Box>
+              ))}
+              <Box>
+                <StyledReviewBox sx={{ margin: '10px' }}>
+                    <ReviewCard tutor={'test'} feedback={'test'} rating={'test'}/>
+                </StyledReviewBox>
+              </Box>
+
+              <Box>
+                <StyledReviewBox sx={{ margin: '10px' }}>
+                    <ReviewCard tutor={'test'} feedback={'test'} rating={'test'}/>
+                </StyledReviewBox>
+              </Box>
+
+              <Box>
+                <StyledReviewBox sx={{ margin: '10px' }}>
+                    <ReviewCard tutor={'test'} feedback={'test'} rating={'test'}/>
+                </StyledReviewBox>
+              </Box>
+            </Box>
+          </ScrollContainer>
+        ) : (
+          <StyledReviewBox sx={{ width: '50vw' }}>
+            <LoadingOverlay>
+              <CircularProgress size='20vh' />
+            </LoadingOverlay>
+          </StyledReviewBox>
+        )}
+
+      </Box>
     </Box>
   );
 };
