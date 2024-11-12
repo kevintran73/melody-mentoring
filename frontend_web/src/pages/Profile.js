@@ -34,8 +34,11 @@ const StyledCardsContainer = styled(Box)(() => ({
  */
 const Profile = () => {
   const [profileInfo, setProfileInfo] = useState([]);
+  const [newProfilePic, setNewProfilePic] = useState('');
+  const [newProfilePic64, setNewProfilePic64] = useState('');
   // const navigate = useNavigate();
   const { accessToken, userId } = React.useContext(TokenContext);
+  const [file, setFile] = useState();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -58,27 +61,15 @@ const Profile = () => {
   return (
     <StyledContainer>
       <NavBar />
-      {/* Test */}
-      {/* <Box
-        component="img"
-        src={profileInfo["profile_picture"]}
-        // alt='test'
-        sx={{
-          width: '100%',
-          objectFit: 'cover',
-        }}
-      /> */}
-      {/* {profileInfo["profile_picture"]} */}
-      {/* Test */}
       <StyledCardsContainer>
         {/* Profile Card */}
         <Box flex={1}>
           <ProfileCard 
-            username={profileInfo["username"]}
-            profilePic={profileInfo["profile_picture"]}
-            email={profileInfo["email"]}
-            instrument={profileInfo["instrument"]}
-            level={profileInfo["level"]}
+            username={profileInfo['username']}
+            profilePic={profileInfo['profile_picture']}
+            email={profileInfo['email']}
+            instrument={profileInfo['instrument']}
+            level={profileInfo['level']}
           />
         </Box>
 
