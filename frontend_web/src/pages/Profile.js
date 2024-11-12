@@ -34,11 +34,7 @@ const StyledCardsContainer = styled(Box)(() => ({
  */
 const Profile = () => {
   const [profileInfo, setProfileInfo] = useState([]);
-  const [newProfilePic, setNewProfilePic] = useState('');
-  const [newProfilePic64, setNewProfilePic64] = useState('');
-  // const navigate = useNavigate();
   const { accessToken, userId } = React.useContext(TokenContext);
-  const [file, setFile] = useState();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -93,7 +89,6 @@ const Profile = () => {
             </Box>
           </Card>
         </Box>
-
       </StyledCardsContainer>
     </StyledContainer>
   );

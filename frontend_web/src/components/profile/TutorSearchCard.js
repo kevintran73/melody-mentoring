@@ -5,11 +5,12 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
+import TutorDialog from './TutorDialog';
 
 import { styled } from '@mui/system';
 
 const StyledCard = styled(Card)(() => ({
-  width: '70%',
+  width: '90%',
   // minWidth: '150px',
   height: '100%', 
   // minHeight: '220px',
@@ -23,27 +24,13 @@ const StyledCard = styled(Card)(() => ({
   borderRadius: '16px',
 }));
 
-const StyledButton = styled(Button)({
-  width: '90%',
-  backgroundColor: '#020E37',
-  color:'white',
-  fontSize: '1rem',
-  padding: '10px 16px',
-  textTransform: 'none',
-  borderRadius: '16px',
-  marginTop: '10px',
-  '&:hover': {
-    backgroundColor: 'blue',
-  },
-});
-
 const TutorSearchCard = () => {
   return (
     <StyledCard variant='outlined'>
       <Box>
         <Typography fontSize='1.5rem' component='div'>Want to add more tutors?</Typography>
       </Box>
-      <StyledButton> Find a Tutor </StyledButton>
+      <TutorDialog />
     </StyledCard>
   );
 };
