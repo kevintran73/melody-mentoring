@@ -12,31 +12,6 @@ files_bp = Blueprint('files', __name__)
 
 # media routes
 
-# Route that will help to request the profile picture of a user.
-# file key should be as such "{user_id}-profile-picture.{file_extension}""
-@files_bp.route('/files/user/profile-picture/<userId>', methods=['GET'])
-@token_required
-def get_presigned_url_picture(userId):
-    '''GET route to access a users profile picture
-    Route parameters must be of the following format:
-    {
-        userId: str                 # id of the uploading user
-    }
-
-    Gets the profile pictures stored in profile-pictures/{user_id}
-    '''
-    try:
-        url = urlFromBucketObj(os.getenv('S3_BUCKET_USER_PICTURE'), f'profile-pictures/{userId}')
-
-        return jsonify({
-            'url': url
-        }), 200
-
-    except Exception as e:
-        return jsonify({
-            'error': str(e)
-        }), 500
-
 # Route that will help to request the sheet music for a specigic song
 @files_bp.route('/files/sheets/<songId>', methods=['GET'])
 @token_required
