@@ -16,7 +16,6 @@ const SectionDesc = styled('p')({
   fontSize: '1rem',
   color: '#2b2b2b',
   width: 'auto',
-  whiteSpace: 'nowrap',
 });
 
 const SectionBlock = styled('div')({

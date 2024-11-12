@@ -21,15 +21,45 @@ const StyledHeader = styled('h1')({
 const PageBlock = styled('div')({
   height: 'calc(100vh - 70px - 4rem)',
   margin: '1rem 2.5rem',
+
+  '@media (max-width: 500px)': {
+    margin: '0.75rem 1.5rem',
+  },
+});
+
+const StyledButtonGroup = styled(ButtonGroup)({
+  maxWidth: 'calc(100vw - 3rem)',
+  display: 'flex',
+  flexWrap: 'wrap',
+  border: 'none',
+  boxShadow: 'none',
+});
+
+const StyledButton = styled(Button)({
+  backgroundColor: '#404040',
+  color: '#ffffff',
+
+  ':hover': {
+    backgroundColor: '#515151',
+  },
+
+  '@media (max-width: 500px)': {
+    padding: '4px 15px',
+  },
 });
 
 const CategoryBlock = styled('div')({
-  height: 'calc(90vh - 70px - 6rem)',
+  height: 'calc(90vh - 70px - 7rem)',
   marginTop: '2rem',
   padding: '1rem 2rem',
   border: '1px solid gray',
   borderRadius: '10px',
   overflowY: 'auto',
+
+  '@media (max-width: 610px)': {
+    padding: '0.75rem 1.5rem',
+    height: 'calc(90vh - 70px - 9rem)',
+  },
 });
 
 /**
@@ -48,12 +78,16 @@ const Settings = () => {
       <NavBar></NavBar>
       <PageBlock>
         <StyledHeader>Settings</StyledHeader>
-        <ButtonGroup>
-          <Button onClick={() => setSettingsCategory('account')}>Account</Button>
-          <Button onClick={() => setSettingsCategory('accessibility')}>Accessibility</Button>
-          <Button onClick={() => setSettingsCategory('support')}>Support</Button>
-          <Button onClick={() => setSettingsCategory('legal')}>Legal Information</Button>
-        </ButtonGroup>
+        <StyledButtonGroup aria-label='Settings navigation bar'>
+          <StyledButton onClick={() => setSettingsCategory('account')}>Account</StyledButton>
+          <StyledButton onClick={() => setSettingsCategory('accessibility')}>
+            Accessibility
+          </StyledButton>
+          <StyledButton onClick={() => setSettingsCategory('support')}>Support</StyledButton>
+          <StyledButton onClick={() => setSettingsCategory('legal')}>
+            Legal Information
+          </StyledButton>
+        </StyledButtonGroup>
         <CategoryBlock>
           {settingsCategory === 'account' && <Account />}
           {settingsCategory === 'accessibility' && <Accessibility />}

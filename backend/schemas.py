@@ -41,6 +41,7 @@ class User(BaseModel):
     easy_completed: list[str]   # SongIds for completed tracks
     medium_completed: list[str] # SongIds for completed tracks
     hard_completed: list[str]   # SongIds for completed tracks
+    favourite_songs: list[str]
     role: Role
 
 class Review(BaseModel):
