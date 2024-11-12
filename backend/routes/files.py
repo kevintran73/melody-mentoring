@@ -188,7 +188,7 @@ def user_attempts_track():
         }), 400
     except KeyError:
         return jsonify({
-            'error': 'Missing required fields (userId, composer, thumbnail, genreTags, instrument, title, difficulty, trackAudio)'
+            'error': 'Missing required fields (userId, songId)'
         }), 400
     except Exception as e:
         return jsonify({
