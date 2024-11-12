@@ -16,6 +16,7 @@ import Playlist from './pages/Playlist';
 import Verification from './pages/Verification';
 import Experiment from './pages/Experiment';
 import TrackSummary from './pages/TrackSummary';
+import PreExperiment from './pages/PreExperiment';
 
 const App = () => {
   let lsAccessToken = null;
@@ -83,6 +84,7 @@ const App = () => {
           <Route path='/settings' element={<Settings />} />
           <Route path='/playlist/:playlistType' element={<Playlist />} />
           <Route path='/track-summary/:trackAttemptId' element={<TrackSummary />} />
+          <Route path='/pre-experiment/:songId' element={<PreExperiment />} />
           <Route path='/experiment/:songId' element={<Experiment />} />
         </Routes>
       </BrowserRouter>

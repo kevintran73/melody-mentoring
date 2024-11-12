@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Box from '@mui/material/Box';
@@ -260,7 +260,7 @@ const Catalogue = () => {
             {songs
               .filter((song) => !song['private'] && song.genreTags.includes('rock'))
               .map((song, i) => (
-                <Box key={`box-${song['title']}-${i}`}>
+                <Box key={`box-rock-${song['title']}-${i}`}>
                   <SongCard
                     title={song['title']}
                     composer={song['composer']}

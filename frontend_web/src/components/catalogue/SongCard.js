@@ -24,7 +24,7 @@ const SongCard = ({ title, thumbnail, composer, difficulty, privacy, genreTags, 
   const navigate = useNavigate();
 
   const navExperiment = () => {
-    return navigate(`/experiment/${songId}`);
+    return navigate(`/pre-experiment/${songId}`);
   };
 
   return (
