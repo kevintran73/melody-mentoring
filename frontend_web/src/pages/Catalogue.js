@@ -48,7 +48,7 @@ const TopContainer = styled(Card)({
   padding: '20px',
   position: 'relative',
   left: '20%',
-  margin: '20px 0px'
+  margin: '20px 0px',
 });
 
 const PlaylistButton = styled(Button)({
@@ -61,7 +61,7 @@ const PlaylistButton = styled(Button)({
 });
 
 const PlaylistTitle = ({ title, navPlaylist }) => (
-  <PlaylistButton variant='secondary' onClick={navPlaylist} >
+  <PlaylistButton variant='secondary' onClick={navPlaylist}>
     {title}
   </PlaylistButton>
 );
@@ -88,11 +88,30 @@ const Catalogue = () => {
   const { accessToken, userId } = React.useContext(TokenContext);
 
   useEffect(() => {
+    if (!accessToken || !userId) {
+      return;
+    }
+
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/profile/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        setUserData(response.data);
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+
     const fetchSongs = async () => {
       try {
         const response = await axios.get('http://localhost:5001/catalogue/songs/list-all', {
           headers: {
             Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
           },
         });
         setSongs(response.data.songs);
@@ -101,8 +120,9 @@ const Catalogue = () => {
       }
     };
 
+    fetchUserData();
     fetchSongs();
-  }, [accessToken]);
+  }, [accessToken, userId]);
 
   const navPlaylist = (playlistType) => {
     return navigate(`/playlist/${playlistType}`);
@@ -113,16 +133,16 @@ const Catalogue = () => {
       <NavBar></NavBar>
       <Box margin='10px'>
         <StyledSearchBar id='outlined-basic' label='Search' variant='outlined' size='small' />
-          <StyledButton variant='contained' endIcon={<FilterAltIcon />}>
-            Filter
-          </StyledButton>
+        <StyledButton variant='contained' endIcon={<FilterAltIcon />}>
+          Filter
+        </StyledButton>
       </Box>
 
       <Box margin='60px 20px'>
         {/* Welcome container */}
         <TopContainer>
           <Typography variant='h2'>
-            Welcome back, {userData ? userData['Username'] : 'N/A'}!
+            Welcome back, {userData ? userData['username'] : 'N/A'}!
           </Typography>
           <Typography variant='h4'>Interested in trying these songs again?</Typography>
           <Box display='flex' gap='2vw'>
@@ -135,22 +155,22 @@ const Catalogue = () => {
 
       {/* Playlist Uploaded */}
       <Box margin='10px'>
-        <PlaylistTitle title='Your Uploaded Songs >' navPlaylist={() => navPlaylist("uploaded")} />
+        <PlaylistTitle title='Your Uploaded Songs >' navPlaylist={() => navPlaylist('uploaded')} />
         <ScrollContainer>
           <Box display='flex' flexDirection='row'>
             {songs
               .filter((song) => song['private'] && song['uploaderId'] === userId)
               .map((song, i) => (
-                <Box>
-                <SongCard
-                  title={song['title']}
-                  composer={song['composer']}
-                  privacy={song['private']}
-                  thumbnail={song['thumbnail']}
-                  difficulty={song['difficulty']}
-                  genreTags={song['genreTags']}
-                  songId={song['id']}
-                />
+                <Box key={`box-uploaded-private-${song['title']}-${i}`}>
+                  <SongCard
+                    title={song['title']}
+                    composer={song['composer']}
+                    privacy={song['private']}
+                    thumbnail={song['thumbnail']}
+                    difficulty={song['difficulty']}
+                    genreTags={song['genreTags']}
+                    songId={song['id']}
+                  />
                 </Box>
               ))}
           </Box>
@@ -159,22 +179,25 @@ const Catalogue = () => {
 
       {/* Playlist Uploaded (Everyone) */}
       <Box margin='10px'>
-        <PlaylistTitle title='Your Uploaded Songs (Everyone) >' navPlaylist={() => navPlaylist("uploaded")} />
+        <PlaylistTitle
+          title='Your Uploaded Songs (Everyone) >'
+          navPlaylist={() => navPlaylist('uploaded')}
+        />
         <ScrollContainer>
           <Box display='flex' flexDirection='row'>
             {songs
               .filter((song) => song['private'])
               .map((song, i) => (
-                <Box>
-                <SongCard
-                  title={song['title']}
-                  composer={song['composer']}
-                  privacy={song['private']}
-                  thumbnail={song['thumbnail']}
-                  difficulty={song['difficulty']}
-                  genreTags={song['genreTags']}
-                  songId={song['id']}
-                />
+                <Box key={`box-uploaded-everyone-${song['title']}-${i}`}>
+                  <SongCard
+                    title={song['title']}
+                    composer={song['composer']}
+                    privacy={song['private']}
+                    thumbnail={song['thumbnail']}
+                    difficulty={song['difficulty']}
+                    genreTags={song['genreTags']}
+                    songId={song['id']}
+                  />
                 </Box>
               ))}
           </Box>
@@ -183,13 +206,13 @@ const Catalogue = () => {
 
       {/* Playlist 70s */}
       <Box margin='10px'>
-        <PlaylistTitle title='70s Playlist >' navPlaylist={() => navPlaylist("70s")} />
+        <PlaylistTitle title='70s Playlist >' navPlaylist={() => navPlaylist('70s')} />
         <ScrollContainer>
           <Box display='flex' flexDirection='row'>
             {songs
               .filter((song) => !song['private'] && song.genreTags.includes('70s'))
-              .map((song) => (
-                <Box>
+              .map((song, i) => (
+                <Box key={`box-70s-${song['title']}-${i}`}>
                   <SongCard
                     title={song['title']}
                     composer={song['composer']}
@@ -207,13 +230,13 @@ const Catalogue = () => {
 
       {/* Playlist Pop */}
       <Box margin='10px'>
-        <PlaylistTitle title='Pop Playlist >' navPlaylist={() => navPlaylist("pop")} />
+        <PlaylistTitle title='Pop Playlist >' navPlaylist={() => navPlaylist('pop')} />
         <ScrollContainer>
           <Box display='flex' flexDirection='row'>
             {songs
               .filter((song) => !song['private'] && song.genreTags.includes('pop'))
-              .map((song) => (
-                <Box>
+              .map((song, i) => (
+                <Box key={`box-pop-${song['title']}-${i}`}>
                   <SongCard
                     title={song['title']}
                     composer={song['composer']}
@@ -236,8 +259,8 @@ const Catalogue = () => {
           <Box display='flex' flexDirection='row'>
             {songs
               .filter((song) => !song['private'] && song.genreTags.includes('rock'))
-              .map((song) => (
-                <Box>
+              .map((song, i) => (
+                <Box key={`box-${song['title']}-${i}`}>
                   <SongCard
                     title={song['title']}
                     composer={song['composer']}
@@ -255,13 +278,13 @@ const Catalogue = () => {
 
       {/* Playlist Public */}
       <Box margin='10px'>
-        <PlaylistTitle title='Playlist (Public) Test >' navPlaylist={() => navPlaylist("public")} />
+        <PlaylistTitle title='Playlist (Public) Test >' navPlaylist={() => navPlaylist('public')} />
         <ScrollContainer>
           <Box display='flex' flexDirection='row'>
             {songs
               .filter((song) => !song['private'])
-              .map((song) => (
-                <Box>
+              .map((song, i) => (
+                <Box key={`box-public-${song['title']}-${i}`}>
                   <SongCard
                     title={song['title']}
                     composer={song['composer']}
@@ -282,8 +305,8 @@ const Catalogue = () => {
         <PlaylistTitle title='Playlist 1 (Default) >' navPlaylist={navPlaylist} />
         <ScrollContainer>
           <Box display='flex' flexDirection={'row'}>
-            {Array.apply(null, { length: 15 }).map((i) => (
-              <SongCardTemplate key={i}></SongCardTemplate>
+            {Array.apply(null, { length: 15 }).map((_, i) => (
+              <SongCardTemplate key={`playlist-1-${i}`}></SongCardTemplate>
             ))}
           </Box>
         </ScrollContainer>
@@ -294,8 +317,8 @@ const Catalogue = () => {
         <PlaylistTitle title='Playlist 2 (Default) >' navPlaylist={navPlaylist} />
         <ScrollContainer>
           <Box display='flex' flexDirection={'row'}>
-            {Array.apply(null, { length: 15 }).map((i) => (
-              <SongCardTemplate key={i}></SongCardTemplate>
+            {Array.apply(null, { length: 15 }).map((_, i) => (
+              <SongCardTemplate key={`playlist-2-${i}`}></SongCardTemplate>
             ))}
           </Box>
         </ScrollContainer>
