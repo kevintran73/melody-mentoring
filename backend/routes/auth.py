@@ -212,6 +212,8 @@ def confirmSignup():
             'hard_completed': [],
             'track_attempts': [],
             'private_songs': [],
+            'favourite_songs': [],
+            'level': '1'
         }
 
         users.put_item(Item=user)
