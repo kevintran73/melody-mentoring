@@ -104,7 +104,7 @@ const History = () => {
           console.log(newSongDetail)
           allSongDetails.push(newSongDetail);
         } catch (error) {
-          console.error('Error fetching track details:', error);
+          console.error('Error fetching song details:', error);
         }
       }
       allSongDetails.sort((a, b) => b.date - a.date);

@@ -5,9 +5,14 @@ import Card from '@mui/material/Card';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CachedIcon from '@mui/icons-material/Cached';
 import IconButton from '@mui/material/IconButton';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import TokenContext from '../context/TokenContext';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 import NavBar from '../components/nav_bar/NavBar';
 import PieChartCard from '../components/track_summary/PieChartCard';
@@ -20,14 +25,15 @@ import ReviewCard from '../components/track_summary/ReviewCard';
  * Track Summary page
  */
 
-const StyledBackButton = styled(IconButton)({
+const StyledButton = styled(IconButton)({
   backgroundColor: '#020E37',
-  color:'white',
+  color: 'white',
+  // width: '50px',
   margin: '10px 0px 0px 20px',
   '&:hover': {
-    backgroundColor: 'blue',
-    // borderColor: '#0062cc',
-    // boxShadow: 'none',
+    backgroundColor: '#020E37',
+    borderColor: '#0062cc',
+    boxShadow: 'none',
   },
 });
 
@@ -103,6 +109,7 @@ const TrackSummary = () => {
   const [summary, setSummary] = useState(null);
   const [songDetails, setSongDetails] = useState(null);
   const [reviews, setReviews] = useState(null);
+  const [model, setModel] = useState('llama3');
   const { accessToken } = React.useContext(TokenContext);
 
   const navigate = useNavigate();
@@ -111,6 +118,9 @@ const TrackSummary = () => {
     return navigate('/history');
   };
 
+  const handleChange = (event) => {
+    setModel(event.target.value);
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -144,39 +154,65 @@ const TrackSummary = () => {
           },
         });
         fetchSongDetails(response.data);
+        // fetchReviewDetails(response.data.reviews)
         setReviews(response.data.reviews)
-        console.log(response.data)
+        console.log(response.data.reviews)
       } catch (error) {
         console.error('Error fetching track details:', error);
       }
     };
 
     const fetchSongDetails = async (track) => {
-        try {
-          const response = await axios.get(`http://localhost:5001/catalogue/songs/find/${track.songId}`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
+      try {
+        const response = await axios.get(`http://localhost:5001/catalogue/songs/find/${track.songId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
 
-          const date = new Date(track.isoUploadTime);
-          const dateTimeFormat = new Intl.DateTimeFormat('en', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          });
-          const updatedDate = dateTimeFormat.format(date)
+        const date = new Date(track.isoUploadTime);
+        const dateTimeFormat = new Intl.DateTimeFormat('en', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+        const updatedDate = dateTimeFormat.format(date)
 
-          const newSongDetail = {
-            ...response.data,
-            date: updatedDate,
-          };
-          console.log(newSongDetail)
-          setSongDetails(newSongDetail)
-        } catch (error) {
-          console.error('Error fetching track details:', error);
-        }
+        const newSongDetail = {
+          ...response.data,
+          date: updatedDate,
+        };
+        console.log(newSongDetail)
+        setSongDetails(newSongDetail)
+      } catch (error) {
+        console.error('Error fetching track details:', error);
       }
+    }
+
+    // const fetchReviewDetails = async (reviewData) => {
+    //   const allReviewDetails = [];
+
+    //   for (const review of reviewData) {
+    //     try {
+    //       const response = await axios.get(`http://localhost:5001/profile/${review.tutor}`, {
+    //         headers: {
+    //           Authorization: `Bearer ${accessToken}`,
+    //         },
+    //       });
+
+    //       const newReviewDetail = {
+    //         ...reviewData,
+    //         tutorName: response.data,
+    //       };
+
+    //       console.log(response.data)
+    //       allReviewDetails.push(newReviewDetail);
+    //     } catch (error) {
+    //       console.error('Error fetching review details:', error);
+    //     }
+    //   }
+    //   setReviews(allReviewDetails)
+    // };
 
     fetchSummary();
     return () => {
@@ -195,9 +231,33 @@ const TrackSummary = () => {
     <Box backgroundColor='#f9f9f9'>
       <NavBar />
 
-      <StyledBackButton onClick={navHistory}>
-        <ArrowBackIcon />
-      </StyledBackButton>
+      <Box display='flex' justifyContent='space-between' alignItems='center'>
+        <StyledButton onClick={navHistory}>
+          <ArrowBackIcon />
+        </StyledButton>
+        <Box display='flex' flexDirection='row' sx={{ width: '200px', margin: '15px 15px 0px 0px', gap: '10px' }}>
+          <FormControl>
+            <InputLabel id='model-select-label'>Model</InputLabel>
+            <Select
+              // defaultValue={'llama'}
+              labelId='model-select-label'
+              id='model-select'
+              value={model}
+              label='Model'
+              onChange={handleChange}
+            >
+              <MenuItem value={'llama3'}>Llama3</MenuItem>
+              <MenuItem value={'mixtral'}>Mixtral</MenuItem>
+              <MenuItem value={'gemma'}>Gemma</MenuItem>
+            </Select>
+          </FormControl>
+          <Box>
+            <StyledButton>
+              <CachedIcon />
+            </StyledButton>
+          </Box>
+        </Box>
+      </Box>
 
       <StyledMainSummary>
         <Box flex='4' marginRight='30px'>
