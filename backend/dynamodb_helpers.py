@@ -110,8 +110,16 @@ def listOfMusicBaskets():
         return basket
     return {'songs': list(map(convertGenresToList, baskets))}
 
+def listOfPlaylists():
+    table = db.Table(os.getenv('DYNAMODB_TABLE_PLAYLISTS'))
+    baskets = (table.scan())["Items"]
+    def convertGenresToList(basket):
+        basket['genreTags'] = list(basket['genreTags'])
+        return basket
+    return {'playlists': list(map(convertGenresToList, baskets))}
+
 def getTrackAttempyDetails(trackAttemptID):
-    table = db.table(os.getenv('DYNAMODB_TABLE_TRACK_ATTEMPTS'))
+    table = db.Table(os.getenv('DYNAMODB_TABLE_TRACK_ATTEMPTS'))
 
     attempt = table.get_item(Key={'id': trackAttemptID})
 
@@ -121,3 +129,53 @@ def getTrackAttempyDetails(trackAttemptID):
     attemptData = attempt['Item']
 
     return attemptData
+
+def updateAchievements(trackAttemptId, metrics):
+    if (metrics[0] + metrics[1] + metrics[2])/3 < 0.8:
+        return False
+
+    Attemptdetails = getTrackAttempyDetails(trackAttemptId)
+    userId = Attemptdetails['userId']
+    songId = Attemptdetails['songId']
+
+    users = db.Table(os.getenv('DYNAMODB_TABLE_USERS'))
+    userDetails = users.get_item(Key={'id': userId})['Item']
+
+    songs = db.Table(os.getenv('DYNAMODB_TABLE_SONGS'))
+    songDetails = songs.get_item(Key={'id': songId})['Item']
+
+    if float(songDetails['difficulty']) < 2.0:
+        if songId not in userDetails['easy_completed']:
+            userDetails['easy_completed'].append(songId)
+    elif float(songDetails['difficulty']) <= 4:
+        if songId not in userDetails['medium_completed']:
+            userDetails['medium_completed'].append(songId)
+    else:
+        if songId not in userDetails['hard_completed']:
+            userDetails['hard_completed'].append(songId)
+
+    for achievement in userDetails["achievements"]:
+        if (len(userDetails['easy_completed']) >= int(achievement['easy_required']) and
+            len(userDetails['medium_completed']) >= int(achievement['medium_required']) and
+            len(userDetails['hard_completed']) >= int(achievement['hard_required'])):
+            achievement['achieved'] = True
+    
+    users.update_item(
+        Key={'id': userId},
+        UpdateExpression=(
+            "SET easy_completed = :easy_completed, "
+            "medium_completed = :medium_completed, "
+            "hard_completed = :hard_completed, "
+            "achievements = :achievements"
+        ),
+        ExpressionAttributeValues={
+            ':easy_completed': userDetails['easy_completed'],
+            ':medium_completed': userDetails['medium_completed'],
+            ':hard_completed': userDetails['hard_completed'],
+            ':achievements': userDetails['achievements']
+        }
+    )
+
+    return True
+    
+

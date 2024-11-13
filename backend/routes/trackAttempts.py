@@ -16,6 +16,8 @@ from groq import Groq
 
 import Levenshtein as lev
 
+from dynamodb_helpers import updateAchievements, getTrackAttempyDetails
+
 load_dotenv()
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -283,6 +285,7 @@ def get_feedback_for_track_attempt(trackAttemptId):
     '''
 
     groqSays = generateGroqResponse(prompt)
+    updateAchievements(trackAttemptId, metrics)
 
     return jsonify({
         'pitch': metrics[0],
@@ -291,3 +294,27 @@ def get_feedback_for_track_attempt(trackAttemptId):
         'dynamics': metrics[3],
         'groqSays': groqSays
     }), 200
+
+@trackAttempts_bp.route('/track-attempt/<trackAttemptId>', methods=['GET'])
+@token_required
+def get_details_for_track_attempt(trackAttemptId):
+    '''
+    GET route for the details of a track attempt
+    route parameter should be as follows
+    {
+        trackAttemptId: str                 id for the track attempt 
+    }
+
+    returns
+    {
+        'id': str                           id for the track attempt
+        'isoUploadTime': str                date that the track attempt was uploaded        
+        'reviews': list[str]                list of ids for reviews
+        'songId': str                       id of the song
+        'userId': str                       id of the user attempting the track
+        
+    }
+    '''
+    details = getTrackAttempyDetails(trackAttemptId)
+
+    return jsonify(details), 200

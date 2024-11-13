@@ -1,7 +1,8 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, json, jsonify, request
 import boto3
 import os
 from dynamodb_helpers import listOfMusicBaskets
+from boto3.dynamodb.conditions import Attr, Or
 from .auth import token_required
 
 dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
@@ -65,3 +66,55 @@ def get_music_basket_list():
         return jsonify({
             'error': 'Songs cannot be found'
         }), 500
+
+@catalogue_songs_bp.route('/catalogue/query', methods=['GET'])
+@token_required
+def query_songs_and_playlists():
+    '''
+    GET route for songs that match a search string
+    query args should be as follows
+    {
+        query: str                 query string
+        last_key: str              id pointing to the last song returned for dynamodb for pagination (optional)
+    }
+
+    returns
+    {
+        songs : list[songs]        a list of song objects
+        
+    }
+    When this route is called for the first time, last_key is not required, however each subsequent time
+    you call this route it should be put in to ensure that return results are paginated
+    '''
+    query_string = request.args.get('query', '')
+    last_key = request.args.get('last_key')
+
+    if not query_string:
+        return jsonify({'error': 'query string is required'}), 400
+    
+    songs = dynamodb.Table(os.getenv('DYNAMODB_TABLE_SONGS'))
+
+    params = {
+        "FilterExpression": (
+            Attr('title').contains(query_string) |
+            Attr('composer').contains(query_string) |
+            Attr('genreTags').contains(query_string)
+        ),
+    }
+
+    if last_key:
+        params["ExclusiveStartKey"] = json.loads(last_key)
+    
+    songs_response = songs.scan(**params)
+
+    songs_matches = songs_response.get('Items', [])
+    last_key = songs_response.get("LastEvaluatedKey")
+
+    response = {
+        "songs": songs_matches
+    }
+
+    if last_key:
+        response["last_key"] = json.dumps(last_key)
+
+    return jsonify(response)

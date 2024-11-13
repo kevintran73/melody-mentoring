@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 import boto3
 import os
-from .auth import token_required
+from .auth import token_required, validate_token_helper
 from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
@@ -11,7 +11,6 @@ profile_bp = Blueprint('user', __name__)
 
 # User routes
 @profile_bp.route('/profile/<userId>', methods=['GET'])
-@token_required
 def getUserDetails(userId):
     '''GET route to access the details of a particular user
     Route parameters must be of the following format:
@@ -20,9 +19,17 @@ def getUserDetails(userId):
     }
 
     Gets the details of the user from dynamodb
-    Makes sure that the details are being retrieved from the actual user
     '''
     try:
+        auth_header = request.headers.get('Authorization', None)
+        if not auth_header:
+            return jsonify({'error': 'Missing Authorization header'}), 401
+        token = auth_header.split(" ")[1]
+        user = validate_token_helper(token)
+
+        if user is None:
+            return jsonify({'error': 'Invalid or expired token'}), 403
+
         users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
         response = users.get_item(Key={'id': userId})
 
@@ -47,34 +54,26 @@ def updateProfilePicture():
     Body must be of the following format:
     {
         userId: str                 # id of user whose profile picture we want to update
-        file: (IMAGE FILE TYPE)     # file of the new profile picture
+        picture: str                # base64 url for the image
     }
 
     Updates the users profile picture
     '''
     try:
-        data = request.form
+        data = request.json
         userId = data['userId']
-        file = request.files['file']
-
-        s3.upload_fileobj(
-            file,
-            os.getenv('S3_BUCKET_USER_PICTURE'),
-            f'profile-pictures/{userId}',
-        )
-
-        file_url = f"https://{os.getenv('S3_BUCKET_USER_PICTURE')}.s3.amazonaws.com/profile-pictures/{userId}"
+        picture = data['picture']
 
         users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
         users.update_item(
             Key={'id': userId},
             UpdateExpression='SET profile_picture = :url',
-            ExpressionAttributeValues={':url': file_url}
+            ExpressionAttributeValues={':url': picture}
         )
 
         return jsonify({
             'message': 'Profile picture updated successfully!',
-            'profile_picture_url': file_url
+            'profile_picture_url': picture
         }), 200
 
     except ClientError as e:
