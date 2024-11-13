@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import defaultImg from '../../assets/default-img.png';
 import Typography from '@mui/material/Typography';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import LinearProgress from '@mui/material/LinearProgress';
 
 const Progress = ({ value, minValue, maxValue }) => {
@@ -41,31 +42,6 @@ const Image = ({ img }) => {
   )
 }
 
-const AchievementSection = ({ img, value, minValue, maxValue, name }) => {
-  return (
-    <Box 
-      sx={{
-        width: '13vw',
-        objectFit: 'cover',
-        padding: '10px',
-        textAlign: 'center', 
-        boxShadow: 3,
-        borderRadius: '16px',
-        margin: '10px',
-      }}  
-    >
-      <Image img={img} />
-      {/* If string, show string. Otherwise show a progress bar using value var. */}
-      {typeof value === 'string' ? (
-        <Typography variant="body2"> {value} </Typography>
-      ) : (
-        <Progress value={value} minValue={minValue} maxValue={maxValue} />
-      )}
-      <Typography>{name}</Typography>
-    </Box>
-  )
-}
-
 const AchievementGrid = () => {
   return (
     <Box sx={{ flexGrow: 1, p: 2 }}>
@@ -78,18 +54,31 @@ const AchievementGrid = () => {
           alignItems: 'center',
         }}
       >
+        <Box 
+          sx={{
+            width: '13vw',
+            objectFit: 'cover',
+            padding: '10px',
+            textAlign: 'center', 
+            boxShadow: 3,
+            borderRadius: '16px',
+            margin: '10px',
+          }}  
+        >
 
-        {/* Top layer */}
-        <Box display='flex' flexDirection='row' justifyContent='center' alignItems='center'>
-          <AchievementSection img={defaultImg} value='20 days' minValue='0' maxValue='100' name='Test' />
-          <AchievementSection img={defaultImg} value={10} minValue='0' maxValue='100' name='Total Attempts' />
-          <AchievementSection img={defaultImg} value={30} minValue='0' maxValue='100' name='Excellent Lessons' />
-        </Box>
+          <Box>
+            <ArrowForwardIcon width='100px'></ArrowForwardIcon>
+          </Box>
 
-        {/* Bottom layer */}
-        <Box display='flex' flexDirection='row' justifyContent='center' alignItems='center'>
-          <AchievementSection img={defaultImg} value={40} minValue='0' maxValue='100' name='Test' />
-          <AchievementSection img={defaultImg} value={60} minValue='0' maxValue='100' name='Test' />
+
+          {/* <Image img={img} /> */}
+          {/* If string, show string. Otherwise show a progress bar using value var. */}
+          {typeof value === 'string' ? (
+            <Typography variant="body2"> 1 </Typography>
+          ) : (
+            <Progress value={1} minValue={0} maxValue={2} />
+          )}
+          <Typography>{'Test'}</Typography>
         </Box>
       </Box>
     </Box>

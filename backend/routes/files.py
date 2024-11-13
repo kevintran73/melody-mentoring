@@ -170,7 +170,7 @@ def user_attempts_track():
         data = request.json
         attemptId = addAttemptToTrackAttempt(data['userId'], data['songId'])
 
-        audioUploader = createUploadHelper(os.getenv('S3_BUCKET_USER_AUDIO'), attemptId + '.wav')
+        audioUploader = createUploadHelper(os.getenv('S3_BUCKET_USER_AUDIO'), attemptId)
         videoUploader = createUploadHelper(os.getenv('S3_BUCKET_USER_VIDEO'), attemptId)
         return jsonify({
             'message': f'Submitted track attempt for user: {data["userId"]}, track-attempt: {attemptId}',

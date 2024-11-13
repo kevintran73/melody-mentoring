@@ -39,7 +39,7 @@ const StyledButton = styled(IconButton)({
 });
 
 const StyledTextButton = styled(Button)({
-  width: '75%',
+  width: '17vw',
   backgroundColor: '#020E37',
   color:'white',
   fontSize: '1.3rem',
@@ -444,7 +444,7 @@ const TrackSummary = () => {
           <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
             Tutor Reviews
           </Typography>
-          <StyledTextButton>Testing123</StyledTextButton>
+          <StyledTextButton>Request Review</StyledTextButton>
         </Box>
         {reviews ? (
           <ScrollContainer>

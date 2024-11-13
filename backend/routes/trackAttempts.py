@@ -157,7 +157,7 @@ def generateMetricsForSubmission(userAudioKey, trackAudioKey):
     '''
 
     # we need to convert from a video/webm -> audio/wav
-    getUserAudioSubmission = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_USER_AUDIO'), Key=(userAudioKey + '.wav'))
+    getUserAudioSubmission = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_USER_AUDIO'), Key=(userAudioKey))
     userAudio = getUserAudioSubmission['Body'].read()
     # A bit cursed but windows gives us permission errors if we try to open the file directly
     # instead we write to a temporary file and leave it open to process the .mxl file
