@@ -144,7 +144,7 @@ const TrackSummary = () => {
         if (axios.isCancel(error)) {
           console.log('Fetch cancelled:', error.message);
         } else {
-          console.error('Error fetching user details:', error);
+          console.error('Error fetching feedback details:', error);
         }
       }
     };

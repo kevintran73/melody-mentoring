@@ -40,7 +40,7 @@ const TutorList = ({ tutorIds = [] }) => {
         }
       }
       setTutorsInfo(allTutorDetails);
-      console.log(allTutorDetails)
+      // console.log(allTutorDetails)
     };
 
     fetchTutorDetails();

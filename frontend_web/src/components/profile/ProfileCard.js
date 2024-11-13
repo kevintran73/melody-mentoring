@@ -113,8 +113,8 @@ const SongCard = ({ username, profilePic, email, instrument, level, onChange }) 
 
       setProfileImage(uploadedImage)
 
-      const response = await axios.post(
-        'http://localhost:5001/files/profile/profile-picture',
+      const response = await axios.put(
+        'http://localhost:5001/profile/profile-picture',
         { ...profilePicInfo },
         {
           headers: {

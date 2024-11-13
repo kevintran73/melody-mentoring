@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -37,8 +37,8 @@ const StyledButton = styled(Button)({
 });
 
 
-function SimpleDialog(props) {
-  const { onClose, selectedValue, open } = props;
+function SimpleDialog({onClose, selectedValue, open, tutorRecs}) {
+  // const { onClose, selectedValue, open, tutorRecs } = props;
 
   const handleClose = () => {
     onClose(selectedValue);
@@ -56,15 +56,15 @@ function SimpleDialog(props) {
     >
       <DialogTitle>Select a Tutor</DialogTitle>
       <List sx={{ pt: 0 }}>
-        {exampleTutorNames.map((email) => (
-          <ListItem disableGutters key={email}>
-            <ListItemButton onClick={() => handleListItemClick(email)}>
+        {tutorRecs.map((tutor) => (
+          <ListItem disableGutters key={tutor}>
+            <ListItemButton onClick={() => handleListItemClick(tutor)}>
               <ListItemAvatar>
                 <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
                   <PersonIcon />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary={email} />
+              <ListItemText primary={tutor} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -80,9 +80,46 @@ SimpleDialog.propTypes = {
 };
 
 const TutorDialog = () => {
-  const [open, setOpen] = React.useState(false);
-  const [selectedTutor, setSelectedTutor] = React.useState('');
+  const [open, setOpen] = useState(false);
+  const [selectedTutor, setSelectedTutor] = useState('');
+  const [tutorRecs, setTutorRecs] = useState([]);
   const { accessToken, userId } = React.useContext(TokenContext);
+
+  useEffect(() => {
+    const fetchTutorRecs = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/tutor-recommendations/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        fetchTutorNames(response.data.tutors)
+      } catch (error) {
+        console.error('Error fetching tutor recommendation details:', error);
+      }
+    };
+
+    const fetchTutorNames = async (tutorIds) => {
+      const allTutorNames = [];
+
+      for (const tutorId of tutorIds) {
+        try {
+          const response = await axios.get(`http://localhost:5001/profile/${tutorId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          allTutorNames.push(response.data.username);
+        } catch (error) {
+          console.error('Error fetching tutor details:', error);
+        }
+      }
+      setTutorRecs(allTutorNames);
+      console.log(allTutorNames)
+    };
+
+    fetchTutorRecs();
+  }, [accessToken]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -109,7 +146,7 @@ const TutorDialog = () => {
       console.log(requestTutorInfo);
 
       const response = await axios.post(
-        `http://localhost:5001/files/tutor/request/${userId}/${selectedTutor}`,
+        `http://localhost:5001/tutor/request/${userId}/${selectedTutor}`,
         { ...requestTutorInfo },
         {
           headers: {
@@ -152,6 +189,7 @@ const TutorDialog = () => {
         selectedValue={selectedTutor}
         open={open}
         onClose={handleClose}
+        tutorRecs={tutorRecs}
       />
     </Box>
   );

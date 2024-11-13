@@ -51,22 +51,7 @@ const Profile = () => {
       }
     };
 
-    const fetchTutorRecommendations = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5001/tutor-recommendations/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setProfileInfo(response.data);
-        console.log(response.data)
-      } catch (error) {
-        console.error('Error fetching tutor recommendation details:', error);
-      }
-    };
-
     fetchProfile();
-    fetchTutorRecommendations();
   }, [accessToken]);
 
   return (
@@ -75,6 +60,7 @@ const Profile = () => {
       <StyledCardsContainer>
         {/* Profile Card */}
         <Box flex={1}>
+          {/* <Typography>Test: {profileInfo['username']}</Typography> */}
           <ProfileCard 
             username={profileInfo['username']}
             profilePic={profileInfo['profile_picture']}
