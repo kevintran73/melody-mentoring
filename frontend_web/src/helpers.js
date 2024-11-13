@@ -4,12 +4,48 @@ import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 
 /**
- * Determines whether the given username is valid
+ * Show an error message via toast
  * @param {String} message
  *
  */
 export const showErrorMessage = (message) => {
   toast.error(message, {
+    position: 'bottom-right',
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: 'colored',
+  });
+};
+
+/**
+ * Show a success message via toast
+ * @param {String} message
+ *
+ */
+export const showSuccessMessage = (message) => {
+  toast.success(message, {
+    position: 'bottom-right',
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: 'colored',
+  });
+};
+
+/**
+ * Show an uploading message via toast
+ * @param {String} message
+ *
+ */
+export const showUploadingMessage = (message) => {
+  toast.info(message, {
     position: 'bottom-right',
     autoClose: 5000,
     hideProgressBar: false,

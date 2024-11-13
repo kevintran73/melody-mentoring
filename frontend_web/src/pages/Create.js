@@ -1,7 +1,14 @@
 import React from 'react';
 import axios from 'axios';
-import { Navigate } from 'react-router-dom';
-import { getBase64, mapCommaStringToArray, showErrorMessage, uploadFileToS3 } from '../helpers';
+import { Navigate, useNavigate } from 'react-router-dom';
+import {
+  getBase64,
+  mapCommaStringToArray,
+  showErrorMessage,
+  showSuccessMessage,
+  showUploadingMessage,
+  uploadFileToS3,
+} from '../helpers';
 
 import TokenContext from '../context/TokenContext';
 
@@ -9,7 +16,7 @@ import defaultImage from '../assets/default-img.png';
 import NavBar from '../components/nav_bar/NavBar';
 
 import { styled } from '@mui/material';
-import CreateUploadForm from '../components/create/CreateUploadFields';
+import CreateUploadForm from '../components/create/CreateUploadForm';
 
 const StyledHeader = styled('h1')({
   fontSize: '2rem',
@@ -46,9 +53,11 @@ const Create = () => {
   const [song, setSong] = React.useState('');
   const [artist, setArtist] = React.useState('');
   const [diff, setDiff] = React.useState('');
-  const [genreTags, setGenreTags] = React.useState('');
+  const [genreTag, setGenreTag] = React.useState('');
   const [instrument, setInstrument] = React.useState('');
   const [sheetFile, setSheetFile] = React.useState('');
+
+  const navigate = useNavigate();
 
   const { accessToken, userId } = React.useContext(TokenContext);
   if (accessToken === null) {
@@ -80,14 +89,18 @@ const Create = () => {
     } else if (thumbnail !== defaultImage && !allowedImageFiles.includes(thumbnail.type)) {
       showErrorMessage('Thumbnail is an unsupported file type (accepted: .jpeg, .jpg, .png)');
       return;
+    } else if (genreTag === '') {
+      showErrorMessage('Genre field cannot be empty');
+      return;
     }
 
+    showUploadingMessage('Uploading song...');
     try {
       const songInfo = {
         userId: userId,
         composer: artist,
         thumbnail: thumbnail === defaultImage ? '' : await getBase64(thumbnail),
-        genreTags: mapCommaStringToArray(genreTags),
+        genreTags: mapCommaStringToArray(genreTag),
         instrument: instrument,
         title: song,
         difficulty: diff,
@@ -104,18 +117,21 @@ const Create = () => {
       );
 
       await uploadFileToS3(response.data.sheetUploader, sheetFile);
+      showSuccessMessage('Success! Your song was successfully uploaded.');
+
+      // Reset state variables to default
+      setThumbnail(defaultImage);
+      setSong('');
+      setArtist('');
+      setDiff('');
+      setGenreTag('');
+      setInstrument('');
+
+      return navigate('/catalogue');
     } catch (err) {
       showErrorMessage(err.response.data.error);
       return;
     }
-
-    // Reset state variables to default
-    setThumbnail(defaultImage);
-    setSong('');
-    setArtist('');
-    setDiff('');
-    setGenreTags('');
-    setInstrument('');
   };
 
   return (
@@ -136,8 +152,8 @@ const Create = () => {
           setInstrument={setInstrument}
           diff={diff}
           setDiff={setDiff}
-          genreTags={genreTags}
-          setGenreTags={setGenreTags}
+          genreTag={genreTag}
+          setGenreTag={setGenreTag}
           setSheetFile={setSheetFile}
         />
       </PageBlock>

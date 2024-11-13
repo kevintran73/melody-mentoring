@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import NavBar from '../components/nav_bar/NavBar';
@@ -16,6 +17,8 @@ import defaultImg from '../assets/default-img.png';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 import { maxHeight, styled } from '@mui/system';
+import { showErrorMessage } from '../helpers';
+import SearchResults from '../components/catalogue/SearchResults';
 
 /**
  * Catalogue/songs page
@@ -48,18 +51,22 @@ const TopContainer = styled(Card)({
   padding: '20px',
   position: 'relative',
   left: '20%',
-  margin: '20px 0px'
+  margin: '20px 0px',
+});
+
+const PlaylistButton = styled(Button)({
+  // width: '100px',
+  backgroundColor: '#020E37',
+  color: 'white',
+  fontSize: '1.6rem',
+  margin: '10px 0px 5px 10px',
+  textTransform: 'none',
 });
 
 const PlaylistTitle = ({ title, navPlaylist }) => (
-  <Typography
-    fontSize='2.0rem'
-    marginLeft='10px'
-    sx={{ cursor: 'pointer', display: 'inline' }}
-    onClick={navPlaylist}
-  >
+  <PlaylistButton variant='secondary' onClick={navPlaylist}>
     {title}
-  </Typography>
+  </PlaylistButton>
 );
 
 const SongCardTemplate = () => {
@@ -77,23 +84,56 @@ const SongCardTemplate = () => {
   );
 };
 
+const StyledSearchForm = styled('div')({
+  margin: '10px',
+});
+
 const Catalogue = () => {
   const [songs, setSongs] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [favouritedSongs, setFavouritedSongs] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const navigate = useNavigate();
-  const token = useContext(TokenContext);
+  const { accessToken, userId } = React.useContext(TokenContext);
+
+  // Search functionality
+  const [isSearching, setIsSearching] = useState(false);
+  const [query, setQuery] = useState('');
+  const [lastKey, setLastKey] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
+  const [loadingSearch, setLoadingSearch] = React.useState(false);
+  const [hasMoreResults, setHasMoreResults] = React.useState(true);
 
   useEffect(() => {
+    if (!accessToken || !userId) {
+      return;
+    }
+
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/auth/validate-token', {
+        // Fetch user data
+        const response = await axios.get(`http://localhost:5001/profile/${userId}`, {
           headers: {
-            Authorization: `Bearer ${token['accessToken']}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
-        setUserData(response.data.user);
+        setUserData(response.data);
+
+        // Fetch favourited songs concurrently
+        const favouriteSongIds = response.data.favourite_songs;
+        const songFetchPromises = favouriteSongIds.map((favouritedSongId) =>
+          axios.get(`http://localhost:5001/catalogue/songs/find/${favouritedSongId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+        );
+        const songInfoResponses = await Promise.all(songFetchPromises);
+        const favouriteSongs = songInfoResponses.map((songInfoResponse) => songInfoResponse.data);
+        setFavouritedSongs(favouriteSongs);
       } catch (error) {
-        console.error('Error fetching user details:', error);
+        console.error('Error fetching user details or favourite songs:', error);
+        showErrorMessage(error.response?.data?.error || 'An error occurred');
       }
     };
 
@@ -101,11 +141,16 @@ const Catalogue = () => {
       try {
         const response = await axios.get('http://localhost:5001/catalogue/songs/list-all', {
           headers: {
-            Authorization: `Bearer ${token['accessToken']}`,
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
           },
         });
-        const data = response.data.songs;
-        setSongs(data);
+
+        setSongs(response.data.songs);
+
+        // Get random songs to recommend
+        const shuffledSongs = response.data.songs.slice().sort(() => 0.5 - Math.random());
+        setRecommendations(shuffledSongs.slice(0, 3));
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -113,155 +158,418 @@ const Catalogue = () => {
 
     fetchUserData();
     fetchSongs();
-  }, [token]);
+  }, [accessToken, userId]);
 
-  const navPlaylist = () => {
-    return navigate('/playlist');
+  const navPlaylist = (playlistType) => {
+    return navigate(`/playlist/${playlistType}`);
+  };
+
+  // On query change
+  const onQueryChange = (q) => {
+    setIsSearching(false);
+    setLastKey(null);
+    setHasMoreResults(true);
+    setSearchResults([]);
+    setQuery(q.target.value);
+  };
+
+  // Search for songs
+  const searchSongs = async () => {
+    if (loadingSearch || !hasMoreResults) {
+      return;
+    }
+
+    const params = { query };
+    if (lastKey) {
+      params.last_key = lastKey;
+    }
+    setLoadingSearch(true);
+    setIsSearching(true);
+
+    try {
+      const response = await axios.get('http://localhost:5001/catalogue/query', {
+        params,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      setSearchResults((prev) => [...prev, ...response.data.songs]);
+      setLastKey(response.data.last_key);
+      setLoadingSearch(false);
+      setHasMoreResults(response.data.songs.length === 12 && response.data.last_key);
+    } catch (err) {
+      showErrorMessage(err.response.data.error);
+    }
   };
 
   return (
     <Box backgroundColor='#f9f9f9'>
       <NavBar></NavBar>
-      <Box margin='10px'>
-      <StyledSearchBar id='outlined-basic' label='Search' variant='outlined' size='small' />
-        <StyledButton variant='contained' endIcon={<FilterAltIcon />}>
-          Filter
-        </StyledButton>
-        </Box>
-      <Box margin='60px 20px'>
 
+      {songs.length > 0 && (
+        <StyledSearchForm noValidate>
+          <StyledSearchBar
+            id='outlined-basic'
+            label='Search'
+            variant='outlined'
+            size='small'
+            value={query}
+            onChange={onQueryChange}
+          />
+          <StyledButton onClick={searchSongs} variant='contained' endIcon={<FilterAltIcon />}>
+            Filter
+          </StyledButton>
+        </StyledSearchForm>
+      )}
 
-        {/* Welcome container */}
-        <TopContainer>
-          <Typography variant='h2'>
-            Welcome back, {userData ? userData['Username'] : 'N/A'}!
-          </Typography>
-          <Typography variant='h4'>Interested in trying these songs again?</Typography>
-          <Box display='flex' gap='2vw'>
-            <RecommendationCard title='Test' thumbnail={defaultImg} composer='Test' />
-            <RecommendationCard title='Test' thumbnail={defaultImg} composer='Test2' />
-            <RecommendationCard title='Test' thumbnail={defaultImg} composer='Test3' />
-          </Box>
-        </TopContainer>
-
-        {/* Playlist Uploaded */}
-        <Box>
-          <PlaylistTitle title='Your Uploaded Songs >' navPlaylist={navPlaylist} />
-          <ScrollContainer>
-            <Box display='flex' flexDirection='row' flexWrap='wrap'>
-              {songs
-                .filter((song) => song['private'])
-                .map((song, i) => (
-                  <SongCard
-                    title={song['title']}
-                    composer={song['composer']}
-                    privacy={song['private']}
-                    thumbnail={song['thumbnail']}
-                    difficulty={song['difficulty']}
-                    genreTags={song['genreTags']}
+      {searchResults.length === 0 && !isSearching ? (
+        <>
+          {/* Welcome container */}
+          <Box margin='60px 20px'>
+            <TopContainer>
+              <Typography variant='h2'>
+                Welcome back, {userData ? userData['username'] : 'N/A'}!
+              </Typography>
+              <Typography variant='h4'>Songs that might interest you:</Typography>
+              <Box display='flex' gap='2vw'>
+                {recommendations.map((song, i) => (
+                  <RecommendationCard
+                    key={`recommendation-card-${i}`}
                     songId={song['id']}
+                    title={song['title']}
+                    thumbnail={song['thumbnail']}
+                    composer={song['composer']}
                   />
                 ))}
+              </Box>
+            </TopContainer>
+          </Box>
+
+          {/* Playlist Favourited */}
+          {favouritedSongs.length !== 0 && (
+            <Box margin='10px'>
+              <PlaylistTitle
+                title='Your Favourited Songs >'
+                navPlaylist={() => navPlaylist('favourites')}
+              />
+              <ScrollContainer>
+                <Box display='flex' flexDirection='row'>
+                  {favouritedSongs.map((song, i) => (
+                    <Box key={`box-favourited-${song['title']}-${i}`}>
+                      <SongCard
+                        title={song['title']}
+                        composer={song['composer']}
+                        privacy={song['private']}
+                        thumbnail={song['thumbnail']}
+                        difficulty={song['difficulty']}
+                        genreTags={song['genreTags']}
+                        songId={song['id']}
+                      />
+                    </Box>
+                  ))}
+                </Box>
+              </ScrollContainer>
             </Box>
-          </ScrollContainer>
-        </Box>
+          )}
 
-        {/* Playlist 1 */}
-        <Box>
-          <PlaylistTitle title='Playlist 1 >' navPlaylist={navPlaylist} />
-          <ScrollContainer>
-            <Box display='flex' flexDirection={'row'}>
-              {Array.apply(null, { length: 15 }).map((i) => (
-                <SongCardTemplate key={i}></SongCardTemplate>
-              ))}
+          {/* Playlist Uploaded */}
+          {songs.filter((song) => song['private'] && song['uploaderId'] === userId).length !==
+            0 && (
+            <Box margin='10px'>
+              <PlaylistTitle
+                title='Your Uploaded Songs >'
+                navPlaylist={() => navPlaylist('uploaded')}
+              />
+              <ScrollContainer>
+                <Box display='flex' flexDirection='row'>
+                  {songs
+                    .filter((song) => song['private'] && song['uploaderId'] === userId)
+                    .map((song, i) => (
+                      <Box key={`box-uploaded-private-${song['title']}-${i}`}>
+                        <SongCard
+                          title={song['title']}
+                          composer={song['composer']}
+                          privacy={song['private']}
+                          thumbnail={song['thumbnail']}
+                          difficulty={song['difficulty']}
+                          genreTags={song['genreTags']}
+                          songId={song['id']}
+                        />
+                      </Box>
+                    ))}
+                </Box>
+              </ScrollContainer>
             </Box>
-          </ScrollContainer>
-        </Box>
-      </Box>
+          )}
 
-      {/* Playlist 70s */}
-      <Box margin='10px'>
-        <PlaylistTitle title='70s Playlist >' navPlaylist={navPlaylist} />
-        <ScrollContainer>
-          <Box display='flex' flexDirection='row'>
-            {songs
-              .filter((song) => !song['private'] && song.genreTags.includes('70s'))
-              .map((song) => (
-                <Box>
-                  <SongCard
-                    title={song['title']}
-                    composer={song['composer']}
-                    privacy={song['private']}
-                    thumbnail={song['thumbnail']}
-                    difficulty={song['difficulty']}
-                    genreTags={song['genreTags']}
-                    songId={song['id']}
-                  />
+          {/* Playlist Uploaded (Everyone) */}
+          <Box margin='10px'>
+            <PlaylistTitle
+              title='Uploaded Songs (Everyone) >'
+              navPlaylist={() => navPlaylist('uploaded')}
+            />
+            <ScrollContainer>
+              <Box display='flex' flexDirection='row'>
+                {songs
+                  .filter((song) => song['private'])
+                  .map((song, i) => (
+                    <Box key={`box-uploaded-everyone-${song['title']}-${i}`}>
+                      <SongCard
+                        title={song['title']}
+                        composer={song['composer']}
+                        privacy={song['private']}
+                        thumbnail={song['thumbnail']}
+                        difficulty={song['difficulty']}
+                        genreTags={song['genreTags']}
+                        songId={song['id']}
+                      />
+                    </Box>
+                  ))}
+              </Box>
+            </ScrollContainer>
+          </Box>
+
+          {/* Playlist Rock */}
+          {songs.filter(
+            (song) =>
+              (!song['private'] || song['uploaderId'] === userId) && song.genreTags.includes('rock')
+          ).length > 0 && (
+            <Box margin='10px'>
+              <PlaylistTitle title='Rock Playlist >' navPlaylist={() => navPlaylist('rock')} />
+              <ScrollContainer>
+                <Box display='flex' flexDirection='row'>
+                  {songs
+                    .filter(
+                      (song) =>
+                        (!song['private'] || song['uploaderId'] === userId) &&
+                        song.genreTags.includes('rock')
+                    )
+                    .map((song, i) => (
+                      <Box key={`box-rock-${song['title']}-${i}`}>
+                        <SongCard
+                          title={song['title']}
+                          composer={song['composer']}
+                          privacy={song['private']}
+                          thumbnail={song['thumbnail']}
+                          difficulty={song['difficulty']}
+                          genreTags={song['genreTags']}
+                          songId={song['id']}
+                        />
+                      </Box>
+                    ))}
                 </Box>
-              ))}
-          </Box>
-        </ScrollContainer>
-      </Box>
+              </ScrollContainer>
+            </Box>
+          )}
 
-      {/* Playlist Pop */}
-      <Box margin='10px'>
-        <PlaylistTitle title='Pop Playlist >' navPlaylist={navPlaylist} />
-        <ScrollContainer>
-          <Box display='flex' flexDirection='row'>
-            {songs
-              .filter((song) => !song['private'] && song.genreTags.includes('pop'))
-              .map((song) => (
-                <Box>
-                  <SongCard
-                    title={song['title']}
-                    composer={song['composer']}
-                    privacy={song['private']}
-                    thumbnail={song['thumbnail']}
-                    difficulty={song['difficulty']}
-                    genreTags={song['genreTags']}
-                    songId={song['id']}
-                  />
+          {/* Playlist Pop */}
+          {songs.filter(
+            (song) =>
+              (!song['private'] || song['uploaderId'] === userId) && song.genreTags.includes('pop')
+          ).length > 0 && (
+            <Box margin='10px'>
+              <PlaylistTitle title='Pop Playlist >' navPlaylist={() => navPlaylist('pop')} />
+              <ScrollContainer>
+                <Box display='flex' flexDirection='row'>
+                  {songs
+                    .filter(
+                      (song) =>
+                        (!song['private'] || song['uploaderId'] === userId) &&
+                        song.genreTags.includes('pop')
+                    )
+                    .map((song, i) => (
+                      <Box key={`box-pop-${song['title']}-${i}`}>
+                        <SongCard
+                          title={song['title']}
+                          composer={song['composer']}
+                          privacy={song['private']}
+                          thumbnail={song['thumbnail']}
+                          difficulty={song['difficulty']}
+                          genreTags={song['genreTags']}
+                          songId={song['id']}
+                        />
+                      </Box>
+                    ))}
                 </Box>
-              ))}
-          </Box>
-        </ScrollContainer>
-      </Box>
+              </ScrollContainer>
+            </Box>
+          )}
 
-      {/* Playlist Public */}
-      <Box margin='10px'>
-        <PlaylistTitle title='Playlist (Public) Test >' navPlaylist={navPlaylist} />
-        <ScrollContainer>
-          <Box display='flex' flexDirection='row'>
-            {songs
-              .filter((song) => !song['private'])
-              .map((song) => (
-                <Box>
-                  <SongCard
-                    title={song['title']}
-                    composer={song['composer']}
-                    privacy={song['private']}
-                    thumbnail={song['thumbnail']}
-                    difficulty={song['difficulty']}
-                    genreTags={song['genreTags']}
-                    songId={song['id']}
-                  />
+          {/* Playlist Jazz */}
+          {songs.filter(
+            (song) =>
+              (!song['private'] || song['uploaderId'] === userId) && song.genreTags.includes('jazz')
+          ).length > 0 && (
+            <Box margin='10px'>
+              <PlaylistTitle title='Jazz Playlist >' navPlaylist={() => navPlaylist('jazz')} />
+              <ScrollContainer>
+                <Box display='flex' flexDirection='row'>
+                  {songs
+                    .filter(
+                      (song) =>
+                        (!song['private'] || song['uploaderId'] === userId) &&
+                        song.genreTags.includes('jazz')
+                    )
+                    .map((song, i) => (
+                      <Box key={`box-jazz-${song['title']}-${i}`}>
+                        <SongCard
+                          title={song['title']}
+                          composer={song['composer']}
+                          privacy={song['private']}
+                          thumbnail={song['thumbnail']}
+                          difficulty={song['difficulty']}
+                          genreTags={song['genreTags']}
+                          songId={song['id']}
+                        />
+                      </Box>
+                    ))}
                 </Box>
-              ))}
-          </Box>
-        </ScrollContainer>
-      </Box>
+              </ScrollContainer>
+            </Box>
+          )}
 
-      {/* Playlist 3 */}
-      <Box margin='10px'>
-        <PlaylistTitle title='Playlist 3 >' navPlaylist={navPlaylist} />
-        <ScrollContainer>
-          <Box display='flex' flexDirection={'row'}>
-            {Array.apply(null, { length: 15 }).map((i) => (
-              <SongCardTemplate key={i}></SongCardTemplate>
-            ))}
+          {/* Playlist Classical */}
+          {songs.filter(
+            (song) =>
+              (!song['private'] || song['uploaderId'] === userId) &&
+              song.genreTags.includes('classical')
+          ).length > 0 && (
+            <Box margin='10px'>
+              <PlaylistTitle
+                title='Classical Playlist >'
+                navPlaylist={() => navPlaylist('classical')}
+              />
+              <ScrollContainer>
+                <Box display='flex' flexDirection='row'>
+                  {songs
+                    .filter(
+                      (song) =>
+                        (!song['private'] || song['uploaderId'] === userId) &&
+                        song.genreTags.includes('classical')
+                    )
+                    .map((song, i) => (
+                      <Box key={`box-classical-${song['title']}-${i}`}>
+                        <SongCard
+                          title={song['title']}
+                          composer={song['composer']}
+                          privacy={song['private']}
+                          thumbnail={song['thumbnail']}
+                          difficulty={song['difficulty']}
+                          genreTags={song['genreTags']}
+                          songId={song['id']}
+                        />
+                      </Box>
+                    ))}
+                </Box>
+              </ScrollContainer>
+            </Box>
+          )}
+
+          {/* Playlist Score */}
+          {songs.filter(
+            (song) =>
+              (!song['private'] || song['uploaderId'] === userId) &&
+              song.genreTags.includes('score')
+          ).length > 0 && (
+            <Box margin='10px'>
+              <PlaylistTitle title='Score Playlist >' navPlaylist={() => navPlaylist('score')} />
+              <ScrollContainer>
+                <Box display='flex' flexDirection='row'>
+                  {songs
+                    .filter(
+                      (song) =>
+                        (!song['private'] || song['uploaderId'] === userId) &&
+                        song.genreTags.includes('score')
+                    )
+                    .map((song, i) => (
+                      <Box key={`box-score-${song['title']}-${i}`}>
+                        <SongCard
+                          title={song['title']}
+                          composer={song['composer']}
+                          privacy={song['private']}
+                          thumbnail={song['thumbnail']}
+                          difficulty={song['difficulty']}
+                          genreTags={song['genreTags']}
+                          songId={song['id']}
+                        />
+                      </Box>
+                    ))}
+                </Box>
+              </ScrollContainer>
+            </Box>
+          )}
+
+          {/* Playlist Other */}
+          {songs.filter(
+            (song) =>
+              (!song['private'] || song['uploaderId'] === userId) &&
+              song.genreTags.includes('other')
+          ).length > 0 && (
+            <Box margin='10px'>
+              <PlaylistTitle title='Other Playlist>' navPlaylist={() => navPlaylist('other')} />
+              <ScrollContainer>
+                <Box display='flex' flexDirection='row'>
+                  {songs
+                    .filter(
+                      (song) =>
+                        (!song['private'] || song['uploaderId'] === userId) &&
+                        song.genreTags.includes('other')
+                    )
+                    .map((song, i) => (
+                      <Box key={`box-public-${song['title']}-${i}`}>
+                        <SongCard
+                          title={song['title']}
+                          composer={song['composer']}
+                          privacy={song['private']}
+                          thumbnail={song['thumbnail']}
+                          difficulty={song['difficulty']}
+                          genreTags={song['genreTags']}
+                          songId={song['id']}
+                        />
+                      </Box>
+                    ))}
+                </Box>
+              </ScrollContainer>
+            </Box>
+          )}
+
+          {/* Playlist Public */}
+          <Box margin='10px'>
+            <PlaylistTitle
+              title='Playlist (Public) Test >'
+              navPlaylist={() => navPlaylist('public')}
+            />
+            <ScrollContainer>
+              <Box display='flex' flexDirection='row'>
+                {songs
+                  .filter((song) => !song['private'])
+                  .map((song, i) => (
+                    <Box key={`box-public-${song['title']}-${i}`}>
+                      <SongCard
+                        title={song['title']}
+                        composer={song['composer']}
+                        privacy={song['private']}
+                        thumbnail={song['thumbnail']}
+                        difficulty={song['difficulty']}
+                        genreTags={song['genreTags']}
+                        songId={song['id']}
+                      />
+                    </Box>
+                  ))}
+              </Box>
+            </ScrollContainer>
           </Box>
-        </ScrollContainer>
-      </Box>
+        </>
+      ) : (
+        <SearchResults
+          searchResults={searchResults}
+          lastKey={lastKey}
+          searchSongs={searchSongs}
+          hasMoreResults={hasMoreResults}
+        />
+      )}
     </Box>
   );
 };

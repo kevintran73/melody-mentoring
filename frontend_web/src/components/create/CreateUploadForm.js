@@ -109,8 +109,8 @@ const CreateUploadForm = ({
   setInstrument,
   diff,
   setDiff,
-  genreTags,
-  setGenreTags,
+  genreTag,
+  setGenreTag,
   setSheetFile,
 }) => {
   const isSmallScreen = useMediaQuery('(max-width: 900px)');
@@ -180,12 +180,23 @@ const CreateUploadForm = ({
           value={diff}
           onChange={(d) => setDiff(d.target.value)}
         />
-        <TextField
-          label='Genre tags (separate with a comma e.g. classical,baroque)'
-          id='genre-tags-field'
-          value={genreTags}
-          onChange={(g) => setGenreTags(g.target.value)}
-        />
+        <FormControl fullWidth>
+          <InputLabel id='select-instrument-label'>Genre</InputLabel>
+          <Select
+            label='Genre'
+            labelId='select-genre-label'
+            id='select-genre'
+            value={genreTag}
+            onChange={(i) => setGenreTag(i.target.value)}
+          >
+            <MenuItem value='rock'>Rock</MenuItem>
+            <MenuItem value='pop'>Pop</MenuItem>
+            <MenuItem value='jazz'>Jazz</MenuItem>
+            <MenuItem value='classical'>Classical</MenuItem>
+            <MenuItem value='score'>Score</MenuItem>
+            <MenuItem value='other'>Other</MenuItem>
+          </Select>
+        </FormControl>
         <InputFileUpload
           innerText='Upload sheet music (.mxl or .musicxml)'
           id='upload-sheet-button'
