@@ -68,6 +68,7 @@ const Profile = () => {
             email={profileInfo['email']}
             instrument={profileInfo['instrument']}
             level={profileInfo['level']}
+            role={profileInfo['role']}
           />
         </Box>
 

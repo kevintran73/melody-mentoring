@@ -160,15 +160,13 @@ const History = () => {
             <CircularProgress size='20vh' />
           </LoadingOverlayMain>
         )}
-
-
-
+{/* 
         <HistoryCard
             title={'Ode to Joy (Example - Test)'}
             composer={'Beethoven'}
             difficulty={1.2}
             trackAttemptId={'90d775a8-3cb1-4939-ab06-adadc4a98b18'}
-          />
+          /> */}
       </Box>
     </Box>
   );

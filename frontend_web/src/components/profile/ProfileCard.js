@@ -67,7 +67,7 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const SongCard = ({ username, profilePic, email, instrument, level, onChange }) => {
+const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
   const [isConfirming, setIsConfirming] = useState(false);
   const [uploadedFile, setUploadedFile] = useState('');
   const [uploadedImage, setUploadedImage] = useState('');
@@ -166,7 +166,7 @@ const SongCard = ({ username, profilePic, email, instrument, level, onChange }) 
         <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Email: {email}</Typography>
         <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Instrument: {instrument}</Typography>
         <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Level: {level}</Typography>
-        <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Role: Student</Typography>
+        <Typography fontSize='1.2rem' sx={{ color: 'text.secondary' }}>Role: {role}</Typography>
       </Box>
       {isConfirming ? (
         <Box display='flex' flexDirection='row' width='80%' gap='10px'>
