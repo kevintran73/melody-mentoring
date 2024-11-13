@@ -251,8 +251,24 @@ def generateGroqResponse(prompt: str, model: str) -> str:
 def get_feedback_for_track_attempt(trackAttemptId):
     # TODO: check if the user owns that trackattempt
     '''GET route which dynamically generates feedback for user's track attempts
+    usage:
+    GET /attempts/user/feedback-for-attempt/testingTrackAttempt?model=gemma-7b-it
+    Response 200 returns:
+    {
+        'pitch': float,
+        'intonation': float,
+        'rhythm': float,
+        'dynamics': float,
+        'groqSays': str
+    }
+    For pitch: 1 = all correct notes, 0 = no correct notes
+    For intonation: 1 = perfect, 0 = intonation is terrible
+    For rhythm: greater than 1 = dragging, lower than 1 = rushing
+    For dynamics: 1 = dynamics are perfect, 0 = dynamics are awful
 
-    Also accepts an optional query parameter to specify the model used.
+    Note the query parameter to specify AI model is optional.
+    e.g GET /attempts/user/feedback-for-attempt/testingTrackAttempt
+
     If no model is specified, groq will be passed `llama3-8b-8192` by default.\n
     Working models are specified in allowedModels below, if any other model is tried,
     this route returns a bad request response.
