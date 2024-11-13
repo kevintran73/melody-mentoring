@@ -5,6 +5,7 @@ import random
 from typing import List, Dict
 from .auth import token_required
 from botocore.exceptions import ClientError
+from boto3.dynamodb.conditions import Attr
 
 dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
 tutor_recommendationdbp = Blueprint('tutor_recommendation', __name__)

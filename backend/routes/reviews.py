@@ -1,6 +1,9 @@
 from flask import Blueprint, request, jsonify
 import boto3
+import os
 from .auth import token_required
+import uuid
+from botocore.exceptions import ClientError
 
 review_bp = Blueprint('reviews', __name__)
 client = boto3.client('cognito-idp', region_name='ap-southeast-2')
@@ -146,14 +149,14 @@ def getReview(trackAttemptId):
 
     try:
         reviews = dynamodb.Table(os.getenv('DYNAMODB_TABLE_REVIEWS'))
-        response = reviews_table.query(
-            KeyConditionExpression=Key('trackAttemptId').eq(trackAttemptId)
+        response = reviews.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key('trackAttemptId').eq(trackAttemptId)
         )
 
         if 'Items' not in response or not response['Items']:
             return jsonify({'error': 'Reviews not found'}), 404
 
-        return jsonify(review_data), 200
+        return jsonify(response), 200
 
     except Exception as e:
         return jsonify({
