@@ -132,7 +132,7 @@ const History = () => {
       <NavBar></NavBar>
       <StyledTopContainer>
         <Box flex='2' height='100%'>
-          <HistoryIntroCard title='Fantastic work!' />
+          <HistoryIntroCard title='Welcome to the history page!' />
         </Box>
       </StyledTopContainer>
       
