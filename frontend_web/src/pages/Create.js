@@ -1,7 +1,14 @@
 import React from 'react';
 import axios from 'axios';
-import { Navigate } from 'react-router-dom';
-import { getBase64, mapCommaStringToArray, showErrorMessage, uploadFileToS3 } from '../helpers';
+import { Navigate, useNavigate } from 'react-router-dom';
+import {
+  getBase64,
+  mapCommaStringToArray,
+  showErrorMessage,
+  showSuccessMessage,
+  showUploadingMessage,
+  uploadFileToS3,
+} from '../helpers';
 
 import TokenContext from '../context/TokenContext';
 
@@ -50,6 +57,8 @@ const Create = () => {
   const [instrument, setInstrument] = React.useState('');
   const [sheetFile, setSheetFile] = React.useState('');
 
+  const navigate = useNavigate();
+
   const { accessToken, userId } = React.useContext(TokenContext);
   if (accessToken === null) {
     return <Navigate to='/login' />;
@@ -85,6 +94,7 @@ const Create = () => {
       return;
     }
 
+    showUploadingMessage('Uploading song...');
     try {
       const songInfo = {
         userId: userId,
@@ -107,18 +117,21 @@ const Create = () => {
       );
 
       await uploadFileToS3(response.data.sheetUploader, sheetFile);
+      showSuccessMessage('Success! Your song was successfully uploaded.');
+
+      // Reset state variables to default
+      setThumbnail(defaultImage);
+      setSong('');
+      setArtist('');
+      setDiff('');
+      setGenreTag('');
+      setInstrument('');
+
+      return navigate('/catalogue');
     } catch (err) {
       showErrorMessage(err.response.data.error);
       return;
     }
-
-    // Reset state variables to default
-    setThumbnail(defaultImage);
-    setSong('');
-    setArtist('');
-    setDiff('');
-    setGenreTag('');
-    setInstrument('');
   };
 
   return (

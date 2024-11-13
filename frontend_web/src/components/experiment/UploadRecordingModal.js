@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { styled } from '@mui/system';
 import axios from 'axios';
-import { showErrorMessage, uploadFileToS3 } from '../../helpers';
+import {
+  showErrorMessage,
+  showSuccessMessage,
+  showUploadingMessage,
+  uploadFileToS3,
+} from '../../helpers';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -59,6 +64,7 @@ const UploadRecordingModal = ({ navigate, userId, songId, accessToken }) => {
       return;
     }
 
+    showUploadingMessage('Uploading recording...');
     // Upload to S3
     try {
       const response = await axios.post(
@@ -73,6 +79,8 @@ const UploadRecordingModal = ({ navigate, userId, songId, accessToken }) => {
       );
 
       await uploadFileToS3(response.data.audioUploader, songRecording);
+      showSuccessMessage('Success! Your recording was successfully uploaded.');
+
       return navigate('/history');
     } catch (err) {
       showErrorMessage(err.response.data.error);
