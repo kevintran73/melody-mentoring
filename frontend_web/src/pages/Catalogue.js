@@ -485,30 +485,6 @@ const Catalogue = () => {
               </Box>
             </ScrollContainer>
           </Box>
-
-          {/* Playlist 1 */}
-          <Box margin='10px'>
-            <PlaylistTitle title='Playlist 1 (Default) >' navPlaylist={navPlaylist} />
-            <ScrollContainer>
-              <Box display='flex' flexDirection={'row'}>
-                {Array.apply(null, { length: 15 }).map((_, i) => (
-                  <SongCardTemplate key={`playlist-1-${i}`}></SongCardTemplate>
-                ))}
-              </Box>
-            </ScrollContainer>
-          </Box>
-
-          {/* Playlist 2 */}
-          <Box margin='10px'>
-            <PlaylistTitle title='Playlist 2 (Default) >' navPlaylist={navPlaylist} />
-            <ScrollContainer>
-              <Box display='flex' flexDirection={'row'}>
-                {Array.apply(null, { length: 15 }).map((_, i) => (
-                  <SongCardTemplate key={`playlist-2-${i}`}></SongCardTemplate>
-                ))}
-              </Box>
-            </ScrollContainer>
-          </Box>
         </>
       ) : (
         <SearchResults
