@@ -14,10 +14,13 @@ import AddIcon from '@mui/icons-material/Add';
 import Typography from '@mui/material/Typography';
 import { blue } from '@mui/material/colors';
 import Box from '@mui/material/Box';
+import TokenContext from '../../context/TokenContext';
+import axios from 'axios';
+import { showErrorMessage } from '../../helpers';
 
 import { styled } from '@mui/system';
 
-const exampleTutorNames = ['Jim Adams', 'John Cassyworth', 'Amy Chi', 'Lucas Lars', 'Jim Adams', 'John Cassyworth', 'Amy Chi', 'Lucas Lars', 'Jim Adams', 'John Cassyworth', 'Amy Chi', 'Lucas Lars'];
+const exampleTutorNames = ['Jim Adams1', 'John Cassyworth1', 'Amy Chi1', 'Lucas Lars1', 'Jim Adams', 'John Cassyworth', 'Amy Chi', 'Lucas Lars', 'Jim Adams2', 'John Cassyworth2', 'Amy Chi2', 'Lucas Lars2'];
 
 const StyledButton = styled(Button)({
   width: '100%',
@@ -65,19 +68,6 @@ function SimpleDialog(props) {
             </ListItemButton>
           </ListItem>
         ))}
-        <ListItem disableGutters>
-          <ListItemButton
-            autoFocus
-            onClick={() => handleListItemClick('addAccount')}
-          >
-            <ListItemAvatar>
-              <Avatar>
-                <AddIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary="Add account" />
-          </ListItemButton>
-        </ListItem>
       </List>
     </Dialog>
   );
@@ -92,6 +82,7 @@ SimpleDialog.propTypes = {
 const TutorDialog = () => {
   const [open, setOpen] = React.useState(false);
   const [selectedTutor, setSelectedTutor] = React.useState('');
+  const { accessToken, userId } = React.useContext(TokenContext);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -100,30 +91,52 @@ const TutorDialog = () => {
   const handleClose = (value) => {
     setOpen(false);
     setSelectedTutor(value);
+    console.log(value)
   };
 
   const handleDeny = (value) => {
     setSelectedTutor('');
   };
 
-  const handleConfirm = (value) => {
+  const handleConfirm = async () => {
+    try {
+      const requestTutorInfo = {
+        studentId: userId,
+        tutorId: selectedTutor,
+      };
 
-    // Add tutor in backend
+      console.log(selectedTutor)
+      console.log(requestTutorInfo);
+
+      const response = await axios.post(
+        `http://localhost:5001/files/tutor/request/${userId}/${selectedTutor}`,
+        { ...requestTutorInfo },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+    } catch (err) {
+      showErrorMessage(err.response.data.error);
+      return;
+    }
 
     setSelectedTutor('');
   };
 
   return (
     <Box>
-      {selectedTutor && (
+      {selectedTutor ? (
         <Typography variant="subtitle1" component="div">
           Request {selectedTutor} as a tutor?
         </Typography>
-      )}
-
-
-
-
+      ) : (
+        <Typography variant="subtitle1" component="div">
+          Click the button below to find one!
+        </Typography>
+      )
+      }
       {selectedTutor ? (
         <Box display='flex' flexDirection='row' width='100%' gap='10px'>
           <StyledButton onClick={handleConfirm}>Confirm</StyledButton>

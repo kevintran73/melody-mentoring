@@ -30,13 +30,13 @@ const TutorInfoCard = ({ img, name, details }) => {
           <Img alt='tutor-card' src={img ? img : defaultImg}/>
         </Box>
 
-        <Box>
+        <Box display='flex' justifyContent='center' alignItems='center'>
           <Typography fontSize='1rem'>
             {name}
           </Typography>
-          <Typography fontSize='0.7rem'>
+          {/* <Typography fontSize='0.7rem'>
             {details}
-          </Typography>
+          </Typography> */}
         </Box>
 
       </Box>

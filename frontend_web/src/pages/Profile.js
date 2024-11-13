@@ -51,22 +51,22 @@ const Profile = () => {
       }
     };
 
-    // const fetchTutorRecommendations = async () => {
-    //   try {
-    //     const response = await axios.get(`http://localhost:5001/tutor-recommendations/${userId}`, {
-    //       headers: {
-    //         Authorization: `Bearer ${accessToken}`,
-    //       },
-    //     });
-    //     setProfileInfo(response.data);
-    //     console.log(response.data)
-    //   } catch (error) {
-    //     console.error('Error fetching tutor recommendation details:', error);
-    //   }
-    // };
+    const fetchTutorRecommendations = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/tutor-recommendations/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setProfileInfo(response.data);
+        console.log(response.data)
+      } catch (error) {
+        console.error('Error fetching tutor recommendation details:', error);
+      }
+    };
 
     fetchProfile();
-    // fetchTutorRecommendations();
+    fetchTutorRecommendations();
   }, [accessToken]);
 
   return (
@@ -97,7 +97,7 @@ const Profile = () => {
           <Card sx={{ borderRadius: '16px', height: '100%', display: 'flex', flexDirection: 'column', padding: '20px', gap: '10px'}}>
             <Typography variant='h3' textAlign='center'>Tutors</Typography>
             <Box flex='6' width='100%' justifyContent='center' padding='10px' borderRadius='16px'>
-              <TutorList />
+              <TutorList tutorIds={profileInfo['tutors']}/>
             </Box>
             <Box display='flex' flex='1' width='100%' alignItems='center' justifyContent='center'>
               <TutorSearchCard />
