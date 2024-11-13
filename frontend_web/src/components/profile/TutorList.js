@@ -26,7 +26,6 @@ const TutorList = ({ tutorIds = [] }) => {
   useEffect(() => {
     const fetchTutorDetails = async () => {
       const allTutorDetails = [];
-      console.log('tutorIds:', tutorIds);
 
       for (const tutorId of tutorIds) {
         try {
