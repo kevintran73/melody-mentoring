@@ -81,7 +81,6 @@ def postExperimentReview():
         feedback = data['feedback']
         rating = data['rating']
 
-        # Access the DynamoDB tables
         reviews_table = dynamodb.Table(os.getenv('DYNAMODB_TABLE_REVIEWS'))
         track_attempts_table = dynamodb.Table(os.getenv('DYNAMODB_TABLE_TRACK_ATTEMPTS'))
         users_table = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
@@ -108,13 +107,17 @@ def postExperimentReview():
             ReturnValues="UPDATED_NEW"
         )
 
-        # Remove the trackAttemptId from the tutor's to_review list
+        # Remove the specified track_attempt_id from the to_review list
+        tutor = users_table.get_item(Key={'id': tutor_id})
+        to_review = tutor.get('Item', {}).get('to_review', [])
+        updated_to_review = [item for item in to_review if item != track_attempt_id]
+
+        # Update the to_review attribute with the modified list
         users_table.update_item(
             Key={'id': tutor_id},
-            UpdateExpression="SET to_review = list_remove(to_review, :index)",
-            ConditionExpression="contains(to_review, :track_attempt)",
+            UpdateExpression="SET to_review = :updated_to_review",
             ExpressionAttributeValues={
-                ':track_attempt': track_attempt_id
+                ':updated_to_review': updated_to_review
             },
             ReturnValues="UPDATED_NEW"
         )
