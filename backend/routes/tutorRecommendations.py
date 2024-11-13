@@ -7,8 +7,6 @@ from .auth import token_required
 from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
-s3 = boto3.client('s3', region_name='ap-southeast-2')
-
 tutor_recommendationdbp = Blueprint('tutor_recommendation', __name__)
 
 @tutor_recommendationdbp.route('/tutor-recommendations/<userId>', methods=['GET'])

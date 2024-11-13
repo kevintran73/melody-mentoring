@@ -31,11 +31,19 @@ class User(BaseModel):
     track_attempts: list[str]   # corresponding trackattemptid, oldest first
     private_songs: list[str]
     favourite_songs: list[str]
+    students: list[str] # list of students a tutor marks
+    tutors: list[str] # list of tutors
+    requests: list[str] # list of students requesting to become a tutors student
+    assigned: list[str] # list of songs that are assigned to a student
+    to_review: list[str] # list of track attemps a tutor needs to review
     role: Role
 
 class Review(BaseModel):
-    pass
-    # TODO
+    id: str
+    tutor: str                    # user id for tutor
+    trackAttemptId: str
+    feedback: str                 # A feedback string
+    rating: str                   # A float between 1 and 5 determining closeness to the song
 
 class TrackAttempt(BaseModel):
     id: str
@@ -45,7 +53,7 @@ class TrackAttempt(BaseModel):
     # audioKey: str               # audio s3 key is this object's id in s3->user-experiment-audio
     # videoKey: str               # video s3 key is this object's id in s3->user-experiment-video
     isoUploadTime: str            # time of upload
-    reviews: list[Review]
+    reviews: list[str]            # id of reviews
 
 class Recommendations(BaseModel):
     tutors: list[str]

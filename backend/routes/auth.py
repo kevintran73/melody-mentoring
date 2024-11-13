@@ -96,7 +96,7 @@ def sign_up():
         username: str                 # username of the new user
         email: str                    # email of the new user
         password: str                 # password of the new user
-        role: str                     # either 'student' or 'lecturer'
+        role: str                     # either 'student' or 'tutor'
     }
 
     Returns basic info on the user aswell as if the sign up was successful
@@ -179,6 +179,11 @@ def confirmSignup():
             'track_attempts': [],
             'private_songs': [],
             'favourite_songs': [],
+            'students': [],
+            'tutors': [],
+            'requests': [],
+            'assigned': [],
+            'to_review': [],
             'level': '1'
         }
 
