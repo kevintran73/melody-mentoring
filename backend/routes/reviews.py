@@ -78,23 +78,34 @@ def postExperimentReview():
         feedback = data['feedback']
         rating = data['rating']
 
-        # Add the review to the reviews table
+        # Access the DynamoDB tables
         reviews_table = dynamodb.Table(os.getenv('DYNAMODB_TABLE_REVIEWS'))
+        track_attempts_table = dynamodb.Table(os.getenv('DYNAMODB_TABLE_TRACK_ATTEMPTS'))
+        users_table = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
 
+        # Create and save the review in the reviews table
+        review_id = str(uuid.uuid4())
         review = {
-            'id': str(uuid.uuid4()),
+            'id': review_id,
             'tutor': tutor_id,
             'trackAttemptId': track_attempt_id,
             'feedback': feedback,
             'rating': rating
         }
-
-        # Save the review in the DynamoDB table
         reviews_table.put_item(Item=review)
 
-        # Remove the trackAttemptId from the tutor's to_review list
-        users_table = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
+        # Append the review ID to the reviews list in the trackAttempt entry
+        track_attempts_table.update_item(
+            Key={'id': track_attempt_id},
+            UpdateExpression="SET reviews = list_append(if_not_exists(reviews, :empty_list), :new_review)",
+            ExpressionAttributeValues={
+                ':new_review': [review_id],
+                ':empty_list': []
+            },
+            ReturnValues="UPDATED_NEW"
+        )
 
+        # Remove the trackAttemptId from the tutor's to_review list
         users_table.update_item(
             Key={'id': tutor_id},
             UpdateExpression="SET to_review = list_remove(to_review, :index)",
