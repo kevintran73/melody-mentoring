@@ -48,10 +48,10 @@ const LoadingOverlayMain = styled(Box)({
 
 
 const History = () => {
-  // const [trackAttempts, setTrackAttempts] = useState([]);
   const [songDetails, setSongDetails] = useState([]);
   const { accessToken, userId } = React.useContext(TokenContext);
 
+  // Get track attempts of user
   useEffect(() => {
     const fetchTrackAttempts = async () => {
       try {
@@ -66,27 +66,29 @@ const History = () => {
       }
     };
 
+    // Get track details from track attempts
     const fetchTrackDetails = async (attemptIds) => {
-      try {
-        const attemptPromises = attemptIds.map((attemptId) =>
-          axios.get(`http://localhost:5001/track-attempt/${attemptId}`, {
+      const trackDetails = [];
+
+      for (const attemptId of attemptIds) {
+        try {
+          const response = await axios.get(`http://localhost:5001/track-attempt/${attemptId}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
-          }
-        ))
-        const trackResponses = await Promise.allSettled(attemptPromises);
-        const trackDetails = trackResponses.map((response) => response.value.data);
-        // setTrackAttempts(trackDetails)
-        fetchSongDetails(trackDetails)
-      } catch (error) {
-        console.error('Error fetching track details:', error);
+          });
+          trackDetails.push(response.data);
+        } catch (error) {
+          console.error('Error fetching song details:', error);
+        }
       }
+      fetchSongDetails(trackDetails)
     };
 
+    // Get song details from track details
     const fetchSongDetails = async (trackData) => {
       const allSongDetails = [];
-
+      console.log(trackData)
       for (const track of trackData) {
         try {
           const response = await axios.get(`http://localhost:5001/catalogue/songs/find/${track['songId']}`, {
@@ -101,7 +103,6 @@ const History = () => {
             date: date,
             trackAttemptId: track['id'],
           };
-          console.log(newSongDetail)
           allSongDetails.push(newSongDetail);
         } catch (error) {
           console.error('Error fetching song details:', error);
@@ -121,13 +122,13 @@ const History = () => {
     setSearchInput(e.target.value);
   };
 
-  const filteredPlaylist = songDetails.filter(song => 
+  const filteredTracks = songDetails.filter(song => 
     (song.title.toLowerCase().includes(searchInput.toLowerCase()) ||
     song.composer.toLowerCase().includes(searchInput.toLowerCase()))
   );
 
   return (
-    <Box backgroundColor='#E3E3E3'>
+    <Box>
       <NavBar></NavBar>
       <StyledTopContainer>
         <Box flex='2' height='100%'>
@@ -137,31 +138,35 @@ const History = () => {
       
       <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column' marginX='10vw'>
         <StyledSearchBar id='outlined-basic' label='Search' variant='outlined' onChange={handleSearchChange} value={searchInput} />
-        {filteredPlaylist.map((songDetail, i) => (
-          <HistoryCard
-            key={i}
-            title={songDetail['title']}
-            composer={songDetail['composer']}
-            difficulty={songDetail['difficulty']}
-            date={new Intl.DateTimeFormat('en', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            }).format(songDetail.date)}
-            thumbnail={songDetail['thumbnail']}
-            trackAttemptId={songDetail['trackAttemptId']}
-          />
-        ))}
+
+        {filteredTracks.length > 0 ? (
+          filteredTracks.map((songDetail, i) => (
+            <HistoryCard
+              key={i}
+              title={songDetail['title']}
+              composer={songDetail['composer']}
+              difficulty={songDetail['difficulty']}
+              date={new Intl.DateTimeFormat('en', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              }).format(songDetail.date)}
+              thumbnail={songDetail['thumbnail']}
+              trackAttemptId={songDetail['trackAttemptId']}
+            />
+          ))
+        ) : (
+          <LoadingOverlayMain>
+            <CircularProgress size='20vh' />
+          </LoadingOverlayMain>
+        )}
+
+
+
         <HistoryCard
-            title={'Ode to Joy (Test)'}
+            title={'Ode to Joy (Example - Test)'}
             composer={'Beethoven'}
             difficulty={1.2}
-            // date={new Intl.DateTimeFormat('en', {
-            //   year: 'numeric',
-            //   month: 'long',
-            //   day: 'numeric',
-            // }).format(songDetail.date)}
-            // thumbnail={songDetail['thumbnail']}
             trackAttemptId={'90d775a8-3cb1-4939-ab06-adadc4a98b18'}
           />
       </Box>

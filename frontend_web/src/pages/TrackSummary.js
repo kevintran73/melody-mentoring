@@ -423,9 +423,12 @@ const TrackSummary = () => {
       </ScrollContainer>
 
       <Box margin='10px 40px'>
-        <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
-          Tutor Reviews
-        </Typography>
+        <Box display='flex'>
+          <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
+            Tutor Reviews
+          </Typography>
+          <StyledButton>Test</StyledButton>
+        </Box>
         {reviews ? (
           <ScrollContainer>
             <Box

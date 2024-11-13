@@ -44,7 +44,7 @@ const HistoryCard = ({ title, composer, difficulty, date, thumbnail, trackAttemp
             {title}
           </Typography>
           <Typography fontSize='1.2rem'>
-            {composer} • {difficulty}
+            {composer} • Difficulty: {difficulty}
           </Typography>
           <Typography fontSize='1.2rem' marginTop='1%'>
             {date}
