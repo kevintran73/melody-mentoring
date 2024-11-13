@@ -1,17 +1,14 @@
 import * as React from 'react';
 import { styled } from '@mui/system';
 import axios from 'axios';
+import { showErrorMessage, uploadFileToS3 } from '../../helpers';
 
-import TokenContext from '../../context/TokenContext';
-
-import { TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import TextFieldsIcon from '@mui/icons-material/TextFields';
+
 import InputFileUpload from '../utilities/InputFileUpload';
-import { showErrorMessage, uploadFileToS3 } from '../../helpers';
 
 const style = {
   position: 'absolute',
