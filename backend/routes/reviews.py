@@ -148,15 +148,15 @@ def getReview(trackAttemptId):
     '''
 
     try:
-        reviews = dynamodb.Table(os.getenv('DYNAMODB_TABLE_REVIEWS'))
-        response = reviews.query(
+        reviews_table = dynamodb.Table(os.getenv('DYNAMODB_TABLE_REVIEWS'))
+        response = reviews_table.query(
             KeyConditionExpression=boto3.dynamodb.conditions.Key('trackAttemptId').eq(trackAttemptId)
         )
 
         if 'Items' not in response or not response['Items']:
-            return jsonify({'error': 'Reviews not found'}), 404
+            return jsonify({'error': 'No reviews found for the specified track attempt'}), 404
 
-        return jsonify(response), 200
+        return jsonify({'reviews': response['Items']}), 200
 
     except Exception as e:
         return jsonify({
