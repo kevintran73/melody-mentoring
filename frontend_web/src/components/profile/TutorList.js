@@ -58,22 +58,6 @@ const TutorList = ({ tutorIds = [] }) => {
             details={'test'}
           />
         ))}
-        <TutorInfoCard img={defaultImg} name='Tim' details='Tutor details'/>
-        <TutorInfoCard img={defaultImg} name='Jim' details='Jims other details'/>
-        <TutorInfoCard img={defaultImg} name='Tim' details='Tutor details'/>
-        <TutorInfoCard img={defaultImg} name='Jim' details='Jims other details'/>
-        <TutorInfoCard img={defaultImg} name='Tim' details='Tutor details'/>
-        <TutorInfoCard img={defaultImg} name='Jim' details='Jims other details'/>
-        <TutorInfoCard img={defaultImg} name='Tim' details='Tutor details'/>
-        <TutorInfoCard img={defaultImg} name='Jim' details='Jims other details'/>
-        <TutorInfoCard img={defaultImg} name='Tim' details='Tutor details'/>
-        <TutorInfoCard img={defaultImg} name='Jim' details='Jims other details'/>
-        <TutorInfoCard img={defaultImg} name='Tim' details='Tutor details'/>
-        <TutorInfoCard img={defaultImg} name='Jim' details='Jims other details'/>
-        <TutorInfoCard img={defaultImg} name='Tim' details='Tutor details'/>
-        <TutorInfoCard img={defaultImg} name='Jim' details='Jims other details'/>
-        <TutorInfoCard img={defaultImg} name='Tim' details='Tutor details'/>
-        <TutorInfoCard img={defaultImg} name='Jim' details='Jims other details'/>
       </StyledCard>
     </Box>
   );

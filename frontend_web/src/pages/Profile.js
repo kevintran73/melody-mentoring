@@ -6,6 +6,7 @@ import { Typography } from '@mui/material';
 import ProfileCard from '../components/profile/ProfileCard';
 import TutorSearchCard from '../components/profile/TutorSearchCard';
 import TutorList from '../components/profile/TutorList';
+import StreakCard from '../components/profile/StreakCard';
 import Card from '@mui/material/Card';
 import { styled } from '@mui/system';
 import axios from 'axios';
@@ -74,10 +75,14 @@ const Profile = () => {
         <Box flex={1} flexDirection='column' alignItems='center' justifyContent='center' textAlign='center'>
           <Card sx={{ borderRadius: '16px', height: '100%', display: 'flex', flexDirection: 'column', padding: '20px' }}>
             <Typography variant='h3'> Achievements </Typography>
-            {profileInfo ? (
-              <AchievementGrid userInfo={profileInfo}></AchievementGrid>
-            ) : (<Box />)
-            }
+            <Box height='100%' display='flex' flexDirection='column' alignItems='center' justifyContent='space-evenly'>
+              {profileInfo['current_streak'] && (
+                <StreakCard userInfo={profileInfo}></StreakCard>
+              )}
+              {profileInfo['achievements'] && (
+                <AchievementGrid userInfo={profileInfo}></AchievementGrid>
+              )}
+            </Box>
           </Card>
         </Box>
 

@@ -140,7 +140,7 @@ const SongCard = ({ username, profilePic, email, instrument, level, onChange }) 
           component="img"
           src={uploadedImage ? uploadedImage : defaultImg}
           sx={{
-            width: '100%',
+            width: '70%',
             objectFit: 'cover',
           }}
         />
@@ -149,7 +149,7 @@ const SongCard = ({ username, profilePic, email, instrument, level, onChange }) 
           component="img"
           src={profileImage ? profileImage : defaultImg}
           sx={{
-            width: '100%',
+            width: '70%',
             objectFit: 'cover',
           }}
         />
