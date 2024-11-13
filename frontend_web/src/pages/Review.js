@@ -11,7 +11,7 @@ const Review = () => {
   const [review, setReview] = useState('')
   const { trackAttemptId } = useParams()
   const [recording, setRecording] = useState()
-  const [rating, setRating] = useState()
+  const [rating, setRating] = useState(5)
   const {accessToken, userId} = useContext(TokenContext);
  
   // Fetch the recording from S3 bucket for the tutor to review 
@@ -41,7 +41,7 @@ const Review = () => {
       try {
         alert(review)
 
-        await axios.post('/review/submit', 
+        await axios.post('http://localhost:5001/review/submit', 
           {
             tutor: userId,
             trackAttemptId: trackAttemptId,
