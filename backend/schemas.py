@@ -35,6 +35,7 @@ class User(BaseModel):
     tutors: list[str] # list of tutors
     requests: list[str] # list of students requesting to become a tutors student
     assigned: list[str] # list of songs that are assigned to a student
+    to_review: list[str] # list of track attemps a tutor needs to review
     role: Role
 
 class Review(BaseModel):

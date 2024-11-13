@@ -89,7 +89,7 @@ def tutorResponse(tutorId):
 
 @tutor_bp.route('/tutor/assign/<tutorId>', methods=['POST'])
 @token_required
-def tutorRequest(tutorId):
+def tutorAssignSong(tutorId):
     '''POST for a tutor to assign a student(s) a song
     Body must contain the following things:
     {
