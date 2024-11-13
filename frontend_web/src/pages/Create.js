@@ -80,6 +80,9 @@ const Create = () => {
     } else if (thumbnail !== defaultImage && !allowedImageFiles.includes(thumbnail.type)) {
       showErrorMessage('Thumbnail is an unsupported file type (accepted: .jpeg, .jpg, .png)');
       return;
+    } else if (genreTag === '') {
+      showErrorMessage('Genre field cannot be empty');
+      return;
     }
 
     try {
