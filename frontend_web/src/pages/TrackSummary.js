@@ -21,6 +21,7 @@ import SubAdviceCard from '../components/track_summary/SubAdviceCard';
 import Thumbnail from '../components/track_summary/Thumbnail';
 import BarChartCard from '../components/track_summary/BarChartCard';
 import ReviewCard from '../components/track_summary/ReviewCard';
+import RequestDialog from '../components/track_summary/RequestDialog';
 
 /**
  * Track Summary page
@@ -445,6 +446,7 @@ const TrackSummary = () => {
             Tutor Reviews
           </Typography>
           <StyledTextButton>Request Review</StyledTextButton>
+          <RequestDialog></RequestDialog>
         </Box>
         {reviews ? (
           <ScrollContainer>

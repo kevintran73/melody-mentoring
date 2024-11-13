@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -79,24 +80,27 @@ SimpleDialog.propTypes = {
   selectedValue: PropTypes.string.isRequired,
 };
 
-const TutorDialog = () => {
+const RequestDialog = () => {
+  const params = useParams();
   const [open, setOpen] = useState(false);
   const [selectedTutor, setSelectedTutor] = useState('');
-  const [tutorRecs, setTutorRecs] = useState([]);
+  const [tutors, setTutors] = useState([]);
   const { accessToken, userId } = React.useContext(TokenContext);
+  console.log(params.trackAttemptId)
 
   useEffect(() => {
-    const fetchTutorRecs = async () => {
+    const fetchProfile = async () => {
       try {
-        const response = await axios.get(`http://localhost:5001/tutor-recommendations/${userId}`, {
+        const response = await axios.get(`http://localhost:5001/profile/${userId}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-        fetchTutorNames(response.data.tutors)
+        // setTutors(response.data.tutors);
         console.log(response.data.tutors)
+        fetchTutorNames(response.data.tutors)
       } catch (error) {
-        console.error('Error fetching tutor recommendation details:', error);
+        console.error('Error fetching user details:', error);
       }
     };
 
@@ -117,11 +121,11 @@ const TutorDialog = () => {
           console.error('Error fetching tutor details:', error);
         }
       }
-      setTutorRecs(allTutorNames);
+      setTutors(allTutorNames);
       console.log(allTutorNames)
     };
 
-    fetchTutorRecs();
+    fetchProfile();
   }, [accessToken]);
 
   const handleClickOpen = () => {
@@ -140,17 +144,19 @@ const TutorDialog = () => {
 
   const handleConfirm = async () => {
     try {
-      const requestTutorInfo = {
+      const requestReview = {
+        tutor: selectedTutor['tutorId'],
+        trackAttemptId: params.trackAttemptId,
         studentId: userId,
-        tutorId: selectedTutor['tutorId'],
       };
 
-      console.log(selectedTutor)
-      console.log(requestTutorInfo);
+      // console.log(selectedTutor)
+      console.log(requestReview);
+      console.log(params.trackAttemptId)
 
       const response = await axios.post(
-        `http://localhost:5001/tutor/request/${userId}/${selectedTutor['tutorId']}`,
-        { ...requestTutorInfo },
+        `http://localhost:5001/review/request`,
+        { ...requestReview },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -169,11 +175,11 @@ const TutorDialog = () => {
     <Box>
       {selectedTutor ? (
         <Typography variant="subtitle1" component="div">
-          Request {selectedTutor['tutorName']} as a tutor?
+          Request {selectedTutor['tutorName']} for a review?
         </Typography>
       ) : (
         <Typography variant="subtitle1" component="div">
-          Click the button below to find one!
+          Click the button below to ask a tutor!
         </Typography>
       )
       }
@@ -184,7 +190,7 @@ const TutorDialog = () => {
         </Box>
       ) : (
         <StyledButton variant="outlined" onClick={handleClickOpen}>
-          Find a Tutor
+          Request a Review
         </StyledButton>
       )}
 
@@ -192,10 +198,10 @@ const TutorDialog = () => {
         selectedValue={selectedTutor}
         open={open}
         onClose={handleClose}
-        tutorRecs={tutorRecs}
+        tutorRecs={tutors}
       />
     </Box>
   );
 }
 
-export default TutorDialog;
+export default RequestDialog;
