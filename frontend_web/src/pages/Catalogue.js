@@ -288,6 +288,30 @@ const Catalogue = () => {
         </ScrollContainer>
       </Box>
 
+      {/* Playlist Rock */}
+      <Box margin='10px'>
+        <PlaylistTitle title='Rock Playlist >' navPlaylist={() => navPlaylist('rock')} />
+        <ScrollContainer>
+          <Box display='flex' flexDirection='row'>
+            {songs
+              .filter((song) => !song['private'] && song.genreTags.includes('rock'))
+              .map((song, i) => (
+                <Box key={`box-rock-${song['title']}-${i}`}>
+                  <SongCard
+                    title={song['title']}
+                    composer={song['composer']}
+                    privacy={song['private']}
+                    thumbnail={song['thumbnail']}
+                    difficulty={song['difficulty']}
+                    genreTags={song['genreTags']}
+                    songId={song['id']}
+                  />
+                </Box>
+              ))}
+          </Box>
+        </ScrollContainer>
+      </Box>
+
       {/* Playlist Pop */}
       <Box margin='10px'>
         <PlaylistTitle title='Pop Playlist >' navPlaylist={() => navPlaylist('pop')} />
@@ -312,15 +336,41 @@ const Catalogue = () => {
         </ScrollContainer>
       </Box>
 
-      {/* Playlist Rock
+      {/* Playlist Jazz */}
+      {songs.filter((song) => !song['private'] && song.genreTags.includes('jazz')).length > 0 && (
+        <Box margin='10px'>
+          <PlaylistTitle title='Jazz Playlist >' navPlaylist={() => navPlaylist('jazz')} />
+          <ScrollContainer>
+            <Box display='flex' flexDirection='row'>
+              {songs
+                .filter((song) => !song['private'] && song.genreTags.includes('jazz'))
+                .map((song, i) => (
+                  <Box key={`box-jazz-${song['title']}-${i}`}>
+                    <SongCard
+                      title={song['title']}
+                      composer={song['composer']}
+                      privacy={song['private']}
+                      thumbnail={song['thumbnail']}
+                      difficulty={song['difficulty']}
+                      genreTags={song['genreTags']}
+                      songId={song['id']}
+                    />
+                  </Box>
+                ))}
+            </Box>
+          </ScrollContainer>
+        </Box>
+      )}
+
+      {/* Playlist Other */}
       <Box margin='10px'>
-        <PlaylistTitle title='Rock Playlist >' navPlaylist={() => navPlaylist("rock")} />
+        <PlaylistTitle title='Playlist (Public) Test >' navPlaylist={() => navPlaylist('public')} />
         <ScrollContainer>
           <Box display='flex' flexDirection='row'>
             {songs
-              .filter((song) => !song['private'] && song.genreTags.includes('rock'))
+              .filter((song) => !song['private'])
               .map((song, i) => (
-                <Box key={`box-rock-${song['title']}-${i}`}>
+                <Box key={`box-public-${song['title']}-${i}`}>
                   <SongCard
                     title={song['title']}
                     composer={song['composer']}
@@ -334,7 +384,7 @@ const Catalogue = () => {
               ))}
           </Box>
         </ScrollContainer>
-      </Box> */}
+      </Box>
 
       {/* Playlist Public */}
       <Box margin='10px'>
