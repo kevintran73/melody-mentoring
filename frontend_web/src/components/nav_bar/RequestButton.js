@@ -28,16 +28,16 @@ const RequestButton = () => {
   const location = useLocation();
   // Change colour of button if on dashboard page
   let colour = '#B6B6B6';
-  if (location.pathname === '/requests') {
+  if (location.pathname === '/students') {
     colour = '#FFFFFF';
   }
   const navCatalogue = () => {
-    return navigate('/requests');
+    return navigate('/students');
   };
   return (
     <IconContainer onClick={navCatalogue}>
       <StyledMusic colour={colour} />
-      <IconCaption colour={colour}>Requests</IconCaption>
+      <IconCaption colour={colour}>Students</IconCaption>
     </IconContainer>
   );
 };

@@ -97,7 +97,7 @@ const App = () => {
           <Route path='/experiment/:songId' element={<Experiment />} />
           <Route path='/review/:trackAttemptId' element={<Review />} />
           <Route path='/dashboard' element={<Dashboard />} />
-          <Route path='/requests' element={<Request />} />
+          <Route path='/students' element={<Request />} />
         </Routes>
       </BrowserRouter>
     </TokenContext.Provider>

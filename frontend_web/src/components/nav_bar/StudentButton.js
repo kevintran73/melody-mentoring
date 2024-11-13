@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import ClassIcon from '@mui/icons-material/Class';
+import RateReviewIcon from '@mui/icons-material/RateReview';
 import { styled } from '@mui/system';
 
 const IconContainer = styled('div')({
@@ -11,7 +11,7 @@ const IconContainer = styled('div')({
   cursor: 'pointer',
 });
 
-const StyledMusic = styled(ClassIcon)(({ colour }) => ({
+const StyledMusic = styled(RateReviewIcon)(({ colour }) => ({
   color: colour,
   width: '32px',
   height: '32px',
@@ -37,7 +37,7 @@ const StudentsButton = () => {
   return (
     <IconContainer onClick={navCatalogue}>
       <StyledMusic colour={colour} />
-      <IconCaption colour={colour}>Students</IconCaption>
+      <IconCaption colour={colour}>Review</IconCaption>
     </IconContainer>
   );
 };
