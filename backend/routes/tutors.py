@@ -17,6 +17,15 @@ def requestTutor(tutorId, studentId):
     '''
     try:
         users_table = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
+        response = users_table.get_item(Key={'id': tutorId})
+        if 'Item' in response:
+            tutor = response['Item']
+            current_requests = tutor.get('requests', [])
+
+            # Check if the studentId already exists in requests
+            if studentId in current_requests:
+                return jsonify({'message': 'Request already exists for this tutor.'}), 400
+
 
         users_table.update_item(
             Key={'id': tutorId},
@@ -35,7 +44,6 @@ def requestTutor(tutorId, studentId):
             'error': 'An error occurred while updating tutor requests',
             'details': str(e)
         }), 500
-
 
 @tutor_bp.route('/tutor/request/response/<studentId>/<tutorId>', methods=['POST'])
 @token_required
@@ -56,6 +64,7 @@ def tutorResponse(tutorId):
 
         # If response is true, add student to 'students' and remove from 'requests'
         if response is True:
+            # Add student to tutors students list
             users_table.update_item(
                 Key={'id': tutorId},
                 UpdateExpression="""
@@ -65,6 +74,16 @@ def tutorResponse(tutorId):
                 ExpressionAttributeValues={
                     ':studentId': [studentId],
                     ':empty_list': []ß
+                },
+                ReturnValues="UPDATED_NEW"
+            )
+             # Add tutor to the student's tutors list
+            users_table.update_item(
+                Key={'id': student_id},
+                UpdateExpression="SET tutors = list_append(if_not_exists(tutors, :empty_list), :tutorId)",
+                ExpressionAttributeValues={
+                    ':tutorId': [tutorId],
+                    ':empty_list': []
                 },
                 ReturnValues="UPDATED_NEW"
             )
