@@ -184,6 +184,7 @@ def confirmSignup():
             'tutors': [],
             'requests': [],
             'assigned': [],
+            'to_review': [],
             'level': '1'
         }
 
