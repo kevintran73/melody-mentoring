@@ -12,7 +12,12 @@ import OpenSheetMusicDisplay from '../components/experiment/OpenSheetMusicDispla
 import ExperimentToolbar from '../components/experiment/ExperimentToolbar';
 import axios from 'axios';
 import TokenContext from '../context/TokenContext';
-import { showErrorMessage, uploadFileToS3 } from '../helpers';
+import {
+  showErrorMessage,
+  showSuccessMessage,
+  showUploadingMessage,
+  uploadFileToS3,
+} from '../helpers';
 
 const PageBlock = styled('div')({
   height: 'calc(100vh - 70px)',
@@ -204,6 +209,7 @@ const Experiment = () => {
 
   const finishAttempt = async () => {
     // Upload mediaBlobUrl to database
+    showUploadingMessage('Uploading attempt...');
     try {
       const response = await axios.post(
         'http://localhost:5001/files/user/new-track-attempt',
@@ -223,6 +229,9 @@ const Experiment = () => {
         type: blob.type,
       });
       await uploadFileToS3(response.data.audioUploader, blobFile);
+      showSuccessMessage('Success! Your attempt was successfully uploaded.');
+
+      return navigate('/history');
     } catch (err) {
       showErrorMessage(err.response.data.error);
       return;

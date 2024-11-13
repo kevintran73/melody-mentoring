@@ -19,6 +19,7 @@ import Review from './pages/Review';
 import TrackSummary from './pages/TrackSummary';
 import Dashboard from './pages/Dashboard';
 import Request from './pages/Request';
+import PreExperiment from './pages/PreExperiment';
 
 const App = () => {
   let lsAccessToken = null;
@@ -92,8 +93,9 @@ const App = () => {
           <Route path='/history' element={<History />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/settings' element={<Settings />} />
-          <Route path='/playlist' element={<Playlist />} />
+          <Route path='/playlist/:playlistType' element={<Playlist />} />
           <Route path='/track-summary/:trackAttemptId' element={<TrackSummary />} />
+          <Route path='/pre-experiment/:songId' element={<PreExperiment />} />
           <Route path='/experiment/:songId' element={<Experiment />} />
           <Route path='/review/:trackAttemptId' element={<Review />} />
           <Route path='/dashboard' element={<Dashboard />} />

@@ -223,7 +223,9 @@ def generateMetricsForSubmission(userAudioKey, trackAudioKey):
             return res
         correctHopMap = createHopMap(list(map(lambda m: m.timestamp, melodyNotes)))
         userHopMap = createHopMap(list(map(lambda e: e[2], userAttemptData)))
-        rhythmPercent = 1 - (sum(correctHopMap) - sum(userHopMap)) / sum(userHopMap)
+        # Skipping the first couple notes because there's too much rhythmic inconsistency
+        # from when users start recording audio
+        rhythmPercent = 1 - (sum(correctHopMap[4:]) - sum(userHopMap[4:])) / sum(userHopMap[4:])
 
     finally:
         os.remove(tempFilePath)
@@ -302,17 +304,17 @@ def get_details_for_track_attempt(trackAttemptId):
     GET route for the details of a track attempt
     route parameter should be as follows
     {
-        trackAttemptId: str                 id for the track attempt 
+        trackAttemptId: str                 id for the track attempt
     }
 
     returns
     {
         'id': str                           id for the track attempt
-        'isoUploadTime': str                date that the track attempt was uploaded        
+        'isoUploadTime': str                date that the track attempt was uploaded
         'reviews': list[str]                list of ids for reviews
         'songId': str                       id of the song
         'userId': str                       id of the user attempting the track
-        
+
     }
     '''
     details = getTrackAttempyDetails(trackAttemptId)

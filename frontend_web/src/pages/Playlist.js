@@ -1,6 +1,7 @@
-import { React, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-
+import React, { useEffect, useState, useContext } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import TokenContext from '../context/TokenContext';
 import Box from '@mui/material/Box';
 import NavBar from '../components/nav_bar/NavBar';
 import IconButton from '@mui/material/IconButton';
@@ -35,56 +36,40 @@ const StyledSearchBar = styled(TextField)({
   width: '90%',
 });
 
-const playlistData = [
-  {
-    'title': 'Cold Cold Cold',
-    'artist': 'Cage the Elephant',
-    'difficulty': 'Hard',
-  }, {
-    'title': 'September',
-    'artist': 'Earth, Wind & Fire',
-    'difficulty': 'Hard',
-  }, {
-    'title': 'Budapest',
-    'artist': 'George Ezra',
-    'difficulty': 'Easy',
-  }, {
-    'title': 'How Much A Dollar Cost',
-    'artist': 'Kendrick Lamar',
-    'difficulty': 'Easy',
-  }, {
-    'title': 'Depreston',
-    'artist': 'Courtney Barnett',
-    'difficulty': 'Easy',
-  }, {
-    'title': 'Piano Man',
-    'artist': 'Billy Joel',
-    'difficulty': 'Medium',
-  }, {
-    'title': 'Dance the Night',
-    'artist': 'Dua Lipa',
-    'difficulty': 'Medium',
-  }, {
-    'title': 'Like a Prayer',
-    'artist': 'Madonna',
-    'difficulty': 'Easy',
-  }, {
-    'title': 'Cherry Bomb',
-    'artist': 'The Runaways',
-    'difficulty': 'Hard',
-  }, {
-    'title': 'Dancing Queen',
-    'artist': 'ABBA',
-    'difficulty': 'Hard',
-  }
-]
-
 const Playlist = () => {
   const navigate = useNavigate();
 
   const navCatalogue = () => {
     return navigate('/catalogue');
   };
+
+  const params = useParams();
+
+  const [songs, setSongs] = useState([]);
+  const [mainTitle, setMainTitle] = useState('');
+  const [mainImg, setMainImg] = useState('');
+  const [mainArtist, setMainArtist] = useState('');
+  const [mainDifficulty, setMainDifficulty] = useState('');
+  const [mainSongId, setMainSongId] = useState('');
+  const { accessToken, userId } = React.useContext(TokenContext);
+
+  useEffect(() => {
+    const fetchSongs = async () => {
+      try {
+        const response = await axios.get('http://localhost:5001/catalogue/songs/list-all', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setSongs(response.data.songs);
+        console.log(response.data.songs)
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchSongs();
+  }, [accessToken]);
 
   //Allows for filtering based on search input
   const [searchInput, setSearchInput] = useState('');
@@ -93,10 +78,19 @@ const Playlist = () => {
     setSearchInput(e.target.value);
   };
 
-  const filteredPlaylist = playlistData.filter(song => 
-    song.title.toLowerCase().includes(searchInput.toLowerCase()) ||
-    song.artist.toLowerCase().includes(searchInput.toLowerCase())
+  const filteredPlaylist = songs.filter(song => 
+    (song.title.toLowerCase().includes(searchInput.toLowerCase()) ||
+    song.composer.toLowerCase().includes(searchInput.toLowerCase())) &&
+    song.genreTags.includes(params.playlistType.toLowerCase())
   );
+
+  const selectCard = (song) => {
+    setMainTitle(song['title']);
+    setMainImg(song['thumbnail'] ? song['thumbnail'] : defaultImg);
+    setMainArtist(song['composer'] ? song['composer'] : 'Unknown');
+    setMainDifficulty(song['difficulty']);
+    setMainSongId(song['id']);
+  };
 
   return (
     <>
@@ -119,10 +113,11 @@ const Playlist = () => {
           alignItems= 'center'
         >
           <PlaylistMainSong
-              title='Cold Cold Cold'
-              img={defaultImg}
-              artist='Cage the Elephant'
-              difficulty='7/10'
+            title={mainTitle ? mainTitle : 'Select a Song'}
+            img={mainImg ? mainImg : defaultImg}
+            artist={mainArtist ? mainArtist : 'Artist'}
+            difficulty={mainDifficulty ? mainDifficulty : 'N/A'}
+            songId={mainSongId}
           />
         </Box>
         <Box
@@ -138,10 +133,11 @@ const Playlist = () => {
               <Box display='flex' flexDirection='column' width='100%' alignItems='center'>
                 {filteredPlaylist.map((song) => (
                   <PlaylistCard 
-                    // key={song.id} 
-                    title={song.title} 
-                    artist={song.artist} 
-                    difficulty={song.difficulty} 
+                    title={song['title']} 
+                    thumbnail={(song['thumbnail'])}
+                    composer={song['composer'] ? song['composer'] : 'Unknown'}
+                    difficulty={song['difficulty']} 
+                    onClick={() => selectCard(song)}
                   />
                 ))}
               </Box>
