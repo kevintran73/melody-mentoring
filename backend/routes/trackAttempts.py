@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 import music21
 from dataclasses import dataclass
 from typing import List, Union
@@ -230,7 +230,8 @@ def generateMetricsForSubmission(userAudioKey, trackAudioKey):
 
     return (pitchPercent, intonationPercent, rhythmPercent, 1)
 
-def generateGroqResponse(prompt: str) -> str:
+def generateGroqResponse(prompt: str, model: str) -> str:
+    print(f'Using model: {model}')
     client = Groq(
         api_key=os.getenv('GROQ_API_KEY'),
     )
@@ -242,7 +243,7 @@ def generateGroqResponse(prompt: str) -> str:
                 "content": prompt,
             }
         ],
-        model="llama3-8b-8192",
+        model=model,
     )
 
     return chat_completion.choices[0].message.content
@@ -251,12 +252,66 @@ def generateGroqResponse(prompt: str) -> str:
 @token_required
 def get_feedback_for_track_attempt(trackAttemptId):
     # TODO: check if the user owns that trackattempt
+    '''GET route which dynamically generates feedback for user's track attempts
+    usage:
+    GET /attempts/user/feedback-for-attempt/testingTrackAttempt?model=gemma-7b-it
+    Response 200 returns:
+    {
+        'pitch': float,
+        'intonation': float,
+        'rhythm': float,
+        'dynamics': float,
+        'groqSays': str
+    }
+    For pitch: 1 = all correct notes, 0 = no correct notes
+    For intonation: 1 = perfect, 0 = intonation is terrible
+    For rhythm: greater than 1 = dragging, lower than 1 = rushing
+    For dynamics: 1 = dynamics are perfect, 0 = dynamics are awful
+
+    Note the query parameter to specify AI model is optional.
+    e.g GET /attempts/user/feedback-for-attempt/testingTrackAttempt
+
+    If no model is specified, groq will be passed `llama3-8b-8192` by default.\n
+    Working models are specified in allowedModels below, if any other model is tried,
+    this route returns a bad request response.
+    '''
+    allowedModels = set([
+        'gemma2-9b-it',
+        'gemma-7b-it',
+        'llama3-groq-70b-8192-tool-use-preview',
+        'llama-3.1-70b-versatile',
+        'llama-3.1-8b-instant',
+        'llama-3.2-1b-preview',
+        'llama-3.2-3b-preview',
+        'llama-3.2-11b-vision-preview',
+        'llama-3.2-90b-vision-preview',
+        'llama3-70b-8192',
+        'llama3-8b-8192',
+        'mixtral-8x7b-32768',
+        # The models below are listed on groq's api but don't
+        # work with our implementation
+        # 'distil-whisper-large-v3-en',
+        # 'llama3-groq-8b-8192-tool-use-preview',
+        # 'llama-guard-3-8b',
+        # 'whisper-large-v3',
+        # 'whisper-large-v3-turbo'
+    ])
+
     db = boto3.resource(
         service_name='dynamodb',
         region_name='ap-southeast-2',
         aws_access_key_id=aws_access_key_id,
         aws_secret_access_key=aws_secret_access_key
     )
+
+    # our default model is 'llama3-8b-8192'
+    model = 'llama3-8b-8192'
+    if len(request.query_string) == 0:
+        model = 'llama3-8b-8192'
+    elif request.args.get('model') in allowedModels:
+        model = request.args.get('model')
+    else:
+        return jsonify({'error': 'Unrecognised model type'}), 400
 
     trackAttempts = db.Table(os.getenv('DYNAMODB_TABLE_TRACK_ATTEMPTS'))
     response = trackAttempts.get_item(Key={'id': trackAttemptId})
@@ -284,8 +339,8 @@ def get_feedback_for_track_attempt(trackAttemptId):
         Start your feedback with a friendly manner and have the introduction paragraph be exactly one paragraph.
     '''
 
-    groqSays = generateGroqResponse(prompt)
-    updateAchievements(trackAttemptId, metrics)
+    groqSays = generateGroqResponse(prompt, model)
+    # updateAchievements(trackAttemptId, metrics)
 
     return jsonify({
         'pitch': metrics[0],
