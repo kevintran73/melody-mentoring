@@ -8,6 +8,13 @@ class Role(str, Enum):
 class S3PresignedURL(BaseModel):
     url: str # "https://bucketName.s3.amazonaws.com/sheetfilekey.pdf?AWSAccessKeyId=notTheNormalAccessKey&Signature=INSERTSIGNATURE&Expires=1728212979"
 
+class Playlist(BaseModel):
+    id: str
+    thumbnail: str
+    genreTags: list[str]
+    title: str
+    private: bool
+
 class Song(BaseModel):
     id: str
     thumbnail: str
@@ -36,12 +43,12 @@ class User(BaseModel):
     achievements: list[Achievement]
     track_attempts: list[str]   # corresponding trackattemptid, oldest first
     private_songs: list[str]
+    favourite_songs: list[str]
     last_login: str             # time of last login
     current_streak: int         # streak of logins
     easy_completed: list[str]   # SongIds for completed tracks
     medium_completed: list[str] # SongIds for completed tracks
     hard_completed: list[str]   # SongIds for completed tracks
-    favourite_songs: list[str]
     students: list[str] # list of students a tutor marks
     tutors: list[str] # list of tutors
     requests: list[str] # list of students requesting to become a tutors student

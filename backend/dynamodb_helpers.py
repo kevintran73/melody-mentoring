@@ -110,6 +110,14 @@ def listOfMusicBaskets():
         return basket
     return {'songs': list(map(convertGenresToList, baskets))}
 
+def listOfPlaylists():
+    table = db.Table(os.getenv('DYNAMODB_TABLE_PLAYLISTS'))
+    baskets = (table.scan())["Items"]
+    def convertGenresToList(basket):
+        basket['genreTags'] = list(basket['genreTags'])
+        return basket
+    return {'playlists': list(map(convertGenresToList, baskets))}
+
 def getTrackAttempyDetails(trackAttemptID):
     table = db.Table(os.getenv('DYNAMODB_TABLE_TRACK_ATTEMPTS'))
 
