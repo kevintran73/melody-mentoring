@@ -15,7 +15,7 @@ const Review = () => {
   const {accessToken, userId} = useContext(TokenContext);
  
   // Fetch the recording from S3 bucket for the tutor to review 
-  /* 
+  
   useEffect(() => {
     const fetchRecording = async () => {
       try {
@@ -31,7 +31,7 @@ const Review = () => {
     };
     fetchRecording()
   }, []);
-  */
+  
 
   // call route that submits the review
   const handleClick = async () => {
@@ -39,7 +39,6 @@ const Review = () => {
       showErrorMessage('Try again')
     } else {
       try {
-        alert(review)
 
         await axios.post('http://localhost:5001/review/submit', 
           {
@@ -65,8 +64,11 @@ const Review = () => {
       <NavBar></NavBar>
       <div className='m-10 flex flex-col'>
         <h1 className='text-3xl font-medium'>Review Track Attempt</h1>
-        <div className='my-8'>Recording & Post song summary</div>
-    
+
+        <div className='my-16'>
+          <audio controls src={recording}></audio>
+        </div>
+  
         <div className='flex flex-col items-start gap-4 my-8'>
           <TextField 
             label='Enter your review'

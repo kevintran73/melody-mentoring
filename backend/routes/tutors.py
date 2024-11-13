@@ -50,12 +50,13 @@ def requestTutor(tutorId, studentId):
 @tutor_bp.route('/tutor/request/response/<studentId>/<tutorId>', methods=['POST'])
 @token_required
 def tutorResponse(tutorId, studentId):
-    '''POST for a tutor to accept/decline a student
-    Body must contain the following things:
+    '''
+    POST for a tutor to accept/decline a student.
+    Body must contain:
     {
-        studentId: str                 # id of student
-        tutorId: str                   # id of tutor
-        resposne: boolean              # true to accept student, false to reject student
+        "studentId": str,     # ID of the student
+        "tutorId": str,       # ID of the tutor
+        "response": boolean   # true to accept student, false to reject student
     }
     '''
     try:
@@ -64,22 +65,33 @@ def tutorResponse(tutorId, studentId):
 
         users_table = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
 
-        # If response is true, add student to 'students' and remove from 'requests'
+        # Fetch the tutor's current requests list
+        tutor = users_table.get_item(Key={'id': tutorId}).get('Item', {})
+        current_requests = tutor.get('requests', [])
+
+        # If studentId is not in requests, return an error
+        if studentId not in current_requests:
+            return jsonify({'error': 'Student not found in tutor requests'}), 400
+
+        # Determine the index of the student in requests
+        student_index = current_requests.index(studentId)
+
         if response is True:
-            # Add student to tutors students list
+            # Accept the student
+            # Add student to the tutor's students list and remove from requests
             users_table.update_item(
                 Key={'id': tutorId},
                 UpdateExpression="""
                     SET students = list_append(if_not_exists(students, :empty_list), :studentId)
-                    REMOVE requests[requests.index(:studentId)]
-                """,
+                    REMOVE requests[{}]
+                """.format(student_index),
                 ExpressionAttributeValues={
                     ':studentId': [studentId],
                     ':empty_list': []
                 },
                 ReturnValues="UPDATED_NEW"
             )
-             # Add tutor to the student's tutors list
+            # Add tutor to the student's tutors list
             users_table.update_item(
                 Key={'id': studentId},
                 UpdateExpression="SET tutors = list_append(if_not_exists(tutors, :empty_list), :tutorId)",
@@ -89,14 +101,12 @@ def tutorResponse(tutorId, studentId):
                 },
                 ReturnValues="UPDATED_NEW"
             )
-        # If response is false, only remove the studentId from 'requests'
+
         else:
+            # Decline the student by only removing from requests
             users_table.update_item(
                 Key={'id': tutorId},
-                UpdateExpression="REMOVE requests[requests.index(:studentId)]",
-                ExpressionAttributeValues={
-                    ':studentId': studentId
-                },
+                UpdateExpression="REMOVE requests[{}]".format(student_index),
                 ReturnValues="UPDATED_NEW"
             )
 
@@ -105,6 +115,11 @@ def tutorResponse(tutorId, studentId):
     except ClientError as e:
         return jsonify({
             'error': 'An error occurred while updating tutor response',
+            'details': e.response['Error']['Message']
+        }), 500
+    except Exception as e:
+        return jsonify({
+            'error': 'An unexpected error occurred',
             'details': str(e)
         }), 500
 
