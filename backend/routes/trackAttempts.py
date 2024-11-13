@@ -94,7 +94,7 @@ def processXML(file):
 
     # Get BPM and calculate seconds per quarter
     tempo_markings = score.flatten().getElementsByClass(music21.tempo.MetronomeMark)
-    bpm = tempo_markings[0].number if tempo_markings else 120
+    bpm = tempo_markings[0].number if tempo_markings[0].number else 120
     seconds_per_quarter = 60 / bpm
 
     # Process left-hand and right-hand notes
@@ -155,7 +155,9 @@ def generateMetricsForSubmission(userAudioKey, trackAudioKey):
     * greater than 1 = late
     * less than 1 = early
     '''
-    getUserAudioSubmission = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_USER_AUDIO'), Key=userAudioKey)
+
+    # we need to convert from a video/webm -> audio/wav
+    getUserAudioSubmission = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_USER_AUDIO'), Key=(userAudioKey + '.wav'))
     userAudio = getUserAudioSubmission['Body'].read()
     # A bit cursed but windows gives us permission errors if we try to open the file directly
     # instead we write to a temporary file and leave it open to process the .mxl file
@@ -248,7 +250,7 @@ def generateGroqResponse(prompt: str) -> str:
     return chat_completion.choices[0].message.content
 
 @trackAttempts_bp.route('/attempts/user/feedback-for-attempt/<trackAttemptId>', methods=['GET'])
-@token_required
+# @token_required
 def get_feedback_for_track_attempt(trackAttemptId):
     # TODO: check if the user owns that trackattempt
     db = boto3.resource(
@@ -302,17 +304,17 @@ def get_details_for_track_attempt(trackAttemptId):
     GET route for the details of a track attempt
     route parameter should be as follows
     {
-        trackAttemptId: str                 id for the track attempt 
+        trackAttemptId: str                 id for the track attempt
     }
 
     returns
     {
         'id': str                           id for the track attempt
-        'isoUploadTime': str                date that the track attempt was uploaded        
+        'isoUploadTime': str                date that the track attempt was uploaded
         'reviews': list[str]                list of ids for reviews
         'songId': str                       id of the song
         'userId': str                       id of the user attempting the track
-        
+
     }
     '''
     details = getTrackAttempyDetails(trackAttemptId)
