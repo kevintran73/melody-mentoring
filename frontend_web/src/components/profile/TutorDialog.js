@@ -57,14 +57,14 @@ function SimpleDialog({onClose, selectedValue, open, tutorRecs}) {
       <DialogTitle>Select a Tutor</DialogTitle>
       <List sx={{ pt: 0 }}>
         {tutorRecs.map((tutor) => (
-          <ListItem disableGutters key={tutor}>
-            <ListItemButton onClick={() => handleListItemClick(tutor)}>
+          <ListItem disableGutters key={tutor['tutorId']}>
+            <ListItemButton onClick={() => handleListItemClick(tutor['tutorId'])}>
               <ListItemAvatar>
                 <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
                   <PersonIcon />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary={tutor} />
+              <ListItemText primary={tutor['tutorName']} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -94,6 +94,7 @@ const TutorDialog = () => {
           },
         });
         fetchTutorNames(response.data.tutors)
+        console.log(response.data.tutors)
       } catch (error) {
         console.error('Error fetching tutor recommendation details:', error);
       }
@@ -109,7 +110,9 @@ const TutorDialog = () => {
               Authorization: `Bearer ${accessToken}`,
             },
           });
-          allTutorNames.push(response.data.username);
+          const tutorPart = {tutorId: tutorId, tutorName: response.data.username}
+
+          allTutorNames.push(tutorPart);
         } catch (error) {
           console.error('Error fetching tutor details:', error);
         }

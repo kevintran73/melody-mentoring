@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Card from '@mui/material/Card';
+import Button from '@mui/material/Button';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -30,6 +31,22 @@ const StyledButton = styled(IconButton)({
   color: 'white',
   // width: '50px',
   margin: '10px 0px 0px 20px',
+  '&:hover': {
+    backgroundColor: '#020E37',
+    borderColor: '#0062cc',
+    boxShadow: 'none',
+  },
+});
+
+const StyledTextButton = styled(Button)({
+  width: '75%',
+  backgroundColor: '#020E37',
+  color:'white',
+  fontSize: '1.3rem',
+  padding: '8px 8px',
+  textTransform: 'none',
+  borderRadius: '16px',
+  marginTop: '10px',
   '&:hover': {
     backgroundColor: '#020E37',
     borderColor: '#0062cc',
@@ -427,7 +444,7 @@ const TrackSummary = () => {
           <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
             Tutor Reviews
           </Typography>
-          <StyledButton>Test</StyledButton>
+          <StyledTextButton>Testing123</StyledTextButton>
         </Box>
         {reviews ? (
           <ScrollContainer>
