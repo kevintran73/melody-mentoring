@@ -15,7 +15,11 @@ import History from './pages/History';
 import Playlist from './pages/Playlist';
 import Verification from './pages/Verification';
 import Experiment from './pages/Experiment';
+import Review from './pages/Review';
 import TrackSummary from './pages/TrackSummary';
+import Dashboard from './pages/Dashboard';
+import Request from './pages/Request';
+import PreExperiment from './pages/PreExperiment';
 
 const App = () => {
   let lsAccessToken = null;
@@ -42,16 +46,24 @@ const App = () => {
   }
   const [userId, setUserId] = React.useState(lsUserId);
 
+  let lsRole = null;
+  if (localStorage.getItem('role') !== 'null') {
+    lsRole = localStorage.getItem('role');
+  }
+  const [role, setRole] = React.useState(lsRole);
+
   // at login, set and store tokens
-  const login = (accessToken, idToken, refreshToken, userId) => {
+  const login = (accessToken, idToken, refreshToken, userId, role) => {
     setAccessToken(accessToken);
     setIdToken(idToken);
     setRefreshToken(refreshToken);
     setUserId(userId);
+    setRole(role)
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('idToken', idToken);
     localStorage.setItem('refreshToken', refreshToken);
     localStorage.setItem('userId', userId);
+    localStorage.setItem('role', role);
   };
 
   // at logout, set all tokens to null
@@ -67,7 +79,7 @@ const App = () => {
   };
 
   return (
-    <TokenContext.Provider value={{ accessToken, idToken, refreshToken, userId, login, logout }}>
+    <TokenContext.Provider value={{ accessToken, idToken, refreshToken, userId, role, login, logout }}>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Navigate to='/login' />} />
@@ -81,9 +93,13 @@ const App = () => {
           <Route path='/history' element={<History />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/settings' element={<Settings />} />
-          <Route path='/playlist' element={<Playlist />} />
+          <Route path='/playlist/:playlistType' element={<Playlist />} />
           <Route path='/track-summary/:trackAttemptId' element={<TrackSummary />} />
+          <Route path='/pre-experiment/:songId' element={<PreExperiment />} />
           <Route path='/experiment/:songId' element={<Experiment />} />
+          <Route path='/review/:trackAttemptId' element={<Review />} />
+          <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/students' element={<Request />} />
         </Routes>
       </BrowserRouter>
     </TokenContext.Provider>

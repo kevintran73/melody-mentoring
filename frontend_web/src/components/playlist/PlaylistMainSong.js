@@ -30,22 +30,30 @@ const StyledButton = styled(Button)({
   },
 });
 
-const songInfo = (title, img, artist, difficulty) => (
-  <Box display='flex' flexDirection='column' alignItems='center'>
-    <img src={img} alt='img' width='95%' height='95%'></img>
-    <Box display='flex' flexDirection='column' padding='3px' gap={0.5} alignItems='center' marginTop='10px'>
-      <Typography variant='h3' component='div' align='center'>{title}</Typography>
-      <Typography variant='h5' sx={{ color: 'text.secondary' }} align='center'>{artist}</Typography>
-      <Typography variant='h5' sx={{ color: 'text.secondary' }} align='center'>{difficulty}</Typography>
-      <StyledButton>
-          Start Activity
-      </StyledButton>
-    </Box>
-  </Box>
-);
+const PlaylistMainSong = ({ title, img, artist, difficulty, songId }) => {
+  const navigate = useNavigate();
 
-const PlaylistMainSong = ({ title, img, artist, difficulty }) => {
-  return <StyledMainSong>{songInfo(title, img, artist, difficulty)}</StyledMainSong>;
+  const navExperiment = () => {
+    if (songId) {
+      return navigate(`/experiment/${songId}`);
+    }
+  };
+  
+  return (
+    <StyledMainSong>
+      <Box display='flex' flexDirection='column' alignItems='center'>
+        <img src={img} alt='img' width='95%' height='95%'></img>
+        <Box display='flex' flexDirection='column' padding='3px' gap={0.5} alignItems='center' marginTop='10px'>
+          <Typography variant='h3' component='div' align='center'>{title}</Typography>
+          <Typography variant='h5' sx={{ color: 'text.secondary' }} align='center'>{artist}</Typography>
+          <Typography variant='h5' sx={{ color: 'text.secondary' }} align='center'>{difficulty}</Typography>
+          <StyledButton onClick={navExperiment}>
+              {songId ? 'Start Activity' : 'Select a Song'}
+          </StyledButton>
+        </Box>
+      </Box>
+    </StyledMainSong>
+  );
 };
 
 export default PlaylistMainSong;

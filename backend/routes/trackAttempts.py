@@ -225,7 +225,9 @@ def generateMetricsForSubmission(userAudioKey, trackAudioKey):
             return res
         correctHopMap = createHopMap(list(map(lambda m: m.timestamp, melodyNotes)))
         userHopMap = createHopMap(list(map(lambda e: e[2], userAttemptData)))
-        rhythmPercent = 1 - (sum(correctHopMap) - sum(userHopMap)) / sum(userHopMap)
+        # Skipping the first couple notes because there's too much rhythmic inconsistency
+        # from when users start recording audio
+        rhythmPercent = 1 - (sum(correctHopMap[4:]) - sum(userHopMap[4:])) / sum(userHopMap[4:])
 
     finally:
         os.remove(tempFilePath)
