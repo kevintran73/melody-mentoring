@@ -2,38 +2,34 @@ import React from 'react';
 
 import SongCard from './SongCard';
 
-import { styled } from '@mui/material';
+import { debounce, styled } from '@mui/material';
 import Box from '@mui/material/Box';
 
 const SongsContainer = styled('div')({
-  padding: '50px 10px',
+  padding: '100px 20px',
   width: 'calc(100vw - 40px)',
-  height: 'auto',
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
   gap: '16px',
+  paddingBottom: '50vh',
+  backgroundColor: '#f9f9f9',
 });
 
-const SearchResults = ({ searchResults, lastKey, searchSongs }) => {
+const SearchResults = ({ searchResults, lastKey, searchSongs, hasMoreResults }) => {
   // Set up scroll event listener
   React.useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = debounce(() => {
       if (
         window.innerHeight + document.documentElement.scrollTop >=
         document.documentElement.offsetHeight - 100
       ) {
         searchSongs();
       }
-    };
+    }, 200);
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [searchSongs]);
-
-  // Initial fetch on component mount
-  //   React.useEffect(() => {
-  //     searchSongs();
-  //   }, [searchSongs]);
 
   return (
     <SongsContainer>

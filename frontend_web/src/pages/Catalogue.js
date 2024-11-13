@@ -167,6 +167,9 @@ const Catalogue = () => {
   // On query change
   const onQueryChange = (q) => {
     setIsSearching(false);
+    setLastKey(null);
+    setHasMoreResults(true);
+    setSearchResults([]);
     setQuery(q.target.value);
   };
 
@@ -182,8 +185,9 @@ const Catalogue = () => {
     }
     setLoadingSearch(true);
     setIsSearching(true);
+
+    console.log(params);
     try {
-      console.log(params);
       const response = await axios.get('http://localhost:5001/catalogue/query', {
         params,
         headers: {
@@ -198,8 +202,7 @@ const Catalogue = () => {
       setLoadingSearch(false);
       setHasMoreResults(response.data.songs.length === 12 && response.data.last_key);
     } catch (err) {
-      console.log(err);
-      // showErrorMessage(err.response.data.error);
+      showErrorMessage(err.response.data.error);
     }
   };
 
@@ -508,7 +511,12 @@ const Catalogue = () => {
           </Box>
         </>
       ) : (
-        <SearchResults searchResults={searchResults} lastKey={lastKey} searchSongs={searchSongs} />
+        <SearchResults
+          searchResults={searchResults}
+          lastKey={lastKey}
+          searchSongs={searchSongs}
+          hasMoreResults={hasMoreResults}
+        />
       )}
     </Box>
   );
