@@ -16,6 +16,7 @@ import defaultImg from '../assets/default-img.png';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 import { maxHeight, styled } from '@mui/system';
+import { showErrorMessage } from '../helpers';
 
 /**
  * Catalogue/songs page
@@ -84,6 +85,8 @@ const SongCardTemplate = () => {
 const Catalogue = () => {
   const [songs, setSongs] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [favouritedSongs, setFavouritedSongs] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const navigate = useNavigate();
   const { accessToken, userId } = React.useContext(TokenContext);
 
@@ -94,15 +97,29 @@ const Catalogue = () => {
 
     const fetchUserData = async () => {
       try {
+        // Fetch user data
         const response = await axios.get(`http://localhost:5001/profile/${userId}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-
         setUserData(response.data);
+
+        // Fetch favourited songs concurrently
+        const favouriteSongIds = response.data.favourite_songs;
+        const songFetchPromises = favouriteSongIds.map((favouritedSongId) =>
+          axios.get(`http://localhost:5001/catalogue/songs/find/${favouritedSongId}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          })
+        );
+        const songInfoResponses = await Promise.all(songFetchPromises);
+        const favouriteSongs = songInfoResponses.map((songInfoResponse) => songInfoResponse.data);
+        setFavouritedSongs(favouriteSongs);
       } catch (error) {
-        console.error('Error fetching user details:', error);
+        console.error('Error fetching user details or favourite songs:', error);
+        showErrorMessage(error.response?.data?.error || 'An error occurred');
       }
     };
 
@@ -114,7 +131,12 @@ const Catalogue = () => {
             'Content-Type': 'application/json',
           },
         });
+
         setSongs(response.data.songs);
+
+        // Get random songs to recommend
+        const shuffledSongs = response.data.songs.slice().sort(() => 0.5 - Math.random());
+        setRecommendations(shuffledSongs.slice(0, 3));
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -138,30 +160,38 @@ const Catalogue = () => {
         </StyledButton>
       </Box>
 
+      {/* Welcome container */}
       <Box margin='60px 20px'>
-        {/* Welcome container */}
         <TopContainer>
           <Typography variant='h2'>
             Welcome back, {userData ? userData['username'] : 'N/A'}!
           </Typography>
           <Typography variant='h4'>Interested in trying these songs again?</Typography>
           <Box display='flex' gap='2vw'>
-            <RecommendationCard title='Test' thumbnail={defaultImg} composer='Test' />
-            <RecommendationCard title='Test' thumbnail={defaultImg} composer='Test2' />
-            <RecommendationCard title='Test' thumbnail={defaultImg} composer='Test3' />
+            {recommendations.map((song, i) => (
+              <RecommendationCard
+                key={`recommendation-card-${i}`}
+                songId={song['id']}
+                title={song['title']}
+                thumbnail={song['thumbnail']}
+                composer={song['composer']}
+              />
+            ))}
           </Box>
         </TopContainer>
       </Box>
 
-      {/* Playlist Uploaded */}
-      <Box margin='10px'>
-        <PlaylistTitle title='Your Uploaded Songs >' navPlaylist={() => navPlaylist('uploaded')} />
-        <ScrollContainer>
-          <Box display='flex' flexDirection='row'>
-            {songs
-              .filter((song) => song['private'] && song['uploaderId'] === userId)
-              .map((song, i) => (
-                <Box key={`box-uploaded-private-${song['title']}-${i}`}>
+      {/* Playlist Favourited */}
+      {favouritedSongs.length !== 0 && (
+        <Box margin='10px'>
+          <PlaylistTitle
+            title='Your Favourited Songs >'
+            navPlaylist={() => navPlaylist('favourites')}
+          />
+          <ScrollContainer>
+            <Box display='flex' flexDirection='row'>
+              {favouritedSongs.map((song, i) => (
+                <Box key={`box-favourited-${song['title']}-${i}`}>
                   <SongCard
                     title={song['title']}
                     composer={song['composer']}
@@ -173,14 +203,44 @@ const Catalogue = () => {
                   />
                 </Box>
               ))}
-          </Box>
-        </ScrollContainer>
-      </Box>
+            </Box>
+          </ScrollContainer>
+        </Box>
+      )}
+
+      {/* Playlist Uploaded */}
+      {songs.filter((song) => song['private'] && song['uploaderId'] === userId).length !== 0 && (
+        <Box margin='10px'>
+          <PlaylistTitle
+            title='Your Uploaded Songs >'
+            navPlaylist={() => navPlaylist('uploaded')}
+          />
+          <ScrollContainer>
+            <Box display='flex' flexDirection='row'>
+              {songs
+                .filter((song) => song['private'] && song['uploaderId'] === userId)
+                .map((song, i) => (
+                  <Box key={`box-uploaded-private-${song['title']}-${i}`}>
+                    <SongCard
+                      title={song['title']}
+                      composer={song['composer']}
+                      privacy={song['private']}
+                      thumbnail={song['thumbnail']}
+                      difficulty={song['difficulty']}
+                      genreTags={song['genreTags']}
+                      songId={song['id']}
+                    />
+                  </Box>
+                ))}
+            </Box>
+          </ScrollContainer>
+        </Box>
+      )}
 
       {/* Playlist Uploaded (Everyone) */}
       <Box margin='10px'>
         <PlaylistTitle
-          title='Your Uploaded Songs (Everyone) >'
+          title='Uploaded Songs (Everyone) >'
           navPlaylist={() => navPlaylist('uploaded')}
         />
         <ScrollContainer>
