@@ -19,7 +19,6 @@ def requestExperimentReview():
     Returns details of the review ensuring it was successful
     '''
     try:
-        # Parse request data
         data = request.get_json()
         tutor_id = data.get("tutor")
         track_attempt_id = data.get("trackAttemptId")
@@ -28,7 +27,6 @@ def requestExperimentReview():
         if not tutor_id or not track_attempt_id or not student_id:
             return jsonify({"error": "Missing required fields"}), 400
 
-        # Access the DynamoDB users table
         users_table = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
 
         # Update the tutor's to_review list by adding the new trackAttemptId
