@@ -42,7 +42,7 @@ const Image = ({ img }) => {
   )
 }
 
-const AchievementGrid = () => {
+const AchievementGrid = ({ achievements, easyDone, MediumDone, HardDone }) => {
   return (
     <Box sx={{ flexGrow: 1, p: 2 }}>
       <Box
@@ -73,11 +73,9 @@ const AchievementGrid = () => {
 
           {/* <Image img={img} /> */}
           {/* If string, show string. Otherwise show a progress bar using value var. */}
-          {typeof value === 'string' ? (
-            <Typography variant="body2"> 1 </Typography>
-          ) : (
-            <Progress value={1} minValue={0} maxValue={2} />
-          )}
+            <Progress value={1} minValue={0} maxValue={4} />
+            <Progress value={1} minValue={0} maxValue={4} />
+            <Progress value={1} minValue={0} maxValue={4} />
           <Typography>{'Test'}</Typography>
         </Box>
       </Box>
