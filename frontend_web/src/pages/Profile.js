@@ -74,7 +74,10 @@ const Profile = () => {
         <Box flex={1} flexDirection='column' alignItems='center' justifyContent='center' textAlign='center'>
           <Card sx={{ borderRadius: '16px', height: '100%', display: 'flex', flexDirection: 'column', padding: '20px' }}>
             <Typography variant='h3'> Achievements </Typography>
-            <AchievementGrid></AchievementGrid>
+            {profileInfo ? (
+              <AchievementGrid userInfo={profileInfo}></AchievementGrid>
+            ) : (<Box />)
+            }
           </Card>
         </Box>
 

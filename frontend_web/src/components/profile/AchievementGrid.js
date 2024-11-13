@@ -42,7 +42,44 @@ const Image = ({ img }) => {
   )
 }
 
-const AchievementGrid = ({ achievements, easyDone, MediumDone, HardDone }) => {
+function checkRank(userInfo, easyDone, mediumDone, hardDone) {
+  const rankInfo = {
+    name: '',
+    easyMin: 0,
+    easyMax: 3,
+    mediumMin: 0,
+    mediumMax: 0,
+    hardMin: 0,
+    hardMax:0,
+  }
+
+  userInfo['achievements'].forEach(achievement => {
+      if (
+        easyDone >= achievement['easy_required'] &&
+        mediumDone >= achievement['medium_required'] &&
+        hardDone >= achievement['hard_required']
+      ) {
+          rankInfo['name'] = achievement['name']
+          rankInfo['easyMin'] = achievement['easy_required']
+          rankInfo['mediumMin'] = achievement['medium_required']
+          rankInfo['hardMin'] = achievement['hard_required']
+      } else {
+        rankInfo['easyMax'] = achievement['easy_required']
+        rankInfo['mediumMax'] = achievement['medium_required']
+        rankInfo['hardMax'] = achievement['hard_required']
+      }
+  });
+
+  return rankInfo;
+}
+
+
+const AchievementGrid = ({ userInfo }) => {
+  // const easyDone = userInfo['easy_completed'].length ? userInfo['easy_completed'].length : 0;
+  // const mediumDone = userInfo['medium_completed'].length ? userInfo['medium_completed'] : 0;
+  // const hardDone = userInfo['hard_completed'].length ? userInfo['hard_completed'].length : 0;
+  // const rankInfo = checkRank(userInfo, easyDone, mediumDone, hardDone)
+
   return (
     <Box sx={{ flexGrow: 1, p: 2 }}>
       <Box
@@ -73,9 +110,9 @@ const AchievementGrid = ({ achievements, easyDone, MediumDone, HardDone }) => {
 
           {/* <Image img={img} /> */}
           {/* If string, show string. Otherwise show a progress bar using value var. */}
-            <Progress value={1} minValue={0} maxValue={4} />
-            <Progress value={1} minValue={0} maxValue={4} />
-            <Progress value={1} minValue={0} maxValue={4} />
+            {/* <Progress value={rankInfo['easyMin']} minValue={0} maxValue={rankInfo['easyMax']} />
+            <Progress value={rankInfo['mediumMin']} minValue={0} maxValue={rankInfo['mediumMax']} />
+            <Progress value={rankInfo['hardMin']} minValue={0} maxValue={rankInfo['hardMax']} /> */}
           <Typography>{'Test'}</Typography>
         </Box>
       </Box>
