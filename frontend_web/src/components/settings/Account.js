@@ -21,8 +21,7 @@ const SectionHeader = styled('h2')({
 const SectionDesc = styled('p')({
   fontSize: '1rem',
   color: '#2b2b2b',
-  width: 'auto',
-  whiteSpace: 'nowrap',
+  width: '100%',
 });
 
 const SectionBlock = styled('div')({

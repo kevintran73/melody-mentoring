@@ -24,6 +24,10 @@ const StyledHeader = styled('header')(({ isDisabled }) => ({
   ...(isDisabled && {
     pointerEvents: 'none',
   }),
+
+  '@media (max-width: 500px)': {
+    padding: '1rem 0.75rem',
+  },
 }));
 
 const MiddleContainer = styled('div')({
@@ -32,6 +36,10 @@ const MiddleContainer = styled('div')({
   justifyContent: 'center',
   alignItems: 'center',
   gap: '40px',
+
+  '@media (max-width: 500px)': {
+    gap: '15px',
+  },
 });
 
 const RightContainer = styled('div')({
@@ -40,6 +48,10 @@ const RightContainer = styled('div')({
   justifyContent: 'center',
   alignItems: 'center',
   gap: '20px',
+
+  '@media (max-width: 500px)': {
+    gap: '2px',
+  },
 });
 
 const NavBar = ({ isDisabled = false, ...props }) => {
