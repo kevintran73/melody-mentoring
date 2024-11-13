@@ -198,7 +198,7 @@ const Catalogue = () => {
       setSearchResults((prev) => [...prev, ...response.data.songs]);
       setLastKey(response.data.last_key);
       setLoadingSearch(false);
-      setHasMoreResults(response.data.songs.length === 12 && response.data.last_key);
+      setHasMoreResults(response.data.last_key);
     } catch (err) {
       showErrorMessage(err.response.data.error);
     }
@@ -229,7 +229,7 @@ const Catalogue = () => {
           {/* Welcome container */}
           <Box margin='60px 20px'>
             <TopContainer>
-              <Typography variant='h2'>
+              <Typography variant='h3'>
                 Welcome back, {userData ? userData['username'] : 'N/A'}!
               </Typography>
               <Typography variant='h4'>Songs that might interest you:</Typography>

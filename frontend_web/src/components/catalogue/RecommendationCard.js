@@ -25,8 +25,8 @@ const StyledHeader5 = styled('h5')({
 const SongThumbnail = ({ ...props }) => <ResponseSongThumbnail {...props} />;
 
 const StyledSongThumbnail = styled('div')`
-  height: 200px;
-  width: 200px;
+  height: 150px;
+  width: 150px;
   object-fit: cover;
   background-color: #f2f2f2;
   background-image: ${(props) =>
@@ -41,8 +41,8 @@ const StyledSongThumbnail = styled('div')`
 
 const ResponseSongThumbnail = styled(StyledSongThumbnail)({
   '@media (min-width: 1001px)': {
-    width: '250px',
-    height: '250px',
+    width: '150px',
+    height: '150px',
   },
 });
 
