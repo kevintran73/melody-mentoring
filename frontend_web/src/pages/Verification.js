@@ -10,6 +10,7 @@ const Verification = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [username, setUsername] = useState('');
+  const [role, setRole] = useState('')
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -17,6 +18,7 @@ const Verification = () => {
       navigate('/register');
     } else {
       setUsername(location.state.username);
+      setRole(location.state.role)
     }
   }, []);
 
@@ -37,6 +39,7 @@ const Verification = () => {
       await axios.post(`http://localhost:5001/auth/confirm-signup`, {
         code: code,
         username: username,
+        role: role,
       });
 
       // if confirmation is successful, redirect to login page for user to login with their credentials

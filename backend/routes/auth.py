@@ -147,6 +147,7 @@ def confirmSignup():
         data = request.json
         code = data['code']
         username = data['username']
+        role = data['role']
 
         client.confirm_sign_up(
             ClientId=os.getenv('AWS_COGNITO_CLIENTID'),
@@ -159,14 +160,12 @@ def confirmSignup():
             Username=username
         )
 
-        email, role = '', ''
+        email = ''
 
         # Users account is recorded in dynamodb only after it is confirmed
         for attribute in response['UserAttributes']:
             if attribute['Name'] == 'email':
                 email = attribute['Value']
-            if attribute['Name'] == 'role':
-                role = attribute['Value']
 
         users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
 

@@ -8,6 +8,9 @@ import ProfileButton from './ProfileButton';
 import CreateButton from './CreateButton';
 import HistoryButton from './HistoryButton';
 import SettingsButton from './SettingsButton';
+import StudentsButton from './StudentButton';
+import TokenContext from '../../context/TokenContext';
+import RequestButton from './RequestButton';
 
 const StyledHeader = styled('header')(({ isDisabled }) => ({
   display: 'flex',
@@ -52,14 +55,23 @@ const RightContainer = styled('div')({
 });
 
 const NavBar = ({ isDisabled = false, ...props }) => {
+
+  const { role } = React.useContext(TokenContext);
+
   return (
     <StyledHeader isDisabled={isDisabled} {...props}>
       <NotificationsButton />
-
+    
       <MiddleContainer>
         <CreateButton />
-        <CatalogueButton />
-        <HistoryButton />
+        {role === 'student' && <>
+          <CatalogueButton />
+          <HistoryButton />
+        </>}
+        {role === 'tutor' && <>
+          <StudentsButton />
+          <RequestButton />
+        </>}
       </MiddleContainer>
 
       <RightContainer>

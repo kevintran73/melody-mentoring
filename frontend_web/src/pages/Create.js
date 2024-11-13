@@ -45,6 +45,12 @@ const PageBlock = styled('div')({
   },
 });
 
+const options = [
+  {value: 'daniel', label: 'Daniel'},
+  {value: 'jennifer', label: 'Jennifer'},
+  {value: 'jerome', label: 'Jerome'},
+];
+
 /**
  * Create experiment page
  */

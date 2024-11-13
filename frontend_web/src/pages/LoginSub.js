@@ -86,9 +86,23 @@ const LoginSub = () => {
         });
         // stores tokens inside variables using TokenContext's login
         const { access_token, id_token, refresh_token, user_id } = response.data;
-        login(access_token, id_token, refresh_token, user_id);
 
-        navigate('/catalogue'); // redirect to catalogue page
+        const userDetailsResponse = await axios.get(`http://localhost:5001/profile/${user_id}`, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,  // Attach token to the headers
+          },
+        });
+        
+        const role = userDetailsResponse.data.role
+
+        login(access_token, id_token, refresh_token, user_id, role);
+        
+        if (role === 'student') {
+          navigate('/catalogue'); // redirect to catalogue page for student login
+        } else {
+          navigate('/dashboard'); // redirect to dashboard for tutor login
+        }
+
       } catch (err) {
         showErrorMessage(err.response.data.error);
       }
