@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 import boto3
 from .auth import token_required
+import os
+from botocore.exceptions import ClientError
 
 tutor_bp = Blueprint('tutor', __name__)
 dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
@@ -8,7 +10,7 @@ dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
 @tutor_bp.route('/tutor/request/<studentId>/<tutorId>', methods=['POST'])
 @token_required
 def requestTutor(tutorId, studentId):
-     '''POST to request a tutor to accept a student
+    '''POST to request a tutor to accept a student
     Body must contain the following things:
     {
         studentId: str                 # id of student
@@ -47,8 +49,8 @@ def requestTutor(tutorId, studentId):
 
 @tutor_bp.route('/tutor/request/response/<studentId>/<tutorId>', methods=['POST'])
 @token_required
-def tutorResponse(tutorId):
-     '''POST for a tutor to accept/decline a student
+def tutorResponse(tutorId, studentId):
+    '''POST for a tutor to accept/decline a student
     Body must contain the following things:
     {
         studentId: str                 # id of student
@@ -73,13 +75,13 @@ def tutorResponse(tutorId):
                 """,
                 ExpressionAttributeValues={
                     ':studentId': [studentId],
-                    ':empty_list': []ß
+                    ':empty_list': []
                 },
                 ReturnValues="UPDATED_NEW"
             )
              # Add tutor to the student's tutors list
             users_table.update_item(
-                Key={'id': student_id},
+                Key={'id': studentId},
                 UpdateExpression="SET tutors = list_append(if_not_exists(tutors, :empty_list), :tutorId)",
                 ExpressionAttributeValues={
                     ':tutorId': [tutorId],
