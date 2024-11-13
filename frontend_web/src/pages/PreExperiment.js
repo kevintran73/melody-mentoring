@@ -7,10 +7,23 @@ import { showErrorMessage } from '../helpers';
 import defaultImage from '../assets/default-img.png';
 
 import { styled } from '@mui/system';
-import { Button } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 
 import NavBar from '../components/nav_bar/NavBar';
 import UploadRecordingModal from '../components/experiment/UploadRecordingModal';
+
+const LoadingOverlay = styled('div')({
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(255, 255, 255, 0)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 999,
+});
 
 const PageBlock = styled('div')({
   padding: '1.5rem 2.5rem',
@@ -174,6 +187,11 @@ const PreExperiment = () => {
   return (
     <>
       <NavBar />
+      {songInfo === null && (
+        <LoadingOverlay>
+          <CircularProgress size='40vh' />
+        </LoadingOverlay>
+      )}
       {songInfo !== null && (
         <PageBlock>
           <PageContainer>

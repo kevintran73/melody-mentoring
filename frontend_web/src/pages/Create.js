@@ -9,7 +9,7 @@ import defaultImage from '../assets/default-img.png';
 import NavBar from '../components/nav_bar/NavBar';
 
 import { styled } from '@mui/material';
-import CreateUploadForm from '../components/create/CreateUploadFields';
+import CreateUploadForm from '../components/create/CreateUploadForm';
 
 const StyledHeader = styled('h1')({
   fontSize: '2rem',
@@ -46,7 +46,7 @@ const Create = () => {
   const [song, setSong] = React.useState('');
   const [artist, setArtist] = React.useState('');
   const [diff, setDiff] = React.useState('');
-  const [genreTags, setGenreTags] = React.useState('');
+  const [genreTag, setGenreTag] = React.useState('');
   const [instrument, setInstrument] = React.useState('');
   const [sheetFile, setSheetFile] = React.useState('');
 
@@ -87,7 +87,7 @@ const Create = () => {
         userId: userId,
         composer: artist,
         thumbnail: thumbnail === defaultImage ? '' : await getBase64(thumbnail),
-        genreTags: mapCommaStringToArray(genreTags),
+        genreTags: mapCommaStringToArray(genreTag),
         instrument: instrument,
         title: song,
         difficulty: diff,
@@ -114,7 +114,7 @@ const Create = () => {
     setSong('');
     setArtist('');
     setDiff('');
-    setGenreTags('');
+    setGenreTag('');
     setInstrument('');
   };
 
@@ -136,8 +136,8 @@ const Create = () => {
           setInstrument={setInstrument}
           diff={diff}
           setDiff={setDiff}
-          genreTags={genreTags}
-          setGenreTags={setGenreTags}
+          genreTag={genreTag}
+          setGenreTag={setGenreTag}
           setSheetFile={setSheetFile}
         />
       </PageBlock>
