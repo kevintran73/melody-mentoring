@@ -442,10 +442,9 @@ const TrackSummary = () => {
 
       <Box margin='10px 40px'>
         <Box display='flex'>
-          <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
+          <Typography align='left' variant='h4' margin='30px' marginRight='20px'>
             Tutor Reviews
           </Typography>
-          <StyledTextButton>Request Review</StyledTextButton>
           <RequestDialog></RequestDialog>
         </Box>
         {reviews ? (
@@ -466,11 +465,11 @@ const TrackSummary = () => {
               ))}
               <Box>
                 <StyledReviewBox sx={{ margin: '10px' }}>
-                    <ReviewCard tutor={'test'} feedback={'test'} rating={'test'}/>
+                    <ReviewCard tutor={'John'} feedback={'Nice post!'} rating={'4'}/>
                 </StyledReviewBox>
               </Box>
 
-              <Box>
+              {/* <Box>
                 <StyledReviewBox sx={{ margin: '10px' }}>
                     <ReviewCard tutor={'test'} feedback={'test'} rating={'test'}/>
                 </StyledReviewBox>
@@ -480,7 +479,7 @@ const TrackSummary = () => {
                 <StyledReviewBox sx={{ margin: '10px' }}>
                     <ReviewCard tutor={'test'} feedback={'test'} rating={'test'}/>
                 </StyledReviewBox>
-              </Box>
+              </Box> */}
             </Box>
           </ScrollContainer>
         ) : (
