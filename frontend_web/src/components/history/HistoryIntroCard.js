@@ -23,8 +23,8 @@ const StyledCard = styled(Card)(() => ({
 const HistoryIntroCard = ({ title }) => {
   return (
     <StyledCard variant='outlined'>
-      <Typography variant='h3' component='div'>{title}</Typography>
-      <Typography variant='h5'>You've been doing consistently well over the past few days!</Typography>
+      <Typography margin='10px' variant='h2' component='div'>{title}</Typography>
+      <Typography variant='h4'>Take a look at your past attempts and see how you did</Typography>
     </StyledCard>
   );
 };

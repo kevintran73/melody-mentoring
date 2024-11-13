@@ -8,9 +8,10 @@ import defaultImg from '../../assets/default-img.png';
 const Img = styled('img')({
   margin: '5px',
   width: '200px',
+  borderRadius: '8px',
 });
 
-const Thumbnail = ({ title, artist, difficulty, date }) => {
+const Thumbnail = ({ title, thumbnail, composer, difficulty, date }) => {
   return (
     <Card
       sx={{
@@ -20,6 +21,7 @@ const Thumbnail = ({ title, artist, difficulty, date }) => {
         flexGrow: 1,
         margin: '10px 0',
         boxShadow: 2,
+        borderRadius: '16px',
       }}
     >
       <Box>
@@ -32,15 +34,18 @@ const Thumbnail = ({ title, artist, difficulty, date }) => {
             alignItems:'center',
           }}
         >
-          <Img alt='playlist-card' src={defaultImg} />
+          <Img alt='playlist-card' src={thumbnail ? thumbnail : defaultImg} />
 
-          <Typography fontSize='1.8rem' component='div'>
+          <Typography fontSize='1.6rem' component='div'>
             {title}
           </Typography>
-          <Typography fontSize='1.2rem'>
-            {artist} • {difficulty}
+          <Typography fontSize='1.1rem'>
+            {composer}
           </Typography>
-          <Typography fontSize='1.2rem'>
+          <Typography fontSize='1.1rem'>
+            Difficulty: {difficulty}
+          </Typography>
+          <Typography fontSize='1.1rem'>
             {date}
           </Typography>
         </Box>

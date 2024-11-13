@@ -2,6 +2,7 @@ import React from 'react';
 
 import { styled } from '@mui/system';
 
+import Box from '@mui/material/Box';
 import CatalogueButton from './CatalogueButton';
 import NotificationsButton from './NotificationsButton';
 import ProfileButton from './ProfileButton';
@@ -60,8 +61,9 @@ const NavBar = ({ isDisabled = false, ...props }) => {
 
   return (
     <StyledHeader isDisabled={isDisabled} {...props}>
-      <NotificationsButton />
-    
+      {/* <NotificationsButton /> */}
+      <Box width='100px'/>
+
       <MiddleContainer>
         <CreateButton />
         {role === 'student' && <>

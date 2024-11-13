@@ -147,6 +147,9 @@ const Catalogue = () => {
         });
 
         setSongs(response.data.songs);
+        console.log(response.data.songs)
+        console.log(response.data.songs
+          .filter((song) => song['private']))
 
         // Get random songs to recommend
         const shuffledSongs = response.data.songs.slice().sort(() => 0.5 - Math.random());

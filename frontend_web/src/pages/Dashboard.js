@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [experiments, setExperiments] = useState([])
 
   const handleClick = (trackAttemptId) => {
+    console.log(trackAttemptId)
     navigate(`/review/${trackAttemptId}`)
   }
 
@@ -34,6 +35,7 @@ const Dashboard = () => {
         });
         const data = response.data.to_review;
         setExperiments(data);
+        console.log(data)
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -51,9 +53,9 @@ const Dashboard = () => {
       {experiments.map((experiment) => (
         <div className='shadow-md border rounded-lg flex items-center p-3 m-2 justify-between h-20'>
           <div className='flex items-center'>
-            <div className='font-semibold'>Track Attempt: <span className='text-gray-500'>{experiment.id}</span> </div>
+            <div className='font-semibold'>Track Attempt: <span className='text-gray-500'>{experiment}</span> </div>
           </div>
-          <RateReviewIcon className='cursor-pointer' onClick={() => handleClick(experiment.id)} />
+          <RateReviewIcon className='cursor-pointer' onClick={() => handleClick(experiment)} />
         </div>
       ))}
 

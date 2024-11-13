@@ -34,20 +34,24 @@ const Request = () => {
       });
       const data = response.data;
 
-      const res = data.students.map((id) => 
+      console.log(data)
+
+      let res = data.students.map((id) => 
         axios.get(`http://localhost:5001/profile/${id}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         })
       )
-      const responses = await Promise.all(res);
+      let responses = await Promise.all(res);
 
-      const studentDetails = responses.map((response) => {
+      let studentDetails = responses.map((response) => {
         const { id, username, profile_picture } = response.data; 
         return { id, username, profile_picture }
       });      
       setAllStudents(studentDetails) 
+
+      console.log(data.requests)
 
       res = data.requests.map((id) => 
         axios.get(`http://localhost:5001/profile/${id}`, {
@@ -57,6 +61,8 @@ const Request = () => {
         })
       )
       responses = await Promise.all(res);
+
+      console.log(responses)
 
       studentDetails = responses.map((response) => {
         const { id, username, profile_picture } = response.data; 

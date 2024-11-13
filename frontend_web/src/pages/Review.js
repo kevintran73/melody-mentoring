@@ -39,14 +39,16 @@ const Review = () => {
       showErrorMessage('Try again')
     } else {
       try {
-
+        const sendReview = {
+          tutor: userId,
+          trackAttemptId: trackAttemptId,
+          feedback: review,
+          rating: rating,
+        };
+        console.log(sendReview)
         await axios.post('http://localhost:5001/review/submit', 
+          { ...sendReview },
           {
-            tutor: userId,
-            trackAttemptId: trackAttemptId,
-            feedback: review,
-            rating: rating,
-          }, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
