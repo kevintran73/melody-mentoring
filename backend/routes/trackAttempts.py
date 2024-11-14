@@ -406,7 +406,7 @@ def get_user_history(userId):
         trackAttemptDetails = []
         for trackAttempt in trackAttempts:
             trackAttemptData = getTrackAttempyDetails(trackAttempt)
-            songData = getSongDetails(trackAttemptData['songId'])
+            songData = trackAttemptData['songDetails']
             obj = {
                 "songTitle": songData['title'],
                 "songComposer": songData['composer'],
