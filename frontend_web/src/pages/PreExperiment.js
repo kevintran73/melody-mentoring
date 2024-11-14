@@ -33,6 +33,14 @@ const PageBlock = styled('div')({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+
+  '@media (max-width: 1000px)': {
+    display: 'block',
+  },
+
+  '@media (max-height: 800px)': {
+    display: 'block',
+  },
 });
 
 const PageContainer = styled('div')({
@@ -47,6 +55,11 @@ const PageContainer = styled('div')({
   boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.4)',
 
   '@media (max-width: 1000px)': {
+    flexDirection: 'column',
+    gap: '0',
+  },
+
+  '@media (max-height: 800px)': {
     flexDirection: 'column',
     gap: '0',
   },
@@ -78,8 +91,8 @@ const StyledSongThumbnail = styled('div')`
 
 const ResponseSongThumbnail = styled(StyledSongThumbnail)({
   '@media (min-width: 1001px)': {
-    width: '500px',
-    height: '500px',
+    width: '400px',
+    height: '400px',
   },
 });
 
