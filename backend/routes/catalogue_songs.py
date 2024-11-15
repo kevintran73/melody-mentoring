@@ -2,7 +2,7 @@ from flask import Blueprint, json, jsonify, request
 import boto3
 import os
 from dynamodb_helpers import listOfMusicBaskets
-from boto3.dynamodb.conditions import Attr, Or
+from boto3.dynamodb.conditions import Attr, Or, And
 from .auth import token_required
 
 dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
@@ -77,14 +77,14 @@ def get_user_catalogue(userId):
         last_evaluated_key = None
 
         while True:
-            scan_kwargs = {
+            params = {
                 "FilterExpression": Attr('private').eq(False) | Attr('uploaderId').eq(userId)
             }
 
             if last_evaluated_key:
-                scan_kwargs["ExclusiveStartKey"] = last_evaluated_key
+                params["ExclusiveStartKey"] = last_evaluated_key
 
-            response = songs.scan(**scan_kwargs)
+            response = songs.scan(**params)
 
             all_items.extend(response.get('Items', []))
 
@@ -99,9 +99,9 @@ def get_user_catalogue(userId):
         })
 
 
-@catalogue_songs_bp.route('/catalogue/query', methods=['GET'])
+@catalogue_songs_bp.route('/catalogue/query/<userId>', methods=['GET'])
 @token_required
-def query_songs_and_playlists():
+def query_songs_and_playlists(userId):
     '''
     GET route for songs that match a search string
     query args should be as follows
@@ -127,10 +127,13 @@ def query_songs_and_playlists():
     songs = dynamodb.Table(os.getenv('DYNAMODB_TABLE_SONGS'))
 
     params = {
-        "FilterExpression": (
-            Attr('title').contains(query_string) |
-            Attr('composer').contains(query_string) |
-            Attr('genreTags').contains(query_string)
+        "FilterExpression": And(
+            Or(Attr('private').eq(False) | Attr('uploaderId').eq(userId)),
+            Or(
+                Attr('title').contains(query_string) |
+                Attr('composer').contains(query_string) |
+                Attr('genreTags').contains(query_string)
+            )
         ),
     }
 
