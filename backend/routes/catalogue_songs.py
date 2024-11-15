@@ -77,7 +77,6 @@ def get_user_catalogue(userId):
         last_evaluated_key = None
 
         while True:
-
             scan_kwargs = {
                 "FilterExpression": Attr('private').eq(False) | Attr('uploaderId').eq(userId)
             }
@@ -93,7 +92,7 @@ def get_user_catalogue(userId):
             if not last_evaluated_key:
                 break
 
-        return jsonify(response['Items']), 200
+        return jsonify(all_items), 200
     except Exception as e:
         return jsonify({
             "error": str(e)
