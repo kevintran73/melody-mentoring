@@ -67,6 +67,22 @@ def get_music_basket_list():
             'error': 'Songs cannot be found'
         }), 500
 
+@catalogue_songs_bp.route('/catalague/user-catalogue/<userId>', methods=['GET'])
+@token_required
+def get_user_catalogue(userId):
+    try:
+        songs = dynamodb.Table(os.getenv("DYNAMODB_TABLE_SONGS"))
+        response = songs.scan(
+            FilterExpression=Attr('private').eq(False) | Attr('uploaderId').eq(userId)
+        )
+
+        return jsonify(response['Items']),
+    except Exception as e:
+        return jsonify({
+            "error": str(e)
+        })
+
+
 @catalogue_songs_bp.route('/catalogue/query', methods=['GET'])
 @token_required
 def query_songs_and_playlists():
