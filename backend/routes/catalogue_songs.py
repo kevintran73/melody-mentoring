@@ -120,37 +120,35 @@ def query_songs_and_playlists():
     '''
     query_string = request.args.get('query', '')
     userId = request.args.get('userId')
-    last_key = request.args.get('last_key')
 
     if not query_string:
         return jsonify({'error': 'query string is required'}), 400
     
     songs = dynamodb.Table(os.getenv('DYNAMODB_TABLE_SONGS'))
 
-    params = {
-        "FilterExpression": And(
-            Or(Attr('private').eq(False) | Attr('uploaderId').eq(userId)),
-            Or(
-                Attr('title').contains(query_string) |
-                Attr('composer').contains(query_string) |
-                Attr('genreTags').contains(query_string)
-            )
-        ),
-    }
+    all_items = []
 
-    if last_key:
-        params["ExclusiveStartKey"] = json.loads(last_key)
-    
-    songs_response = songs.scan(**params)
+    while True:
+        params = {
+            "FilterExpression": And(
+                Or(Attr('private').eq(False) | Attr('uploaderId').eq(userId)),
+                Or(
+                    Attr('title').contains(query_string) |
+                    Attr('composer').contains(query_string) |
+                    Attr('genreTags').contains(query_string)
+                )
+            ),
+        }
 
-    songs_matches = songs_response.get('Items', [])
-    last_key = songs_response.get("LastEvaluatedKey")
+        if last_key:
+            params["ExclusiveStartKey"] = last_key
 
-    response = {
-        "songs": songs_matches
-    }
+        response = songs.scan(**params)
 
-    if last_key:
-        response["last_key"] = json.dumps(last_key)
+        all_items.extend(response.get('Items', []))
 
-    return jsonify(response)
+        last_key = response.get('LastEvaluatedKey')
+        if not last_key:
+            break
+
+    return jsonify(all_items), 200
