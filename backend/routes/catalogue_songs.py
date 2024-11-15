@@ -99,7 +99,7 @@ def get_user_catalogue(userId):
         })
 
 
-@catalogue_songs_bp.route('/catalogue/query/', methods=['GET'])
+@catalogue_songs_bp.route('/catalogue/query', methods=['GET'])
 @token_required
 def query_songs_and_playlists():
     '''
@@ -119,36 +119,36 @@ def query_songs_and_playlists():
     you call this route it should be put in to ensure that return results are paginated
     '''
     query_string = request.args.get('query', '')
-    userId = request.args.get('userId')
+    userId = request.args.get('userid')
+    last_key = request.args.get('last_key')
 
     if not query_string:
         return jsonify({'error': 'query string is required'}), 400
     
     songs = dynamodb.Table(os.getenv('DYNAMODB_TABLE_SONGS'))
 
-    all_items = []
+    params = {
+        "FilterExpression": (
+            (Attr('private').eq(False) | Attr('uploaderId').eq(userId)) &
+            (Attr('title').contains(query_string) |
+                Attr('composer').contains(query_string) |
+                Attr('genreTags').contains(query_string))
+        )
+    }
 
-    while True:
-        params = {
-            "FilterExpression": And(
-                Or(Attr('private').eq(False) | Attr('uploaderId').eq(userId)),
-                Or(
-                    Attr('title').contains(query_string) |
-                    Attr('composer').contains(query_string) |
-                    Attr('genreTags').contains(query_string)
-                )
-            ),
-        }
+    if last_key:
+        params["ExclusiveStartKey"] = json.loads(last_key)
+    
+    songs_response = songs.scan(**params)
 
-        if last_key:
-            params["ExclusiveStartKey"] = last_key
+    songs_matches = songs_response.get('Items', [])
+    last_key = songs_response.get("LastEvaluatedKey")
 
-        response = songs.scan(**params)
+    response = {
+        "songs": songs_matches
+    }
 
-        all_items.extend(response.get('Items', []))
+    if last_key:
+        response["last_key"] = json.dumps(last_key)
 
-        last_key = response.get('LastEvaluatedKey')
-        if not last_key:
-            break
-
-    return jsonify(all_items), 200
+    return jsonify(response), 200
