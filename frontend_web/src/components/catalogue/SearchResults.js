@@ -11,7 +11,7 @@ const SongsContainer = styled('div')({
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
   gap: '16px',
-  paddingBottom: '50vh',
+  paddingBottom: '60vh',
   backgroundColor: '#f9f9f9',
 });
 

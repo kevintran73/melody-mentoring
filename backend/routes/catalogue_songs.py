@@ -119,7 +119,7 @@ def query_songs_and_playlists():
     you call this route it should be put in to ensure that return results are paginated
     '''
     query_string = request.args.get('query', '')
-    userId = request.args.get('userid')
+    userId = request.args.get('user_id')
     last_key = request.args.get('last_key')
 
     if not query_string:
@@ -133,7 +133,7 @@ def query_songs_and_playlists():
             (Attr('title').contains(query_string) |
                 Attr('composer').contains(query_string) |
                 Attr('genreTags').contains(query_string))
-        )
+        ),
     }
 
     if last_key:
