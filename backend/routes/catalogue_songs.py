@@ -72,11 +72,28 @@ def get_music_basket_list():
 def get_user_catalogue(userId):
     try:
         songs = dynamodb.Table(os.getenv("DYNAMODB_TABLE_SONGS"))
-        response = songs.scan(
-            FilterExpression=Attr('private').eq(False) | Attr('uploaderId').eq(userId)
-        )
 
-        return jsonify(response['Items']),
+        all_items = []
+        last_evaluated_key = None
+
+        while True:
+
+            scan_kwargs = {
+                "FilterExpression": Attr('private').eq(False) | Attr('uploaderId').eq(userId)
+            }
+
+            if last_evaluated_key:
+                scan_kwargs["ExclusiveStartKey"] = last_evaluated_key
+
+            response = songs.scan(**scan_kwargs)
+
+            all_items.extend(response.get('Items', []))
+
+            last_evaluated_key = response.get('LastEvaluatedKey')
+            if not last_evaluated_key:
+                break
+
+        return jsonify(response['Items']), 200
     except Exception as e:
         return jsonify({
             "error": str(e)
