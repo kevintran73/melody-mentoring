@@ -99,9 +99,9 @@ def get_user_catalogue(userId):
         })
 
 
-@catalogue_songs_bp.route('/catalogue/query/<userId>', methods=['GET'])
+@catalogue_songs_bp.route('/catalogue/query/', methods=['GET'])
 @token_required
-def query_songs_and_playlists(userId):
+def query_songs_and_playlists():
     '''
     GET route for songs that match a search string
     query args should be as follows
@@ -119,6 +119,7 @@ def query_songs_and_playlists(userId):
     you call this route it should be put in to ensure that return results are paginated
     '''
     query_string = request.args.get('query', '')
+    userId = request.args.get('userId')
     last_key = request.args.get('last_key')
 
     if not query_string:
