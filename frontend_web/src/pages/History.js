@@ -111,7 +111,7 @@ const History = () => {
         />
 
         {filteredTracks.length > 0 ? (
-          filteredTracks.map((songDetail, i) => (
+          filteredTracks.reverse().map((songDetail, i) => (
             <HistoryCard
               key={i}
               title={songDetail['songTitle']}
