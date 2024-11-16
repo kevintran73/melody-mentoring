@@ -85,7 +85,7 @@ const History = () => {
   );
 
   return (
-    <Box backgroundColor='#000000'>
+    <Box>
       <NavBar></NavBar>
 
       {/* Greeting element */}

@@ -23,7 +23,6 @@ const StyledContainer = styled(Box)({
   flexGrow: 1,
   margin: "10px 0",
   cursor: "pointer",
-  backgroundColor: '#14213d',
   borderRadius: "16px",
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -52,13 +51,13 @@ const HistoryCard = ({
         </Box>
 
         <Box>
-          <Typography color='white' fontSize="1.8rem">
+          <Typography fontSize="1.8rem">
             {title}
           </Typography>
-          <Typography color='white' fontSize="1.2rem">
+          <Typography fontSize="1.2rem">
             {composer} • Difficulty: {difficulty}
           </Typography>
-          <Typography color='white' fontSize="1.2rem" marginTop="1%">
+          <Typography fontSize="1.2rem" marginTop="1%">
             {date}
           </Typography>
         </Box>
