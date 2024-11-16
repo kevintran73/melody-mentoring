@@ -69,7 +69,7 @@ const Settings = () => {
   const [settingsCategory, setSettingsCategory] = React.useState('account');
 
   const { accessToken } = React.useContext(TokenContext);
-  if (accessToken == null) {
+  if (accessToken === null) {
     return <Navigate to='/login' />;
   }
 

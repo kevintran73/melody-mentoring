@@ -16,7 +16,7 @@ from groq import Groq
 
 import Levenshtein as lev
 
-from dynamodb_helpers import updateAchievements, getTrackAttempyDetails
+from dynamodb_helpers import updateAchievements, getTrackAttempyDetails, getSongDetails, getUserDetails
 
 load_dotenv()
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
@@ -323,7 +323,7 @@ def get_feedback_for_track_attempt(trackAttemptId):
         return jsonify({'error': 'Track attempt not found'}), 404
 
     trackAttemptData = response['Item']
-    metrics = generateMetricsForSubmission(trackAttemptData['id'], trackAttemptData['songId'])
+    metrics = generateMetricsForSubmission(trackAttemptData['id'], trackAttemptData['songDetails']['id'])
     prompt = f'''
         I want to generate a feedback report for a user playing the piano, do not format your response in a way that addresses my prompt in any way.
         Their attempt of the song has been measured with the following metrics where a value of 1 is perfect:
@@ -377,3 +377,50 @@ def get_details_for_track_attempt(trackAttemptId):
     details = getTrackAttempyDetails(trackAttemptId)
 
     return jsonify(details), 200
+
+
+@trackAttempts_bp.route('/track-attempt/history/<userId>', methods=['Get'])
+@token_required
+def get_user_history(userId):
+    '''
+    GET route for the trackAttempt history of a user
+    {
+        userId: str                 id for the user
+    }
+
+    returns
+    {
+    [
+        "songTitle": songData['title'],
+        "songComposer": songData['composer'],
+        "songDifficulty": songData['difficulty'],
+        "songThumbnail": songData['thumbnail'],
+        "isoUploadTime": trackAttemptData['isoUploadTime']
+    ]
+    }
+    '''
+    try:
+        userDetails = getUserDetails(userId)
+
+        trackAttempts = userDetails['track_attempts']
+        trackAttemptDetails = []
+        for trackAttempt in trackAttempts:
+            trackAttemptData = getTrackAttempyDetails(trackAttempt)
+            songData = trackAttemptData['songDetails']
+            obj = {
+                "songTitle": songData['title'],
+                "songComposer": songData['composer'],
+                "songDifficulty": songData['difficulty'],
+                "songThumbnail": songData['thumbnail'],
+                "isoUploadTime": trackAttemptData['isoUploadTime'],
+                "trackAttemptId": trackAttempt
+            }
+            trackAttemptDetails.append(obj)
+
+        
+        return jsonify(trackAttemptDetails), 200
+
+    except Exception as e:
+        return jsonify({
+            "error": str(e)
+        })

@@ -41,10 +41,17 @@ const StyledCardsContainer = styled(Box)(() => ({
  * Profile page
  */
 const Profile = () => {
+  const navigate = useNavigate();
+
   const [profileInfo, setProfileInfo] = useState([]);
   const { accessToken, userId } = React.useContext(TokenContext);
 
   useEffect(() => {
+    // Navigate to login if invalid token or user id
+    if (accessToken === null || !userId) {
+      return navigate('/login');
+    }
+
     const fetchProfile = async () => {
       try {
         const response = await axios.get(
@@ -62,7 +69,7 @@ const Profile = () => {
     };
 
     fetchProfile();
-  }, [accessToken]);
+  }, [accessToken, userId, navigate]);
 
   return (
     <StyledContainer>

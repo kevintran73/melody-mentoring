@@ -37,7 +37,7 @@ def token_required(f):
         try:
             userIdFromRequest = kwargs.get('userId') or request.json.get('userId')
         except Exception as e:
-            print("Error accessing request.json or route parameter:", e)
+            # print("Error accessing request.json or route parameter:", e)
             userIdFromRequest = None
 
         if userIdFromRequest:

@@ -96,11 +96,9 @@ const Login = () => {
   const isSmallScreen = useMediaQuery('(max-width: 750px)');
 
   // Navigate to default page if active token
-  /*
-  if (token !== null) {
+  if (accessToken !== null) {
     return <Navigate to='/catalogue' />;
   }
-    */
 
   const navRegister = () => {
     return navigate('/register');

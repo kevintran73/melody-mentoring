@@ -42,85 +42,36 @@ const LoadingOverlayMain = styled(Box)({
   zIndex: 1000,
 });
 
-// Get track attempts -> get details from each track attempt -> get song details of each track attempt
 const History = () => {
-  const [songDetails, setSongDetails] = useState([]);
-  const { accessToken, userId } = React.useContext(TokenContext);
+  const navigate = useNavigate();
 
-  // Get track attempts of user
+  const [songDetails, setSongDetails] = useState([]);
+  const { accessToken, userId, role } = React.useContext(TokenContext);
+
   useEffect(() => {
+    // Navigate to login if invalid token or role
+    if (accessToken === null || role === 'tutor') {
+      return navigate('/login');
+    }
+
     const fetchTrackAttempts = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5001/profile/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        fetchTrackDetails(response.data.track_attempts);
+        const response = await axios.get(`http://localhost:5001/track-attempt/history/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setSongDetails(response.data);
       } catch (error) {
         console.error("Error fetching user details:", error);
       }
     };
 
-    // Get track details from track attempts
-    const fetchTrackDetails = async (attemptIds) => {
-      const trackDetails = [];
-
-      for (const attemptId of attemptIds) {
-        try {
-          const response = await axios.get(
-            `http://localhost:5001/track-attempt/${attemptId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
-          );
-          trackDetails.push(response.data);
-        } catch (error) {
-          console.error("Error fetching song details:", error);
-        }
-      }
-      fetchSongDetails(trackDetails);
-    };
-
-    // Get song details from track details
-    const fetchSongDetails = async (trackData) => {
-      const allSongDetails = [];
-      for (const track of trackData) {
-        try {
-          const response = await axios.get(
-            `http://localhost:5001/catalogue/songs/find/${track["songId"]}`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
-          );
-          const date = new Date(track.isoUploadTime);
-
-          const newSongDetail = {
-            ...response.data,
-            date: date,
-            trackAttemptId: track["id"],
-          };
-          allSongDetails.push(newSongDetail);
-        } catch (error) {
-          console.error("Error fetching song details:", error);
-        }
-      }
-      allSongDetails.sort((a, b) => b.date - a.date);
-      setSongDetails(allSongDetails);
-    };
-
     fetchTrackAttempts();
-  }, []);
+  }, [accessToken, userId, role, navigate]);
 
-  //Allows for filtering based on search input
-  const [searchInput, setSearchInput] = useState("");
+  // Allows for filtering based on search input
+  const [searchInput, setSearchInput] = useState('');
 
   const handleSearchChange = (e) => {
     setSearchInput(e.target.value);
@@ -128,8 +79,8 @@ const History = () => {
 
   const filteredTracks = songDetails.filter(
     (song) =>
-      song.title.toLowerCase().includes(searchInput.toLowerCase()) ||
-      song.composer.toLowerCase().includes(searchInput.toLowerCase())
+      song.songTitle.toLowerCase().includes(searchInput.toLowerCase()) ||
+      song.songComposer.toLowerCase().includes(searchInput.toLowerCase())
   );
 
   return (
@@ -159,19 +110,19 @@ const History = () => {
           value={searchInput}
         />
         {filteredTracks.length > 0 ? (
-          filteredTracks.map((songDetail, i) => (
+          filteredTracks.reverse().map((songDetail, i) => (
             <HistoryCard
               key={i}
-              title={songDetail["title"]}
-              composer={songDetail["composer"]}
-              difficulty={songDetail["difficulty"]}
-              date={new Intl.DateTimeFormat("en", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
+              title={songDetail['songTitle']}
+              composer={songDetail['songComposer']}
+              difficulty={songDetail['songDifficulty']}
+              date={new Intl.DateTimeFormat('en', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
               }).format(songDetail.date)}
-              thumbnail={songDetail["thumbnail"]}
-              trackAttemptId={songDetail["trackAttemptId"]}
+              thumbnail={songDetail['songThumbnail']}
+              trackAttemptId={songDetail['trackAttemptId']}
             />
           ))
         ) : (
