@@ -1,3 +1,4 @@
+import boto3.exceptions
 from flask import Blueprint, jsonify, request
 import music21
 from dataclasses import dataclass
@@ -5,10 +6,12 @@ from typing import List, Union
 import tempfile
 import librosa
 import numpy as np
+import wave as wave
+import ffmpeg
 
 import boto3
 from botocore.client import ClientError
-import io
+# import io
 import os
 from .auth import token_required
 from dotenv import load_dotenv
@@ -33,17 +36,17 @@ class MusicalElement:
     duration: float             # Duration in seconds
     bar_number: int             # Measure number
 
-'''
-Helper funtion that iterates through every bar in a specific "part" of the xml file
-Input - {
-    part- The part from the xml file you want to sort through
-    seconds_per_quarter- float (How many seconds a quarter is in the track)
-}
-Returns - {
-    elements - [MusicalElement] (List of all musical elements within that staff)
-}
-'''
 def extract_notes_and_chords(part, seconds_per_quarter):
+    '''
+    Helper funtion that iterates through every bar in a specific "part" of the xml file
+    Input - {
+        part- The part from the xml file you want to sort through
+        seconds_per_quarter- float (How many seconds a quarter is in the track)
+    }
+    Returns - {
+        elements - [MusicalElement] (List of all musical elements within that staff)
+    }
+    '''
     elements = []
     for bar in part.getElementsByClass(music21.stream.Measure):
         bar_start_time = bar.offset * seconds_per_quarter
@@ -78,18 +81,19 @@ def extract_notes_and_chords(part, seconds_per_quarter):
 
     return elements
 
-'''
-Helper funtion that scrapes the data for a track through an xml file
-Input - {
-    file- xml file you want to get data from
-}
-Returns - {
-    left_hand_elements - list[MusicalElement] (All the different notes that are present within the staff for left hand)
-    right_hand_elements - list[MusicalElement] (All the different notes that are present within the staff for right hand)
-    dynamics - list[(dynamic, timestamp)] (The dynamics present throughout the track aswell as when they occur )
-}
-'''
+
 def processXML(file):
+    '''
+    Helper funtion that scrapes the data for a track through an xml file
+    Input - {
+        file- xml file you want to get data from
+    }
+    Returns - {
+        left_hand_elements - list[MusicalElement] (All the different notes that are present within the staff for left hand)
+        right_hand_elements - list[MusicalElement] (All the different notes that are present within the staff for right hand)
+        dynamics - list[(dynamic, timestamp)] (The dynamics present throughout the track aswell as when they occur )
+    }
+    '''
     score = music21.converter.parse(file, format='musicxml')
 
     # Get BPM and calculate seconds per quarter
@@ -112,10 +116,64 @@ def processXML(file):
     return left_hand_elements, right_hand_elements, dynamics, bpm
 
 # EVERYTHING BELOW IS FOR PARSING RAW AUDIO
+s3_client = boto3.client(
+    service_name='s3',
+    region_name='ap-southeast-2',
+    aws_access_key_id=aws_access_key_id,
+    aws_secret_access_key=aws_secret_access_key
+)
 
-# requires file in raw bytes e.g.
-# io.BytesIO(file)
+def checkAndConvertWebmToWav(userAudioKey: str) -> str:
+    '''
+    For an uploaded user's audio, we don't know if the format is webm or wav
+    To ensure that we can load it into librosa correctly:
+        - check if it is a .wav file
+            - if it is then return the file path immediately
+        - if it isn't, it's a .webm and we need to convert it first
+    '''
+
+    getUserAudioSubmission = None
+    try:
+        getUserAudioSubmission = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_USER_AUDIO'), Key=userAudioKey)
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'NoSuchKey':
+            try:
+                getUserAudioSubmission = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_USER_VIDEO'), Key=userAudioKey)
+            except ClientError as e:
+                raise e
+
+    userAudio = getUserAudioSubmission['Body'].read()
+
+    with tempfile.NamedTemporaryFile(delete=False) as tempUserAudioUnknownType:
+        tempUserAudioUnknownTypePath = tempUserAudioUnknownType.name
+        tempUserAudioUnknownType.write(userAudio)
+        # storing the userAudio in tempUserAudioUnknownTypePath
+        # we still don't know if this file is a webm or a wav file yet.
+    tempFinalUserAudioPath = tempUserAudioUnknownTypePath
+
+    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tempUserAudioAsWav:
+        tempUserAudioAsWavPath = tempUserAudioAsWav.name
+
+    try:
+        # Checking if it is a .wav file, if it is then continue like normal
+        with wave.open(tempUserAudioUnknownTypePath, 'rb') as wv:
+            print('.wav file detected, processing in librosa...')
+    except wave.Error as e:
+        # Then it must be a webm file, so we write the converted to a new file and set the finalAudioPath to the new one
+        print(str(e) + ', converting .webm to .wav')
+        ffmpeg.input(tempUserAudioUnknownTypePath).output(tempUserAudioAsWavPath, format='wav').run(quiet=True, overwrite_output=True)
+        tempFinalUserAudioPath = tempUserAudioAsWavPath
+        print(f"File conversion successful, cleaning up temporary files.")
+        os.remove(tempUserAudioUnknownTypePath)
+
+    return tempFinalUserAudioPath
+
+
 def processUserAudioRaw(file) -> list:
+    '''
+    Taking the user's uploaded audio, we convert it to an array of notes
+    with relevant info for comparing to the data scraped by the xml for that song
+    '''
     audio, sr = librosa.load(file)
     stft = np.abs(librosa.stft(audio))
     frequencies = librosa.fft_frequencies(sr=sr)
@@ -137,14 +195,6 @@ def processUserAudioRaw(file) -> list:
 
     return res
 
-s3_client = boto3.client(
-    service_name='s3',
-    region_name='ap-southeast-2',
-    aws_access_key_id=aws_access_key_id,
-    aws_secret_access_key=aws_secret_access_key
-)
-
-
 def generateMetricsForSubmission(userAudioKey, trackAudioKey):
     '''
     userAudioKey is just the attemptId
@@ -156,9 +206,10 @@ def generateMetricsForSubmission(userAudioKey, trackAudioKey):
     * less than 1 = early
     '''
 
-    # we need to convert from a video/webm -> audio/wav
-    getUserAudioSubmission = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_USER_AUDIO'), Key=(userAudioKey))
-    userAudio = getUserAudioSubmission['Body'].read()
+    # Since uploaded user audio can either be .webm or .wav
+    # we generate a new temp file which is the converted .wav if necessary
+    userAudioFilePath = checkAndConvertWebmToWav(userAudioKey)
+
     # A bit cursed but windows gives us permission errors if we try to open the file directly
     # instead we write to a temporary file and leave it open to process the .mxl file
     # afterwards we have to do the cleanup. This only applies to music21.converter. Librosa is happy
@@ -176,7 +227,7 @@ def generateMetricsForSubmission(userAudioKey, trackAudioKey):
         melodyNotes: list[MusicalElement] = data[1]
         dynamics = data[2]
         songBPM = data[3]
-        userAttemptData = processUserAudioRaw(io.BytesIO(userAudio))
+        userAttemptData = processUserAudioRaw(userAudioFilePath)
         # first we need to normalise the timestamps before calculating metrics
         # take the first note's time and compare with the correct timestamp
         timeCalibrationDelta = melodyNotes[0].timestamp - userAttemptData[0][2]
@@ -187,7 +238,7 @@ def generateMetricsForSubmission(userAudioKey, trackAudioKey):
         userAttemptData = list(map(amendTiming, userAttemptData))
 
         '''
-        Pitch: % of correct notes (leveshtein distance)
+        Pitch: % of correct notes (levenshtein distance)
         Intonation: % n - no. of notes where the abs(deltaFreq) < 5Hz
         Rhythm, % of notes which are on time, % of notes with the correct duration
         Dynamics: % fake this one
@@ -228,9 +279,11 @@ def generateMetricsForSubmission(userAudioKey, trackAudioKey):
         # Skipping the first couple notes because there's too much rhythmic inconsistency
         # from when users start recording audio
         rhythmPercent = 1 - (sum(correctHopMap[4:]) - sum(userHopMap[4:])) / sum(userHopMap[4:])
-
+    except Exception as e:
+        print('We caught it here '+ str(e))
     finally:
         os.remove(tempFilePath)
+        os.remove(userAudioFilePath)
 
     return (pitchPercent, intonationPercent, rhythmPercent, 1)
 
@@ -255,7 +308,6 @@ def generateGroqResponse(prompt: str, model: str) -> str:
 @trackAttempts_bp.route('/attempts/user/feedback-for-attempt/<trackAttemptId>', methods=['GET'])
 # @token_required
 def get_feedback_for_track_attempt(trackAttemptId):
-    # TODO: check if the user owns that trackattempt
     '''GET route which dynamically generates feedback for user's track attempts
     usage:
     GET /attempts/user/feedback-for-attempt/testingTrackAttempt?model=gemma-7b-it
@@ -417,7 +469,7 @@ def get_user_history(userId):
             }
             trackAttemptDetails.append(obj)
 
-        
+
         return jsonify(trackAttemptDetails), 200
 
     except Exception as e:
