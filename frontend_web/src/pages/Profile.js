@@ -13,6 +13,7 @@ import axios from 'axios';
 import TokenContext from '../context/TokenContext';
 import AchievementCard from '../components/profile/AchievementCard';
 import TutorsCard from '../components/profile/TutorsCard';
+import { useNavigate, Navigate } from 'react-router-dom';
 
 const StyledContainer = styled(Box)(() => ({
   height: '100vh',

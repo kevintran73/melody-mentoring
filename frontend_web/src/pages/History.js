@@ -7,6 +7,7 @@ import HistoryCard from "../components/history/HistoryCard";
 import HistoryIntroCard from "../components/history/HistoryIntroCard";
 import NavBar from "../components/nav_bar/NavBar";
 import TokenContext from "../context/TokenContext";
+import { useNavigate, Navigate } from 'react-router-dom';
 
 /**
  * History page
