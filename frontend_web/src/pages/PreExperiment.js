@@ -164,7 +164,7 @@ const PreExperiment = () => {
   const [songInfo, setSongInfo] = React.useState(null);
   React.useEffect(() => {
     // Navigate to login page if invalid access token
-    if (accessToken == null) {
+    if (accessToken === null) {
       return navigate('/login');
     }
 
