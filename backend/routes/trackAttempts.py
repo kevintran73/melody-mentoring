@@ -195,10 +195,8 @@ def processUserAudioRaw(file) -> list:
 
     return res
 
-def generateMetricsForSubmission(userAudioKey, trackAudioKey):
+def generateMetricsForSubmission(trackAttemptId, songId):
     '''
-    userAudioKey is just the attemptId
-    trackAudioKey is just the songId
     returns (pitchPercent, intonationPercent, rhythmPercent, dynamicPercent)
 
     Note: RhythmPercent can be > or < 1
@@ -208,13 +206,13 @@ def generateMetricsForSubmission(userAudioKey, trackAudioKey):
 
     # Since uploaded user audio can either be .webm or .wav
     # we generate a new temp file which is the converted .wav if necessary
-    userAudioFilePath = checkAndConvertWebmToWav(userAudioKey)
+    userAudioFilePath = checkAndConvertWebmToWav(trackAttemptId)
 
     # A bit cursed but windows gives us permission errors if we try to open the file directly
     # instead we write to a temporary file and leave it open to process the .mxl file
     # afterwards we have to do the cleanup. This only applies to music21.converter. Librosa is happy
     # to parse the file in raw bytes.
-    getTrackAudioRes = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_TRACK_SHEET'), Key=trackAudioKey)
+    getTrackAudioRes = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_TRACK_SHEET'), Key=songId)
     trackAudio = getTrackAudioRes['Body'].read()
 
     pitchPercent, intonationPercent, rhythmPercent = 0, 0, 0
