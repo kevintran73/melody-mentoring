@@ -130,12 +130,12 @@ const Experiment = () => {
   }, [status]);
 
   // Get the sheet music
-  const { accessToken, userId } = React.useContext(TokenContext);
+  const { accessToken, userId, role } = React.useContext(TokenContext);
   const params = useParams();
   const [sheetFile, setSheetFile] = React.useState('');
   React.useEffect(() => {
-    // Navigate to login page if invalid token
-    if (accessToken === null) {
+    // Validate user token and role
+    if (accessToken === null || role === 'tutor') {
       return navigate('/login');
     }
 
@@ -172,7 +172,7 @@ const Experiment = () => {
     };
 
     getSheet();
-  }, [accessToken, params, navigate]);
+  }, [accessToken, role, params, navigate]);
 
   // Check if mobile resolution for sheet music
   const isSmallScreen = useMediaQuery('(max-width: 500px)');
