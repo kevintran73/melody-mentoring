@@ -156,7 +156,7 @@ const NavExperimentPageButton = styled(Button)({
 });
 
 const PreExperiment = () => {
-  const { accessToken, userId } = React.useContext(TokenContext);
+  const { accessToken, userId, role } = React.useContext(TokenContext);
   const navigate = useNavigate();
   const params = useParams();
 
@@ -164,7 +164,7 @@ const PreExperiment = () => {
   const [songInfo, setSongInfo] = React.useState(null);
   React.useEffect(() => {
     // Navigate to login page if invalid access token
-    if (accessToken == null) {
+    if (accessToken === null || role === 'tutor') {
       return navigate('/login');
     }
 
@@ -187,11 +187,12 @@ const PreExperiment = () => {
         setSongInfo(response.data);
       } catch (err) {
         showErrorMessage(err.response.data.error);
+        return navigate('/catalogue');
       }
     };
 
     getSongInfo();
-  }, [accessToken, params, navigate]);
+  }, [accessToken, role, params, navigate]);
 
   const navExperiment = () => {
     return navigate(`/experiment/${params.songId}`);

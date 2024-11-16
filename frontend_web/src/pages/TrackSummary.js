@@ -42,7 +42,7 @@ const StyledButton = styled(IconButton)({
 const StyledTextButton = styled(Button)({
   width: '17vw',
   backgroundColor: '#020E37',
-  color:'white',
+  color: 'white',
   fontSize: '1.3rem',
   padding: '8px 8px',
   textTransform: 'none',
@@ -140,7 +140,7 @@ const TrackSummary = () => {
   };
 
   const handleRefresh = () => {
-    refreshSummary(model)
+    refreshSummary(model);
   };
 
   useEffect(() => {
@@ -150,12 +150,15 @@ const TrackSummary = () => {
     const fetchSummary = async () => {
       try {
         // const response = await axios.get('http://localhost:5001/attempts/user/feedback-for-attempt/90d775a8-3cb1-4939-ab06-adadc4a98b18', {
-        const response = await axios.get(`http://localhost:5001/attempts/user/feedback-for-attempt/${params.trackAttemptId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          signal,
-        });
+        const response = await axios.get(
+          `http://localhost:5001/attempts/user/feedback-for-attempt/${params.trackAttemptId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+            signal,
+          }
+        );
         setSummary(response.data);
         fetchTrackDetails(params.trackAttemptId);
       } catch (error) {
@@ -175,8 +178,8 @@ const TrackSummary = () => {
           },
         });
         fetchSongDetails(response.data);
-        fetchReviewDetails(response.data.reviews)
-        setReviews(response.data.reviews)
+        fetchReviewDetails(response.data.reviews);
+        setReviews(response.data.reviews);
         // console.log(response.data.reviews)
       } catch (error) {
         console.error('Error fetching track details:', error);
@@ -185,11 +188,14 @@ const TrackSummary = () => {
 
     const fetchSongDetails = async (track) => {
       try {
-        const response = await axios.get(`http://localhost:5001/catalogue/songs/find/${track.songId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const response = await axios.get(
+          `http://localhost:5001/catalogue/songs/find/${track.songDetails.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
 
         const date = new Date(track.isoUploadTime);
         const dateTimeFormat = new Intl.DateTimeFormat('en', {
@@ -197,18 +203,18 @@ const TrackSummary = () => {
           month: 'long',
           day: 'numeric',
         });
-        const updatedDate = dateTimeFormat.format(date)
+        const updatedDate = dateTimeFormat.format(date);
 
         const newSongDetail = {
           ...response.data,
           date: updatedDate,
         };
         // console.log(newSongDetail)
-        setSongDetails(newSongDetail)
+        setSongDetails(newSongDetail);
       } catch (error) {
         console.error('Error fetching track details:', error);
       }
-    }
+    };
 
     const fetchReviewDetails = async (reviewData) => {
       const allReviewDetails = [];
@@ -231,7 +237,7 @@ const TrackSummary = () => {
           console.error('Error fetching review details:', error);
         }
       }
-      setReviews(allReviewDetails)
+      setReviews(allReviewDetails);
     };
 
     fetchSummary();
@@ -250,11 +256,14 @@ const TrackSummary = () => {
   const refreshSummary = async (model) => {
     try {
       // const response = await axios.get('http://localhost:5001/attempts/user/feedback-for-attempt/90d775a8-3cb1-4939-ab06-adadc4a98b18', {
-      const response = await axios.get(`http://localhost:5001/attempts/user/feedback-for-attempt/${params.trackAttemptId}?model=${model}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:5001/attempts/user/feedback-for-attempt/${params.trackAttemptId}?model=${model}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
       setSummary(response.data);
     } catch (error) {
       if (axios.isCancel(error)) {
@@ -274,7 +283,13 @@ const TrackSummary = () => {
           <ArrowBackIcon />
         </StyledButton>
 
-        <Box display='flex' flexDirection='column' justifyContent='center' alignItems='center' sx={{ width: '250px', margin: '15px 15px 0px 0px', gap: '10px' }}>
+        <Box
+          display='flex'
+          flexDirection='column'
+          justifyContent='center'
+          alignItems='center'
+          sx={{ width: '250px', margin: '15px 15px 0px 0px', gap: '10px' }}
+        >
           <Box display='flex' flexDirection='row'>
             <FormControl>
               <InputLabel id='model-select-label'>Model</InputLabel>
@@ -306,24 +321,36 @@ const TrackSummary = () => {
               </StyledButton>
             </Box>
           </Box>
-          <Typography variant='subtitle' fontSize='0.8rem' color='grey'>Changing models may take a moment</Typography>
+          <Typography variant='subtitle' fontSize='0.8rem' color='grey'>
+            Changing models may take a moment
+          </Typography>
         </Box>
       </Box>
 
       <StyledMainSummary>
         <Box flex='4' marginRight='30px'>
-          <Box boxShadow={4} height='100%' textAlign='center' display='flex' justifyContent='center' alignItems='center' borderRadius='16px'>
+          <Box
+            boxShadow={4}
+            height='100%'
+            textAlign='center'
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            borderRadius='16px'
+          >
             <Typography fontSize='2rem' margin='20px 30px'>
-              {summaryParagraphs ? summaryParagraphs[0] : 
+              {summaryParagraphs ? (
+                summaryParagraphs[0]
+              ) : (
                 <LoadingOverlayMain>
                   <CircularProgress size='20vh' />
                 </LoadingOverlayMain>
-              }
+              )}
             </Typography>
           </Box>
         </Box>
         <Box flex='1'>
-          {songDetails ? 
+          {songDetails ? (
             <Thumbnail
               title={songDetails['title']}
               thumbnail={songDetails['thumbnail']}
@@ -331,12 +358,11 @@ const TrackSummary = () => {
               difficulty={songDetails['difficulty']}
               date={songDetails['date']}
             />
-            : 
+          ) : (
             <LoadingOverlayMain>
               <CircularProgress size='20vh' />
             </LoadingOverlayMain>
-          }
-
+          )}
         </Box>
       </StyledMainSummary>
 
@@ -353,19 +379,20 @@ const TrackSummary = () => {
               Rhythm
             </Typography>
             <StyledAdviceBox sx={{ width: '50vw' }}>
-            {summary ? (
-              <>
-                <BarChartCard val1={summary['rhythm']} />
-                <Box flex={1}>
-                  <SubAdviceCard details={summaryParagraphs ? summaryParagraphs[1] : 'Loading'} />
-                </Box>
-              </>) : (
-                <Box alignItems='center' justifyContent='center' >
+              {summary ? (
+                <>
+                  <BarChartCard val1={summary['rhythm']} />
+                  <Box flex={1}>
+                    <SubAdviceCard details={summaryParagraphs ? summaryParagraphs[1] : 'Loading'} />
+                  </Box>
+                </>
+              ) : (
+                <Box alignItems='center' justifyContent='center'>
                   <LoadingOverlay>
                     <CircularProgress size='20vh' />
                   </LoadingOverlay>
                 </Box>
-            )}
+              )}
             </StyledAdviceBox>
           </Box>
 
@@ -375,15 +402,13 @@ const TrackSummary = () => {
             </Typography>
             <StyledAdviceBox sx={{ width: '50vw' }}>
               {summary ? (
-              <>
-                <PieChartCard
-                  val1={74}
-                  name1='On Time'
-                />
-                <Box flex={1}>
-                  <SubAdviceCard details={summaryParagraphs ? summaryParagraphs[2] : 'Loading'} />
-                </Box>  
-              </>) : (
+                <>
+                  <PieChartCard val1={74} name1='On Time' />
+                  <Box flex={1}>
+                    <SubAdviceCard details={summaryParagraphs ? summaryParagraphs[2] : 'Loading'} />
+                  </Box>
+                </>
+              ) : (
                 <LoadingOverlay>
                   <CircularProgress size='20vh' />
                 </LoadingOverlay>
@@ -398,10 +423,7 @@ const TrackSummary = () => {
             <StyledAdviceBox sx={{ width: '50vw' }}>
               {summary ? (
                 <>
-                  <PieChartCard
-                    val1={summary['intonation'] * 100}
-                    name1='On Time'
-                  />
+                  <PieChartCard val1={summary['intonation'] * 100} name1='On Time' />
                   <Box flex={1}>
                     <SubAdviceCard details={summaryParagraphs ? summaryParagraphs[3] : 'Loading'} />
                   </Box>
@@ -421,10 +443,7 @@ const TrackSummary = () => {
             <StyledAdviceBox sx={{ width: '50vw' }}>
               {summary ? (
                 <>
-                  <PieChartCard
-                    val1={summary['dynamics'] * 100}
-                    name1='On Time'
-                  />
+                  <PieChartCard val1={summary['dynamics'] * 100} name1='On Time' />
                   <Box flex={1}>
                     <SubAdviceCard details={summaryParagraphs ? summaryParagraphs[4] : 'Loading'} />
                   </Box>
@@ -436,7 +455,6 @@ const TrackSummary = () => {
               )}
             </StyledAdviceBox>
           </Box>
-
         </Box>
       </ScrollContainer>
 
@@ -459,13 +477,17 @@ const TrackSummary = () => {
               {reviews.map((review, i) => (
                 <Box>
                   <StyledReviewBox sx={{ margin: '10px' }} key={i}>
-                    <ReviewCard tutor={review.tutorName} feedback={review.feedback} rating={review.rating} />
+                    <ReviewCard
+                      tutor={review.tutorName}
+                      feedback={review.feedback}
+                      rating={review.rating}
+                    />
                   </StyledReviewBox>
                 </Box>
               ))}
               <Box>
                 <StyledReviewBox sx={{ margin: '10px' }}>
-                    <ReviewCard tutor={'John'} feedback={'Nice post!'} rating={'4'}/>
+                  <ReviewCard tutor={'John'} feedback={'Nice post!'} rating={'4'} />
                 </StyledReviewBox>
               </Box>
 
@@ -489,7 +511,6 @@ const TrackSummary = () => {
             </LoadingOverlay>
           </StyledReviewBox>
         )}
-
       </Box>
     </Box>
   );
