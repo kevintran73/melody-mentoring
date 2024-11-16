@@ -9,6 +9,7 @@ import HistoryIntroCard from '../components/history/HistoryIntroCard';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import TokenContext from '../context/TokenContext';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * History page
@@ -45,10 +46,17 @@ const LoadingOverlayMain = styled(Box)({
 });
 
 const History = () => {
+  const navigate = useNavigate();
+
   const [songDetails, setSongDetails] = useState([]);
   const { accessToken, userId } = React.useContext(TokenContext);
 
   useEffect(() => {
+    // Navigate to login if invalid token or user id
+    if (accessToken === null || !userId) {
+      return navigate('/login');
+    }
+
     const fetchTrackAttempts = async () => {
       try {
         const response = await axios.get(`http://localhost:5001/track-attempt/history/${userId}`, {
@@ -63,7 +71,7 @@ const History = () => {
     };
 
     fetchTrackAttempts();
-  }, [accessToken, userId]);
+  }, [accessToken, userId, navigate]);
 
   // Allows for filtering based on search input
   const [searchInput, setSearchInput] = useState('');

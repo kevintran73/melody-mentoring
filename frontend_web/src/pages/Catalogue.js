@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import Box from '@mui/material/Box';
@@ -69,28 +69,12 @@ const PlaylistTitle = ({ title, navPlaylist }) => (
   </PlaylistButton>
 );
 
-const SongCardTemplate = () => {
-  return (
-    <Box>
-      <SongCard
-        title='Song Title'
-        thumbnail={defaultImg}
-        composer='Some Name'
-        privacy={false}
-        difficulty='3'
-        genreTags={['pop', '70s']}
-      />
-    </Box>
-  );
-};
-
 const StyledSearchForm = styled('div')({
   margin: '10px',
 });
 
 const Catalogue = () => {
   const [songs, setSongs] = useState([]);
-  const [userData, setUserData] = useState(null);
   const [favouritedSongs, setFavouritedSongs] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
   const navigate = useNavigate();
@@ -105,8 +89,9 @@ const Catalogue = () => {
   const [hasMoreResults, setHasMoreResults] = React.useState(true);
 
   useEffect(() => {
-    if (!accessToken || !userId) {
-      return;
+    // Navigate to login if invalid token or user id
+    if (accessToken === null || !userId) {
+      return navigate('/login');
     }
 
     const fetchSongData = async () => {
@@ -124,7 +109,7 @@ const Catalogue = () => {
     };
 
     fetchSongData();
-  }, [accessToken, userId]);
+  }, [accessToken, userId, navigate]);
 
   const navPlaylist = (playlistType) => {
     return navigate(`/playlist/${playlistType}`);
@@ -195,9 +180,7 @@ const Catalogue = () => {
           {/* Welcome container */}
           <Box margin='60px 20px'>
             <TopContainer>
-              <Typography variant='h3'>
-                Welcome back{userData ? `, ${userData['username']}` : ''}!
-              </Typography>
+              <Typography variant='h3'>Welcome back!</Typography>
               {recommendations.length > 0 && (
                 <>
                   <Typography variant='h4'>Songs that might interest you:</Typography>
