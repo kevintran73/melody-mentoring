@@ -97,10 +97,23 @@ const Experiment = () => {
     setOsmdLoaded(true);
   };
 
+  // Check for a webcam
+  const [hasWebcam, setHasWebcam] = React.useState(false);
+  React.useEffect(() => {
+    const checkForWebcam = async () => {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter((device) => device.kind === 'videoinput');
+      setHasWebcam(videoDevices.length > 0);
+    };
+
+    checkForWebcam();
+  }, []);
+
   // Audio recording hooks
   const { status, startRecording, stopRecording, mediaBlobUrl, clearBlobUrl } =
     useReactMediaRecorder({
-      video: false,
+      video: hasWebcam,
+      audio: true,
     });
 
   // After countdown is initiated
