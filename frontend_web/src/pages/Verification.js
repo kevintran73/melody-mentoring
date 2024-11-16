@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Popup from '../components/Popup';
 import { showErrorMessage } from '../helpers';
+import TokenContext from '../context/TokenContext';
 
 const Verification = () => {
   const [open, setOpen] = useState(false);
@@ -10,17 +11,21 @@ const Verification = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [username, setUsername] = useState('');
-  const [role, setRole] = useState('')
+  const [role, setRole] = useState('');
   const [message, setMessage] = useState('');
 
+  const { accessToken } = React.useContext(TokenContext);
+
   useEffect(() => {
-    if (location.state === null) {
+    if (accessToken !== null) {
+      return navigate('/catalogue');
+    } else if (location.state === null) {
       navigate('/register');
     } else {
       setUsername(location.state.username);
-      setRole(location.state.role)
+      setRole(location.state.role);
     }
-  }, []);
+  }, [location.state, accessToken, navigate]);
 
   const handleResend = async () => {
     try {
