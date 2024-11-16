@@ -1,3 +1,4 @@
+import boto3.exceptions
 from flask import Blueprint, jsonify, request
 import music21
 from dataclasses import dataclass
@@ -9,7 +10,7 @@ import wave as wave
 import ffmpeg
 
 import boto3
-# from botocore.client import ClientError
+from botocore.client import ClientError
 # import io
 import os
 from .auth import token_required
@@ -130,7 +131,17 @@ def checkAndConvertWebmToWav(userAudioKey: str) -> str:
             - if it is then return the file path immediately
         - if it isn't, it's a .webm and we need to convert it first
     '''
-    getUserAudioSubmission = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_USER_AUDIO'), Key=userAudioKey)
+
+    getUserAudioSubmission = None
+    try:
+        getUserAudioSubmission = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_USER_AUDIO'), Key=userAudioKey)
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'NoSuchKey':
+            try:
+                getUserAudioSubmission = s3_client.get_object(Bucket=os.getenv('S3_BUCKET_USER_VIDEO'), Key=userAudioKey)
+            except ClientError as e:
+                raise e
+
     userAudio = getUserAudioSubmission['Body'].read()
 
     with tempfile.NamedTemporaryFile(delete=False) as tempUserAudioUnknownType:
