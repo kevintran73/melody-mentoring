@@ -49,11 +49,11 @@ const History = () => {
   const navigate = useNavigate();
 
   const [songDetails, setSongDetails] = useState([]);
-  const { accessToken, userId } = React.useContext(TokenContext);
+  const { accessToken, userId, role } = React.useContext(TokenContext);
 
   useEffect(() => {
-    // Navigate to login if invalid token or user id
-    if (accessToken === null || !userId) {
+    // Navigate to login if invalid token or role
+    if (accessToken === null || role === 'tutor') {
       return navigate('/login');
     }
 
@@ -71,7 +71,7 @@ const History = () => {
     };
 
     fetchTrackAttempts();
-  }, [accessToken, userId, navigate]);
+  }, [accessToken, userId, role, navigate]);
 
   // Allows for filtering based on search input
   const [searchInput, setSearchInput] = useState('');
