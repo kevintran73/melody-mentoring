@@ -20,7 +20,7 @@ const StyledButton = styled(IconButton)({
   color: 'white',
   margin: '10px 0px 0px 20px',
   '&:hover': {
-    backgroundColor: '#020E37',
+    backgroundColor: 'blue',
     borderColor: '#0062cc',
     boxShadow: 'none',
   },

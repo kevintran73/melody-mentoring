@@ -40,7 +40,7 @@ const StyledButton = styled(Button)({
   borderRadius: '16px',
   marginTop: '10px',
   '&:hover': {
-    backgroundColor: '#020E37',
+    backgroundColor: 'blue',
     borderColor: '#0062cc',
     boxShadow: 'none',
   },
