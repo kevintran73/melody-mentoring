@@ -236,8 +236,6 @@ const Experiment = () => {
       showErrorMessage(err.response.data.error);
       return;
     }
-
-    return navigate('/history');
   };
 
   // Exit experiment
@@ -248,7 +246,7 @@ const Experiment = () => {
     setExperimentStarted(false);
 
     // Navigate back to the experiment's song page
-    return navigate('/catalogue');
+    return navigate(`/pre-experiment/${params.songId}`);
   };
 
   // Display all page elements only if sheet file has been retrieved

@@ -90,7 +90,7 @@ def addAttemptToTrackAttempt(userId, songId):
         Item={
             'id': trackAttempId,
             'userId': userId,
-            'songId': songId,
+            'songDetails': getSongDetails(songId),
             'isoUploadTime': isoDate,
             'reviews': [],
         }
@@ -129,6 +129,28 @@ def getTrackAttempyDetails(trackAttemptID):
     attemptData = attempt['Item']
 
     return attemptData
+
+def getUserDetails(userId):
+    users = db.Table(os.getenv('DYNAMODB_TABLE_USERS'))
+    response = users.get_item(Key={'id': userId})
+
+    if 'Item' not in response:
+        return jsonify({'error': 'User not found'}), 404
+
+    user_data = response['Item']
+
+    return user_data
+
+def getSongDetails(songId):
+    songs = db.Table(os.getenv('DYNAMODB_TABLE_SONGS'))
+    response = songs.get_item(Key={'id': songId})
+
+    if 'Item' not in response:
+        return jsonify({'error': 'User not found'}), 404
+
+    song_data = response['Item']
+
+    return song_data
 
 def updateAchievements(trackAttemptId, metrics):
     if (metrics[0] + metrics[1] + metrics[2])/3 < 0.8:

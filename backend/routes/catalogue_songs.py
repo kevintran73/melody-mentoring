@@ -2,7 +2,7 @@ from flask import Blueprint, json, jsonify, request
 import boto3
 import os
 from dynamodb_helpers import listOfMusicBaskets
-from boto3.dynamodb.conditions import Attr, Or
+from boto3.dynamodb.conditions import Attr, Or, And
 from .auth import token_required
 
 dynamodb = boto3.resource('dynamodb', region_name='ap-southeast-2')
@@ -67,6 +67,38 @@ def get_music_basket_list():
             'error': 'Songs cannot be found'
         }), 500
 
+@catalogue_songs_bp.route('/catalague/user-catalogue/<userId>', methods=['GET'])
+@token_required
+def get_user_catalogue(userId):
+    try:
+        songs = dynamodb.Table(os.getenv("DYNAMODB_TABLE_SONGS"))
+
+        all_items = []
+        last_evaluated_key = None
+
+        while True:
+            params = {
+                "FilterExpression": Attr('private').eq(False) | Attr('uploaderId').eq(userId)
+            }
+
+            if last_evaluated_key:
+                params["ExclusiveStartKey"] = last_evaluated_key
+
+            response = songs.scan(**params)
+
+            all_items.extend(response.get('Items', []))
+
+            last_evaluated_key = response.get('LastEvaluatedKey')
+            if not last_evaluated_key:
+                break
+
+        return jsonify(all_items), 200
+    except Exception as e:
+        return jsonify({
+            "error": str(e)
+        })
+
+
 @catalogue_songs_bp.route('/catalogue/query', methods=['GET'])
 @token_required
 def query_songs_and_playlists():
@@ -87,6 +119,7 @@ def query_songs_and_playlists():
     you call this route it should be put in to ensure that return results are paginated
     '''
     query_string = request.args.get('query', '')
+    userId = request.args.get('user_id')
     last_key = request.args.get('last_key')
 
     if not query_string:
@@ -96,9 +129,10 @@ def query_songs_and_playlists():
 
     params = {
         "FilterExpression": (
-            Attr('title').contains(query_string) |
-            Attr('composer').contains(query_string) |
-            Attr('genreTags').contains(query_string)
+            (Attr('private').eq(False) | Attr('uploaderId').eq(userId)) &
+            (Attr('title').contains(query_string) |
+                Attr('composer').contains(query_string) |
+                Attr('genreTags').contains(query_string))
         ),
     }
 
@@ -117,4 +151,4 @@ def query_songs_and_playlists():
     if last_key:
         response["last_key"] = json.dumps(last_key)
 
-    return jsonify(response)
+    return jsonify(response), 200

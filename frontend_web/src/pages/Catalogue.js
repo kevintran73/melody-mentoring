@@ -109,58 +109,21 @@ const Catalogue = () => {
       return;
     }
 
-    const fetchUserData = async () => {
-      try {
-        // Fetch user data
-        const response = await axios.get(`http://localhost:5001/profile/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setUserData(response.data);
+    const fetchSongData = async () => {
+      const response = await axios.get(`http://localhost:5001/catalague/user-catalogue/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-        // Fetch favourited songs concurrently
-        const favouriteSongIds = response.data.favourite_songs;
-        const songFetchPromises = favouriteSongIds.map((favouritedSongId) =>
-          axios.get(`http://localhost:5001/catalogue/songs/find/${favouritedSongId}`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-        );
-        const songInfoResponses = await Promise.all(songFetchPromises);
-        const favouriteSongs = songInfoResponses.map((songInfoResponse) => songInfoResponse.data);
-        setFavouritedSongs(favouriteSongs);
-      } catch (error) {
-        console.error('Error fetching user details or favourite songs:', error);
-        showErrorMessage(error.response?.data?.error || 'An error occurred');
-      }
+      setSongs(response.data);
+
+      // Get random songs to recommend
+      const shuffledSongs = response.data.slice().sort(() => 0.5 - Math.random());
+      setRecommendations(shuffledSongs.slice(0, 3));
     };
 
-    const fetchSongs = async () => {
-      try {
-        const response = await axios.get('http://localhost:5001/catalogue/songs/list-all', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        setSongs(response.data.songs);
-        console.log(response.data.songs)
-        console.log(response.data.songs
-          .filter((song) => song['private']))
-
-        // Get random songs to recommend
-        const shuffledSongs = response.data.songs.slice().sort(() => 0.5 - Math.random());
-        setRecommendations(shuffledSongs.slice(0, 3));
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchUserData();
-    fetchSongs();
+    fetchSongData();
   }, [accessToken, userId]);
 
   const navPlaylist = (playlistType) => {
@@ -182,15 +145,15 @@ const Catalogue = () => {
       return;
     }
 
-    const params = { query };
-    if (lastKey) {
-      params.last_key = lastKey;
-    }
     setLoadingSearch(true);
     setIsSearching(true);
 
+    const params = { query, user_id: userId };
+    if (lastKey) {
+      params.last_key = lastKey;
+    }
     try {
-      const response = await axios.get('http://localhost:5001/catalogue/query', {
+      const response = await axios.get(`http://localhost:5001/catalogue/query`, {
         params,
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -233,20 +196,24 @@ const Catalogue = () => {
           <Box margin='60px 20px'>
             <TopContainer>
               <Typography variant='h3'>
-                Welcome back, {userData ? userData['username'] : 'N/A'}!
+                Welcome back{userData ? `, ${userData['username']}` : ''}!
               </Typography>
-              <Typography variant='h4'>Songs that might interest you:</Typography>
-              <Box display='flex' gap='2vw'>
-                {recommendations.map((song, i) => (
-                  <RecommendationCard
-                    key={`recommendation-card-${i}`}
-                    songId={song['id']}
-                    title={song['title']}
-                    thumbnail={song['thumbnail']}
-                    composer={song['composer']}
-                  />
-                ))}
-              </Box>
+              {recommendations.length > 0 && (
+                <>
+                  <Typography variant='h4'>Songs that might interest you:</Typography>
+                  <Box display='flex' gap='2vw'>
+                    {recommendations.map((song, i) => (
+                      <RecommendationCard
+                        key={`recommendation-card-${i}`}
+                        songId={song['id']}
+                        title={song['title']}
+                        thumbnail={song['thumbnail']}
+                        composer={song['composer']}
+                      />
+                    ))}
+                  </Box>
+                </>
+              )}
             </TopContainer>
           </Box>
 
@@ -306,33 +273,6 @@ const Catalogue = () => {
               </ScrollContainer>
             </Box>
           )}
-
-          {/* Playlist Uploaded (Everyone) */}
-          <Box margin='10px'>
-            <PlaylistTitle
-              title='Uploaded Songs (Everyone) >'
-              navPlaylist={() => navPlaylist('uploaded')}
-            />
-            <ScrollContainer>
-              <Box display='flex' flexDirection='row'>
-                {songs
-                  .filter((song) => song['private'])
-                  .map((song, i) => (
-                    <Box key={`box-uploaded-everyone-${song['title']}-${i}`}>
-                      <SongCard
-                        title={song['title']}
-                        composer={song['composer']}
-                        privacy={song['private']}
-                        thumbnail={song['thumbnail']}
-                        difficulty={song['difficulty']}
-                        genreTags={song['genreTags']}
-                        songId={song['id']}
-                      />
-                    </Box>
-                  ))}
-              </Box>
-            </ScrollContainer>
-          </Box>
 
           {/* Playlist Rock */}
           {songs.filter(
