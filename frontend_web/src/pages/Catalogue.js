@@ -78,7 +78,7 @@ const Catalogue = () => {
   const [favouritedSongs, setFavouritedSongs] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
   const navigate = useNavigate();
-  const { accessToken, userId } = React.useContext(TokenContext);
+  const { accessToken, userId, role } = React.useContext(TokenContext);
 
   // Search functionality
   const [isSearching, setIsSearching] = useState(false);
@@ -89,9 +89,11 @@ const Catalogue = () => {
   const [hasMoreResults, setHasMoreResults] = React.useState(true);
 
   useEffect(() => {
-    // Navigate to login if invalid token or user id
+    // Navigate to login if invalid token or user id; to dashboard if tutor
     if (accessToken === null || !userId) {
       return navigate('/login');
+    } else if (role === 'tutor') {
+      return navigate('/dashboard');
     }
 
     const fetchSongData = async () => {
@@ -109,7 +111,7 @@ const Catalogue = () => {
     };
 
     fetchSongData();
-  }, [accessToken, userId, navigate]);
+  }, [accessToken, userId, navigate, role]);
 
   const navPlaylist = (playlistType) => {
     return navigate(`/playlist/${playlistType}`);

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import TokenContext from '../context/TokenContext';
 import { showErrorMessage } from '../helpers';
 
 import { Button, TextField } from '@mui/material';
@@ -73,7 +74,12 @@ const Register = () => {
   const [username, setUsername] = React.useState('');
   const [isChecked, setIsChecked] = useState(false);
 
+  const { accessToken } = React.useContext(TokenContext);
   const navigate = useNavigate();
+  // Navigate to default page if active token
+  if (accessToken !== null) {
+    return <Navigate to='/catalogue' />;
+  }
 
   // Handles the signup
   const register = async (event) => {
