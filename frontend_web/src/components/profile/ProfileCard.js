@@ -78,7 +78,7 @@ const ProfileText = ({ username, email, instrument, level, role }) => {
         component='div'
         sx={{
           margin: '0px 0px 10px 0px',
-          fontSize: '3rem',
+          fontSize: '3vw',
           '@media (max-width: 1000px)': {
             fontSize: '4vw',
           },
@@ -228,7 +228,6 @@ const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
 
               '@media (max-width: 1000px)': {
                 width: '40%',
-                flexDirection: 'row',
               },
             }}
           />
@@ -249,7 +248,14 @@ const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
 
         {/* If waiting on profile pic confirmation show confirm and deny buttons */}
         {isConfirming ? (
-          <Box display='flex' flexDirection='row' width='80%' gap='10px'>
+          <Box
+            display='flex'
+            flexDirection='row'
+            justifyContent='center'
+            alignItems='center'
+            width='100%'
+            gap='20px'
+          >
             <StyledButton onClick={handleConfirm}>Confirm</StyledButton>
             <StyledButton onClick={handleDeny}>Deny</StyledButton>
           </Box>

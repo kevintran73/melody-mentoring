@@ -1,11 +1,8 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import Grid from '@mui/material/Grid2';
-import Box from '@mui/material/Box';
-import defaultImg from '../../assets/default-img.png';
-import Typography from '@mui/material/Typography';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+import Typography from '@mui/material/Typography';
+import * as React from 'react';
 import bronzeImage from '../../assets/ranks_0000_bronze.png';
 import silverImage from '../../assets/ranks_0001_silver.png';
 import goldImage from '../../assets/ranks_0002_gold.png';
@@ -38,7 +35,7 @@ const Image = ({ img }) => {
       src={img}
       alt='test'
       sx={{
-        width: '100px',
+        width: '7vw',
         objectFit: 'cover',
         padding: '10px',
 
@@ -137,22 +134,38 @@ const AchievementGrid = ({ userInfo }) => {
     <Box
       display='flex'
       flexDirection='column'
-      spacing={2}
-      justifyContent='center'
-      alignItems='center'
       width='100%'
+      height='100%'
+      objectFit='cover'
+      padding='10px'
+      textAlign='center'
+      alignItems='center'
+      justifyContent='center'
+      boxShadow={3}
+      borderRadius='16px'
+      margin='10px'
     >
-      <Box
-        width='100%'
-        objectFit='cover'
-        padding='10px'
-        textAlign='center'
-        boxShadow={3}
-        borderRadius='16px'
-        margin='10px'
-      >
-        <RankIcons rankInfo={rankInfo}></RankIcons>
-        <Box margin='0px 10px 10px 10px'>
+      <RankIcons rankInfo={rankInfo}></RankIcons>
+      <Box margin='0px 10px 10px 10px' width='90%'>
+        <Typography
+          sx={{
+            fontSize: '1.3rem',
+            '@media (max-width: 1000px)': {
+              fontSize: '2vw',
+            },
+          }}
+        >
+          Easy Attempts
+        </Typography>
+        <Progress
+          value={rankInfo['easyMin']}
+          minValue={0}
+          maxValue={rankInfo['easyMax']}
+        />
+      </Box>
+
+      {rankInfo['mediumMax'] > 0 && (
+        <Box margin='0px 10px 10px 10px' width='90%'>
           <Typography
             sx={{
               fontSize: '1.3rem',
@@ -161,55 +174,35 @@ const AchievementGrid = ({ userInfo }) => {
               },
             }}
           >
-            Easy Attempts
+            Medium Attempts
           </Typography>
           <Progress
-            value={rankInfo['easyMin']}
+            value={rankInfo['mediumMin']}
             minValue={0}
-            maxValue={rankInfo['easyMax']}
+            maxValue={rankInfo['mediumMax']}
           />
         </Box>
+      )}
 
-        {rankInfo['mediumMax'] > 0 && (
-          <Box margin='10px'>
-            <Typography
-              sx={{
-                fontSize: '1.3rem',
-                '@media (max-width: 1000px)': {
-                  fontSize: '2vw',
-                },
-              }}
-            >
-              Medium Attempts
-            </Typography>
-            <Progress
-              value={rankInfo['mediumMin']}
-              minValue={0}
-              maxValue={rankInfo['mediumMax']}
-            />
-          </Box>
-        )}
-
-        {rankInfo['hardMax'] > 0 && (
-          <Box margin='10px'>
-            <Typography
-              sx={{
-                fontSize: '1.3rem',
-                '@media (max-width: 1000px)': {
-                  fontSize: '2vw',
-                },
-              }}
-            >
-              Hard Attempts
-            </Typography>
-            <Progress
-              value={rankInfo['hardMin']}
-              minValue={0}
-              maxValue={rankInfo['hardMax']}
-            />
-          </Box>
-        )}
-      </Box>
+      {rankInfo['hardMax'] > 0 && (
+        <Box margin='0px 10px 10px 10px' width='90%'>
+          <Typography
+            sx={{
+              fontSize: '1.3rem',
+              '@media (max-width: 1000px)': {
+                fontSize: '2vw',
+              },
+            }}
+          >
+            Hard Attempts
+          </Typography>
+          <Progress
+            value={rankInfo['hardMin']}
+            minValue={0}
+            maxValue={rankInfo['hardMax']}
+          />
+        </Box>
+      )}
     </Box>
   );
 };

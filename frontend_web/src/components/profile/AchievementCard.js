@@ -7,11 +7,13 @@ import Card from '@mui/material/Card';
 import { styled } from '@mui/system';
 
 const StyledAchievements = styled(Box)(() => ({
+  width: '90%',
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'space-evenly',
+  gap: '20px',
 
   '@media (max-width: 1000px)': {
     flexDirection: 'row',
@@ -29,7 +31,7 @@ const StyledCard = styled(Card)(() => ({
   height: '100%',
   borderRadius: '16px',
   padding: '12px',
-  gap: '20px',
+  // gap: '20px',
 }));
 
 /**
@@ -38,13 +40,13 @@ const StyledCard = styled(Card)(() => ({
 const AchievementCard = ({ profileInfo }) => {
   return (
     <StyledCard>
-      <Typography fontSize='4vw'> Achievements </Typography>
+      <Typography fontSize='3.6vw'> Achievements </Typography>
       <StyledAchievements>
         {profileInfo['current_streak'] && (
-          <StreakCard flex={1} userInfo={profileInfo}></StreakCard>
+          <StreakCard userInfo={profileInfo}></StreakCard>
         )}
         {profileInfo['achievements'] && (
-          <AchievementGrid flex={1} userInfo={profileInfo}></AchievementGrid>
+          <AchievementGrid userInfo={profileInfo}></AchievementGrid>
         )}
       </StyledAchievements>
     </StyledCard>
