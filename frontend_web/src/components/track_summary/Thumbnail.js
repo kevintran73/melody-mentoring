@@ -18,17 +18,17 @@ const Thumbnail = ({ title, thumbnail, composer, difficulty, date }) => {
         padding: 1,
         height: '100%',
         maxHeight: '400px',
-        width: '300px',
+        width: '100%',
         flexGrow: 1,
         margin: '10px 0',
         boxShadow: 2,
         borderRadius: '16px',
+        textAlign: 'center',
       }}
     >
       <Box>
         <Box
           sx={{
-            marginRight: '10px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',

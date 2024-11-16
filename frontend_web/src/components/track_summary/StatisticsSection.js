@@ -14,34 +14,6 @@ import SubAdviceCard from './SubAdviceCard';
  * Track Summary page
  */
 
-const StyledButton = styled(IconButton)({
-  backgroundColor: '#020E37',
-  color: 'white',
-  // width: '50px',
-  margin: '10px 0px 0px 20px',
-  '&:hover': {
-    backgroundColor: '#020E37',
-    borderColor: '#0062cc',
-    boxShadow: 'none',
-  },
-});
-
-const StyledTextButton = styled(Button)({
-  width: '17vw',
-  backgroundColor: '#020E37',
-  color: 'white',
-  fontSize: '1.3rem',
-  padding: '8px 8px',
-  textTransform: 'none',
-  borderRadius: '16px',
-  marginTop: '10px',
-  '&:hover': {
-    backgroundColor: '#020E37',
-    borderColor: '#0062cc',
-    boxShadow: 'none',
-  },
-});
-
 const StyledAdviceBox = styled(Card)(() => ({
   borderWidth: '2px',
   padding: '20px',
@@ -54,16 +26,6 @@ const StyledAdviceBox = styled(Card)(() => ({
   borderRadius: '16px',
   boxShadow: 5,
   position: 'relative',
-}));
-
-const StyledMainSummary = styled(Card)(() => ({
-  padding: '20px',
-  margin: '10px 30px 20px 30px',
-  display: 'flex',
-  flexDirection: 'row',
-  backgroundColor: 'white',
-  borderRadius: '16px',
-  boxShadow: 5,
 }));
 
 const LoadingOverlay = styled('div')({
@@ -79,34 +41,6 @@ const LoadingOverlay = styled('div')({
   zIndex: 999,
 });
 
-const LoadingOverlayMain = styled(Box)({
-  // position: 'fixed',
-  // top: 0,
-  // left: 0,
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: 'rgba(255, 255, 255, 0.8)',
-  zIndex: 1000,
-});
-
-const StyledReviewBox = styled(Card)(() => ({
-  borderWidth: '2px',
-  padding: '20px',
-  margin: '10px',
-  display: 'flex',
-  flexDirection: 'row',
-  backgroundColor: 'white',
-  gap: '30px',
-  height: '450px',
-  width: '400px',
-  borderRadius: '16px',
-  boxShadow: 5,
-  position: 'relative',
-}));
-
 const PieSection = ({ title, summary, id, index, summaryParagraphs }) => {
   return (
     <Box>
@@ -116,8 +50,10 @@ const PieSection = ({ title, summary, id, index, summaryParagraphs }) => {
       <StyledAdviceBox sx={{ width: '900px' }}>
         {summary ? (
           <>
-            <PieChartCard val1={summary[id] * 100} name1='On Time' />
-            <Box flex={1}>
+            <Box flex={7}>
+              <PieChartCard val1={summary[id] * 100} name1='On Time' flex={1} />
+            </Box>
+            <Box flex={12}>
               <SubAdviceCard
                 details={
                   summaryParagraphs ? summaryParagraphs[index] : 'Loading'
@@ -158,8 +94,10 @@ const StatisticsSection = ({ summary, summaryParagraphs }) => {
           <StyledAdviceBox sx={{ width: '900px' }}>
             {summary ? (
               <>
-                <BarChartCard val1={summary['rhythm']} />
-                <Box flex={1}>
+                <Box flex={2}>
+                  <BarChartCard val1={summary['rhythm']} />
+                </Box>
+                <Box flex={54}>
                   <SubAdviceCard
                     details={
                       summaryParagraphs ? summaryParagraphs[1] : 'Loading'

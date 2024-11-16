@@ -6,15 +6,12 @@ import Card from '@mui/material/Card';
 import { styled } from '@mui/system';
 
 const StyledCard = styled(Card)(() => ({
-  width: '17vw',
   borderWidth: '2px',
   padding: '12px',
   height: '100%',
 }));
 
-const PieChartCard = ({ val1, name1, val2, name2, val3, name3 }) => {
-  const valMissed = 100 - val1;
-
+const PieChartCard = ({ val1 }) => {
   return (
     <StyledCard variant='outlined'>
       <Box
@@ -30,7 +27,7 @@ const PieChartCard = ({ val1, name1, val2, name2, val3, name3 }) => {
           sx={{
             minWidth: '200px',
             height: '100%',
-            fontSize: '3vw',
+            fontSize: '3rem',
           }}
         />
       </Box>

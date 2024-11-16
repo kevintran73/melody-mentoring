@@ -35,7 +35,7 @@ const StyledButton = styled(Button)({
   backgroundColor: '#020E37',
   color: 'white',
   fontSize: '1.3rem',
-  padding: '8px 8px',
+  padding: '8px 20px',
   textTransform: 'none',
   borderRadius: '16px',
   marginTop: '10px',
@@ -72,6 +72,10 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 const ProfileText = ({ username, email, instrument, level, role }) => {
+  if (!username || !email || !instrument || !level || !role) {
+    return null;
+  }
+
   return (
     <Box padding='20px'>
       <Typography

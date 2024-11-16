@@ -1,21 +1,17 @@
-import React from 'react';
-import Stack from '@mui/material/Stack';
-import { Gauge } from '@mui/x-charts/Gauge';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import { PieChart } from '@mui/x-charts/PieChart';
 import Typography from '@mui/material/Typography';
-import { BarChart } from '@mui/x-charts/BarChart';
 import { styled } from '@mui/system';
-import Divider from '@mui/material/Divider';
+import { BarChart } from '@mui/x-charts/BarChart';
+import React from 'react';
 
 const xLabels = ['Pitch'];
 
 const StyledCard = styled(Card)(() => ({
-  width: '17vw',
   borderWidth: '2px',
   padding: '12px',
   height: '100%',
+  width: '300px',
 }));
 
 const BarChartCard = ({ val1 }) => {

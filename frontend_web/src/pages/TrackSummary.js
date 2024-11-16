@@ -1,13 +1,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CachedIcon from '@mui/icons-material/Cached';
 import { Box, CircularProgress, Typography } from '@mui/material';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
@@ -15,8 +9,9 @@ import ScrollContainer from 'react-indiana-drag-scroll';
 import { useNavigate, useParams } from 'react-router-dom';
 import TokenContext from '../context/TokenContext';
 
-import RefreshModelComponent from '../components/track_summary/RefreshModelComponent';
 import NavBar from '../components/nav_bar/NavBar';
+import MainSummaryCard from '../components/track_summary/MainSummaryCard';
+import RefreshModelComponent from '../components/track_summary/RefreshModelComponent';
 import RequestDialog from '../components/track_summary/RequestDialog';
 import ReviewCard from '../components/track_summary/ReviewCard';
 import StatisticsSection from '../components/track_summary/StatisticsSection';
@@ -28,26 +23,15 @@ import Thumbnail from '../components/track_summary/Thumbnail';
 
 const StyledButton = styled(IconButton)({
   backgroundColor: '#020E37',
+  width: '60px',
+  height: '60px',
   color: 'white',
-  margin: '10px 0px 0px 20px',
   '&:hover': {
     backgroundColor: '#020E37',
     borderColor: '#0062cc',
     boxShadow: 'none',
   },
 });
-
-const StyledMainSummary = styled(Card)(() => ({
-  padding: '20px',
-  margin: '10px 30px 20px 30px',
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: 'white',
-  borderRadius: '16px',
-  boxShadow: 5,
-}));
 
 const LoadingOverlay = styled('div')({
   backgroundColor: 'rgba(255, 255, 255, 0)',
@@ -60,16 +44,6 @@ const LoadingOverlay = styled('div')({
   alignItems: 'center',
   justifyContent: 'center',
   zIndex: 999,
-});
-
-const LoadingOverlayMain = styled(Box)({
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: 'rgba(255, 255, 255, 0.8)',
-  zIndex: 1000,
 });
 
 const StyledReviewBox = styled(Card)(() => ({
@@ -93,7 +67,6 @@ const TrackSummary = () => {
   const [summary, setSummary] = useState(null);
   const [songDetails, setSongDetails] = useState(null);
   const [reviews, setReviews] = useState(null);
-  const [model, setModel] = useState('gemma-7b-it');
   const { accessToken } = React.useContext(TokenContext);
 
   const navigate = useNavigate();
@@ -103,7 +76,6 @@ const TrackSummary = () => {
   };
 
   const sendSummaryFromChild = (data) => {
-    console.log(data);
     setSummary(data);
   };
 
@@ -228,60 +200,32 @@ const TrackSummary = () => {
     <Box backgroundColor='#f9f9f9'>
       <NavBar />
 
-      <Box display='flex' justifyContent='space-between' alignItems='center'>
+      <Box
+        display='flex'
+        justifyContent='space-between'
+        alignItems='center'
+        margin='10px 30px'
+        position='relative'
+      >
         <StyledButton onClick={navHistory}>
           <ArrowBackIcon />
         </StyledButton>
-
-        <RefreshModelComponent
-          sendSummaryFromChild={sendSummaryFromChild}
-        ></RefreshModelComponent>
+        <Box display='flex' flexDirection='row'>
+          <RefreshModelComponent sendSummaryFromChild={sendSummaryFromChild} />
+          <RequestDialog />
+        </Box>
       </Box>
 
-      <StyledMainSummary>
-        <Box flex='4' marginRight='30px'>
-          <Box
-            boxShadow={4}
-            height='100%'
-            textAlign='center'
-            display='flex'
-            justifyContent='center'
-            alignItems='center'
-            borderRadius='16px'
-          >
-            <Typography fontSize='2rem' margin='20px 30px' overflowY='auto'>
-              {summaryParagraphs ? (
-                summaryParagraphs[0]
-              ) : (
-                <LoadingOverlayMain>
-                  <CircularProgress size='20vh' />
-                </LoadingOverlayMain>
-              )}
-            </Typography>
-          </Box>
-        </Box>
-        <Box flex='1'>
-          {songDetails ? (
-            <Thumbnail
-              title={songDetails['title']}
-              thumbnail={songDetails['thumbnail']}
-              composer={songDetails['composer']}
-              difficulty={songDetails['difficulty']}
-              date={songDetails['date']}
-            />
-          ) : (
-            <LoadingOverlayMain>
-              <CircularProgress size='20vh' />
-            </LoadingOverlayMain>
-          )}
-        </Box>
-      </StyledMainSummary>
+      <MainSummaryCard
+        summaryParagraphs={summaryParagraphs}
+        songDetails={songDetails}
+      />
 
       {/* Section for statistics */}
       <StatisticsSection
         summary={summary}
         summaryParagraphs={summaryParagraphs}
-      ></StatisticsSection>
+      />
 
       {/* Section for tutor reviews */}
       <Box margin='10px 40px'>
@@ -294,7 +238,6 @@ const TrackSummary = () => {
           >
             Tutor Reviews
           </Typography>
-          <RequestDialog></RequestDialog>
         </Box>
         {reviews ? (
           <ScrollContainer>
