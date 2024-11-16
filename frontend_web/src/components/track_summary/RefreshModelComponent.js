@@ -70,7 +70,7 @@ const TrackSummary = ({ sendSummaryFromChild }) => {
       flexDirection='column'
       justifyContent='center'
       alignItems='center'
-      sx={{ width: '250px', margin: '15px 15px 0px 0px', gap: '10px' }}
+      sx={{ width: '250px', gap: '10px' }}
     >
       <Box display='flex' flexDirection='row'>
         <FormControl>

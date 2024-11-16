@@ -67,6 +67,7 @@ const TrackSummary = () => {
   const [summary, setSummary] = useState(null);
   const [songDetails, setSongDetails] = useState(null);
   const [reviews, setReviews] = useState(null);
+  const [recording, setRecording] = useState('');
   const { accessToken } = React.useContext(TokenContext);
 
   const navigate = useNavigate();
@@ -183,6 +184,24 @@ const TrackSummary = () => {
       setReviews(allReviewDetails);
     };
 
+    // Fetch recording audio of the track attempt
+    const fetchRecording = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/files/user/audio/${params.trackAttemptId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        setRecording(response.data.url);
+      } catch (error) {
+        console.error('Error fetching recording:', error);
+      }
+    };
+
+    fetchRecording();
     fetchSummary();
     return () => {
       controller.abort();
@@ -210,15 +229,13 @@ const TrackSummary = () => {
         <StyledButton onClick={navHistory}>
           <ArrowBackIcon />
         </StyledButton>
-        <Box display='flex' flexDirection='row'>
-          <RefreshModelComponent sendSummaryFromChild={sendSummaryFromChild} />
-          <RequestDialog />
-        </Box>
       </Box>
 
       <MainSummaryCard
         summaryParagraphs={summaryParagraphs}
         songDetails={songDetails}
+        recording={recording}
+        sendSummaryFromChild={sendSummaryFromChild}
       />
 
       {/* Section for statistics */}

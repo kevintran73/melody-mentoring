@@ -21,14 +21,6 @@ import { showErrorMessage } from '../../helpers';
 
 import { styled } from '@mui/system';
 
-const Img = styled('img')({
-  // width: '40px',
-  // height: '25px',
-  // objectFit: 'cover',
-  // borderRadius: '8px',
-  // marginLeft: '10px',
-});
-
 const StyledButton = styled(Button)({
   width: '100%',
   backgroundColor: '#020E37',
@@ -65,7 +57,7 @@ function SimpleDialog({ onClose, selectedValue, open, tutorRecs }) {
             <ListItemButton onClick={() => handleListItemClick(tutor)}>
               <ListItemAvatar>
                 <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
-                  <Img alt='tutor-card' src={tutor['profilePic']} />
+                  <img alt='tutor-card' src={tutor['profilePic']} />
                 </Avatar>
               </ListItemAvatar>
               <ListItemText primary={tutor['tutorName']} />

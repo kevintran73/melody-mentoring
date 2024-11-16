@@ -19,6 +19,7 @@ const Thumbnail = ({ title, thumbnail, composer, difficulty, date }) => {
         height: '100%',
         maxHeight: '400px',
         width: '100%',
+        minWidth: '150px',
         flexGrow: 1,
         margin: '10px 0',
         boxShadow: 2,
