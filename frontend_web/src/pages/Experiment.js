@@ -309,6 +309,7 @@ const Experiment = () => {
             retryAttempt={retryAttempt}
             onExit={onExit}
             finishAttempt={finishAttempt}
+            hasWebcam={hasWebcam}
           />
         </>
       )}
