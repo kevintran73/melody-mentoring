@@ -187,6 +187,7 @@ const PreExperiment = () => {
         setSongInfo(response.data);
       } catch (err) {
         showErrorMessage(err.response.data.error);
+        return navigate('/catalogue');
       }
     };
 

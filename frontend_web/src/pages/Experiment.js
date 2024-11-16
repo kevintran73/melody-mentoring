@@ -164,7 +164,7 @@ const Experiment = () => {
           return navigate('/catalogue');
         }
       } catch (err) {
-        showErrorMessage(err.data.response.error);
+        showErrorMessage(err.response.data.error);
 
         // Navigate to catalogue if invalid song id or any other issues with retrieving sheet
         return navigate('/catalogue');
