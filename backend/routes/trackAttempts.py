@@ -146,14 +146,13 @@ def checkAndConvertWebmToWav(userAudioKey: str) -> str:
     try:
         # Checking if it is a .wav file, if it is then continue like normal
         with wave.open(tempUserAudioUnknownTypePath, 'rb') as wv:
-            print('No further processing is required to load into librosa')
+            print('.wav file detected, processing in librosa...')
     except wave.Error as e:
         # Then it must be a webm file, so we write the converted to a new file and set the finalAudioPath to the new one
-        print('This is a normal error ' + str(e))
-        print('We gotta convert this from a webm to a wav file first')
+        print(str(e) + ', converting .webm to .wav')
         ffmpeg.input(tempUserAudioUnknownTypePath).output(tempUserAudioAsWavPath, format='wav').run(quiet=True, overwrite_output=True)
         tempFinalUserAudioPath = tempUserAudioAsWavPath
-        print(f"Conversion successful, getting rid of tempUserAudioUnknownType")
+        print(f"File conversion successful, cleaning up temporary files.")
         os.remove(tempUserAudioUnknownTypePath)
 
     return tempFinalUserAudioPath
@@ -298,7 +297,6 @@ def generateGroqResponse(prompt: str, model: str) -> str:
 @trackAttempts_bp.route('/attempts/user/feedback-for-attempt/<trackAttemptId>', methods=['GET'])
 # @token_required
 def get_feedback_for_track_attempt(trackAttemptId):
-    # TODO: check if the user owns that trackattempt
     '''GET route which dynamically generates feedback for user's track attempts
     usage:
     GET /attempts/user/feedback-for-attempt/testingTrackAttempt?model=gemma-7b-it
