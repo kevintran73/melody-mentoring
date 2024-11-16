@@ -6,9 +6,8 @@ import defaultImg from '../../assets/default-img.png';
 
 const Img = styled('img')({
   width: '40px',
-  // height: '25px',
   objectFit: 'cover',
-  borderRadius: '8px',
+  borderRadius: '24px',
   marginLeft: '10px',
 });
 
@@ -20,28 +19,22 @@ const StyledContainer = styled(Box)({
   flexDirection: 'row',
   borderRadius: '16px',
   gap: '5px',
-})
+});
 
 const TutorInfoCard = ({ img, name, details }) => {
   return (
     <StyledContainer>
       <Box display='flex' alignItems='center'>
         <Box sx={{ marginRight: '10px' }}>
-          <Img alt='tutor-card' src={img ? img : defaultImg}/>
+          <Img alt='tutor-card' src={img ? img : defaultImg} />
         </Box>
 
         <Box display='flex' justifyContent='center' alignItems='center'>
-          <Typography fontSize='1rem'>
-            {name}
-          </Typography>
-          {/* <Typography fontSize='0.7rem'>
-            {details}
-          </Typography> */}
+          <Typography fontSize='1rem'>{name}</Typography>
         </Box>
-
       </Box>
     </StyledContainer>
   );
-}
+};
 
 export default TutorInfoCard;
