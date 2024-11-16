@@ -59,13 +59,19 @@ const UploadRecordingModal = ({ navigate, userId, songId, accessToken }) => {
     setOpen(false);
   };
 
+  const allowedAudio = ['audio/wav', 'audio/mp3', 'audio/webm'];
+  const allowedVideo = ['video/mp4', 'video/x-matroska'];
+
   const [recording, setRecording] = React.useState(null);
   const uploadRecording = async (event) => {
     event.preventDefault();
 
     // Validate .wav file type
-    if (!recording || (recording.type !== 'audio/wav' && recording.type !== 'video/mp4')) {
-      showErrorMessage('Song recording file type must be a .wav or .mp4');
+    if (
+      !recording ||
+      (!allowedAudio.includes(recording.type) && !allowedVideo.includes(recording.type))
+    ) {
+      showErrorMessage('Song recording file type must be a .wav, .mp3, .webm, .mp4 or .mkv');
       return;
     }
 
@@ -116,11 +122,11 @@ const UploadRecordingModal = ({ navigate, userId, songId, accessToken }) => {
               Upload a song recording
             </Typography>
             <InputFileUpload
-              innerText='Add a song recording (.wav or .mp4)'
+              innerText='Add a song recording (audio [.mp3, .wav, .webm] or video [.mp4, .mkv])'
               id='upload-audio-recording-button'
               width='100%'
               fontSize='0.9rem'
-              accept='audio/wav, video/mp4'
+              accept='audio/wav, audio/mp3, audio/webm, video/mp4, video/x-matroska'
               backgroundColor='#1b998b'
               hoverColor='#1fad9e'
               onChangeEvent={(p) => setRecording(p.target.files[0])}
