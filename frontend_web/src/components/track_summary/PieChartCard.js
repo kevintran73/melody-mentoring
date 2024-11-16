@@ -9,7 +9,7 @@ const StyledCard = styled(Card)(() => ({
   width: '17vw',
   borderWidth: '2px',
   padding: '12px',
-  height:'100%',
+  height: '100%',
 }));
 
 const PieChartCard = ({ val1, name1, val2, name2, val3, name3 }) => {
@@ -25,12 +25,12 @@ const PieChartCard = ({ val1, name1, val2, name2, val3, name3 }) => {
         alignItems='center'
         justifyContent='center'
       >
-        <Gauge 
-          value={val1} 
+        <Gauge
+          value={val1}
           sx={{
             minWidth: '200px',
             height: '100%',
-            fontSize: 60,
+            fontSize: '3vw',
           }}
         />
       </Box>
