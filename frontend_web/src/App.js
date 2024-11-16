@@ -71,7 +71,7 @@ const App = () => {
     setAccessToken(null);
     setIdToken(null);
     setRefreshToken(null);
-    setUserId(userId);
+    setUserId(null);
     setRole(null);
     localStorage.removeItem('accessToken');
     localStorage.removeItem('idToken');
