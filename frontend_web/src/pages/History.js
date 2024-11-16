@@ -1,12 +1,12 @@
-import { CircularProgress, TextField } from "@mui/material";
-import Box from "@mui/material/Box";
-import { styled } from "@mui/system";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import HistoryCard from "../components/history/HistoryCard";
-import HistoryIntroCard from "../components/history/HistoryIntroCard";
-import NavBar from "../components/nav_bar/NavBar";
-import TokenContext from "../context/TokenContext";
+import { CircularProgress, TextField, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import { styled } from '@mui/system';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import HistoryCard from '../components/history/HistoryCard';
+import HistoryIntroCard from '../components/history/HistoryIntroCard';
+import NavBar from '../components/nav_bar/NavBar';
+import TokenContext from '../context/TokenContext';
 import { useNavigate, Navigate } from 'react-router-dom';
 
 /**
@@ -14,32 +14,32 @@ import { useNavigate, Navigate } from 'react-router-dom';
  */
 
 const StyledTopContainer = styled(Box)(() => ({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  flexDirection: "row",
-  margin: "2vw 10vw",
-  height: "300px",
-  gap: "1vw",
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'row',
+  margin: '2vw 10vw',
+  height: '300px',
+  gap: '1vw',
 }));
 
 const StyledSearchBar = styled(TextField)({
-  marginBottom: "10px",
-  width: "90%",
-  width: "100%",
+  marginBottom: '10px',
+  width: '90%',
+  width: '100%',
   borderRadius: '8px',
-  marginBottom: "30px",
-  backgroundColor: "white",
-  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+  marginBottom: '30px',
+  backgroundColor: 'white',
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
 });
 
 const LoadingOverlayMain = styled(Box)({
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  backgroundColor: "rgba(255, 255, 255, 0.8)",
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'rgba(255, 255, 255, 0.8)',
   zIndex: 1000,
 });
 
@@ -57,14 +57,23 @@ const History = () => {
 
     const fetchTrackAttempts = async () => {
       try {
-        const response = await axios.get(`http://localhost:5001/track-attempt/history/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setSongDetails(response.data);
+        const response = await axios.get(
+          `http://localhost:5001/track-attempt/history/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        // Sorts songs by most recent upload time
+        setSongDetails(
+          response.data.sort(
+            (a, b) => new Date(b.isoUploadTime) - new Date(a.isoUploadTime)
+          )
+        );
       } catch (error) {
-        console.error("Error fetching user details:", error);
+        console.error('Error fetching user details:', error);
       }
     };
 
@@ -90,28 +99,27 @@ const History = () => {
 
       {/* Greeting element */}
       <StyledTopContainer>
-        {/* <Box height="100%"> */}
-          <HistoryIntroCard />
-        {/* </Box> */}
+        <HistoryIntroCard />
       </StyledTopContainer>
 
-      {/* Track attempts list */}
       <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        flexDirection="column"
-        marginX="10vw"
+        display='flex'
+        justifyContent='center'
+        alignItems='center'
+        flexDirection='column'
+        marginX='10vw'
       >
         <StyledSearchBar
-          id="outlined-basic"
-          label="Search"
-          variant="outlined"
+          id='outlined-basic'
+          label='Search'
+          variant='outlined'
           onChange={handleSearchChange}
           value={searchInput}
         />
+
+        {/* List of track attempts */}
         {filteredTracks.length > 0 ? (
-          filteredTracks.reverse().map((songDetail, i) => (
+          filteredTracks.map((songDetail, i) => (
             <HistoryCard
               key={i}
               title={songDetail['songTitle']}
@@ -121,14 +129,17 @@ const History = () => {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
-              }).format(songDetail.date)}
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+              }).format(new Date(songDetail['isoUploadTime']))}
               thumbnail={songDetail['songThumbnail']}
               trackAttemptId={songDetail['trackAttemptId']}
             />
           ))
         ) : (
           <LoadingOverlayMain>
-            <CircularProgress size="20vh" />
+            <CircularProgress size='20vh' />
           </LoadingOverlayMain>
         )}
       </Box>

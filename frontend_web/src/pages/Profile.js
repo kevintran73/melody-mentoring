@@ -1,19 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import NavBar from '../components/nav_bar/NavBar';
 import Box from '@mui/material/Box';
-import AchievementGrid from '../components/profile/AchievementGrid';
-import { Typography } from '@mui/material';
-import ProfileCard from '../components/profile/ProfileCard';
-import TutorSearchCard from '../components/profile/TutorSearchCard';
-import TutorList from '../components/profile/TutorList';
-import StreakCard from '../components/profile/StreakCard';
-import Card from '@mui/material/Card';
 import { styled } from '@mui/system';
 import axios from 'axios';
-import TokenContext from '../context/TokenContext';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import NavBar from '../components/nav_bar/NavBar';
 import AchievementCard from '../components/profile/AchievementCard';
+import ProfileCard from '../components/profile/ProfileCard';
 import TutorsCard from '../components/profile/TutorsCard';
-import { useNavigate, Navigate } from 'react-router-dom';
+import TokenContext from '../context/TokenContext';
 
 const StyledContainer = styled(Box)(() => ({
   height: '100vh',
@@ -34,7 +28,7 @@ const StyledCardsContainer = styled(Box)(() => ({
 
   '@media (max-width: 1000px)': {
     flexDirection: 'column',
-    margin: '2vw 20vw',
+    margin: '2vw 10vw',
   },
 }));
 

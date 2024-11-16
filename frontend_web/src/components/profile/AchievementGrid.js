@@ -28,8 +28,8 @@ const Progress = ({ value, minValue, maxValue }) => {
         {maxValue}
       </Typography>
     </Box>
-  )
-}
+  );
+};
 
 const Image = ({ img }) => {
   return (
@@ -38,13 +38,17 @@ const Image = ({ img }) => {
       src={img}
       alt='test'
       sx={{
-        width: '8vw',
+        width: '100px',
         objectFit: 'cover',
         padding: '10px',
+
+        '@media (max-width: 1000px)': {
+          width: '10vw',
+        },
       }}
     />
-  )
-}
+  );
+};
 
 function checkRank(userInfo, easyDone, mediumDone, hardDone) {
   const rankInfo = {
@@ -54,11 +58,10 @@ function checkRank(userInfo, easyDone, mediumDone, hardDone) {
     mediumMin: 0,
     mediumMax: 0,
     hardMin: 0,
-    hardMax:0,
-  }
+    hardMax: 0,
+  };
 
   for (const achievement of userInfo['achievements']) {
-    console.log(achievement)
     if (
       easyDone >= achievement['easy_required'] &&
       mediumDone >= achievement['medium_required'] &&
@@ -72,10 +75,10 @@ function checkRank(userInfo, easyDone, mediumDone, hardDone) {
       rankInfo['easyMax'] = achievement['easy_required'];
       rankInfo['mediumMax'] = achievement['medium_required'];
       rankInfo['hardMax'] = achievement['hard_required'];
-      break; 
+      break;
     }
   }
-  console.log(rankInfo)
+  console.log(rankInfo);
 
   return rankInfo;
 }
@@ -100,71 +103,115 @@ const RankIcons = ({ rankInfo }) => {
       return null;
     }
   };
-  const nextRank = getNextRank(rankInfo['name'])
+  const nextRank = getNextRank(rankInfo['name']);
 
   return (
-    <Box display='flex' flexDirection='row' justifyContent='center' alignItems='center' gap='10px'>
-      {rankImages[currentRank] && (
-        <Image img={rankImages[currentRank]} />
-      )}
+    <Box
+      display='flex'
+      flexDirection='row'
+      justifyContent='center'
+      alignItems='center'
+      gap='10px'
+    >
+      {rankImages[currentRank] && <Image img={rankImages[currentRank]} />}
       <ArrowForwardIcon sx={{ fontSize: '60px' }}></ArrowForwardIcon>
-      {rankImages[nextRank] && (
-        <Image img={rankImages[nextRank]} />
-      )}
+      {rankImages[nextRank] && <Image img={rankImages[nextRank]} />}
     </Box>
   );
-}
-
+};
 
 const AchievementGrid = ({ userInfo }) => {
-  const easyDone = userInfo['easy_completed'].length ? userInfo['easy_completed'].length : 0;
-  const mediumDone = userInfo['medium_completed'].length ? userInfo['medium_completed'] : 0;
-  const hardDone = userInfo['hard_completed'].length ? userInfo['hard_completed'].length : 0;
-  const rankInfo = checkRank(userInfo, easyDone, mediumDone, hardDone)
+  console.log(userInfo);
+  const easyDone = userInfo['easy_completed'].length
+    ? userInfo['easy_completed'].length
+    : 0;
+  const mediumDone = userInfo['medium_completed'].length
+    ? userInfo['medium_completed']
+    : 0;
+  const hardDone = userInfo['hard_completed'].length
+    ? userInfo['hard_completed'].length
+    : 0;
+  const rankInfo = checkRank(userInfo, easyDone, mediumDone, hardDone);
 
   return (
+    <Box
+      display='flex'
+      flexDirection='column'
+      spacing={2}
+      justifyContent='center'
+      alignItems='center'
+      width='100%'
+    >
       <Box
-        display='flex'
-        flexDirection='column'
-        spacing={2}
-        sx={{
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
+        width='100%'
+        objectFit='cover'
+        padding='10px'
+        textAlign='center'
+        boxShadow={3}
+        borderRadius='16px'
+        margin='10px'
       >
-        <Box 
-          sx={{
-            width: '100%',
-            objectFit: 'cover',
-            padding: '10px',
-            textAlign: 'center', 
-            boxShadow: 3,
-            borderRadius: '16px',
-            margin: '10px',
-          }}  
-        >
-          <RankIcons rankInfo={rankInfo}></RankIcons>
-            <Box margin='0px 10px 10px 10px'>
-              <Typography>Easy Attempts</Typography>
-              <Progress value={rankInfo['easyMin']} minValue={0} maxValue={rankInfo['easyMax']} />
-            </Box>
-
-          {rankInfo['mediumMax'] > 0 && (
-            <Box margin='10px'>
-              <Typography>Medium Attempts</Typography>
-              <Progress value={rankInfo['mediumMin']} minValue={0} maxValue={rankInfo['mediumMax']} />
-            </Box>
-          )}
-
-          {rankInfo['hardMax'] > 0 && (
-            <Box margin='10px'>
-              <Typography>Hard Attempts</Typography>
-              <Progress value={rankInfo['hardMin']} minValue={0} maxValue={rankInfo['hardMax']} />
-            </Box>
-          )}
+        <RankIcons rankInfo={rankInfo}></RankIcons>
+        <Box margin='0px 10px 10px 10px'>
+          <Typography
+            sx={{
+              fontSize: '1.3rem',
+              '@media (max-width: 1000px)': {
+                fontSize: '2vw',
+              },
+            }}
+          >
+            Easy Attempts
+          </Typography>
+          <Progress
+            value={rankInfo['easyMin']}
+            minValue={0}
+            maxValue={rankInfo['easyMax']}
+          />
         </Box>
+
+        {rankInfo['mediumMax'] > 0 && (
+          <Box margin='10px'>
+            <Typography
+              sx={{
+                fontSize: '1.3rem',
+                '@media (max-width: 1000px)': {
+                  fontSize: '2vw',
+                },
+              }}
+            >
+              Medium Attempts
+            </Typography>
+            <Progress
+              value={rankInfo['mediumMin']}
+              minValue={0}
+              maxValue={rankInfo['mediumMax']}
+            />
+          </Box>
+        )}
+
+        {rankInfo['hardMax'] > 0 && (
+          <Box margin='10px'>
+            <Typography
+              sx={{
+                fontSize: '1.3rem',
+                '@media (max-width: 1000px)': {
+                  fontSize: '2vw',
+                },
+              }}
+            >
+              Hard Attempts
+            </Typography>
+            <Progress
+              value={rankInfo['hardMin']}
+              minValue={0}
+              maxValue={rankInfo['hardMax']}
+            />
+          </Box>
+        )}
       </Box>
+    </Box>
   );
-}
+};
 
 export default AchievementGrid;

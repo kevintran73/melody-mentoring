@@ -17,15 +17,21 @@ const StyledCard = styled(Card)(() => ({
   gap: '10px',
 }));
 
+const TitleText = styled(Typography)({
+  fontSize: 'clamp(34px, 7vw, 60px)',
+});
+
+const SubtitleText = styled(Typography)({
+  fontSize: 'clamp(20px, 5vw, 30px)',
+});
+
 const HistoryIntroCard = () => {
   return (
     <StyledCard variant='outlined'>
-      <Typography variant='h2'>
-        Welcome to the history page!
-      </Typography>
-      <Typography variant='h4'>
+      <TitleText>Welcome to the history page!</TitleText>
+      <SubtitleText>
         Take a look at your past attempts and see how you did.
-      </Typography>
+      </SubtitleText>
     </StyledCard>
   );
 };

@@ -9,7 +9,7 @@ import TokenContext from '../../context/TokenContext';
 
 const StyledCard = styled(Card)(() => ({
   width: '100%',
-  height: '100%', 
+  height: '100%',
   borderWidth: '2px',
   padding: '10px 10px',
   gap: '7px',
@@ -29,11 +29,14 @@ const TutorList = ({ tutorIds = [] }) => {
 
       for (const tutorId of tutorIds) {
         try {
-          const response = await axios.get(`http://localhost:5001/profile/${tutorId}`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
+          const response = await axios.get(
+            `http://localhost:5001/profile/${tutorId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
           allTutorDetails.push(response.data);
         } catch (error) {
           console.error('Error fetching tutor details:', error);
@@ -46,9 +49,8 @@ const TutorList = ({ tutorIds = [] }) => {
     fetchTutorDetails();
   }, [tutorIds, accessToken]);
 
-
   return (
-    <Box height='45vh' >
+    <Box height='100%'>
       <StyledCard>
         {tutorsInfo.map((tutorInfo, i) => (
           <TutorInfoCard
@@ -61,6 +63,6 @@ const TutorList = ({ tutorIds = [] }) => {
       </StyledCard>
     </Box>
   );
-}
+};
 
 export default TutorList;
