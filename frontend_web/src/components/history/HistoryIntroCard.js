@@ -22,7 +22,7 @@ const TitleText = styled(Typography)({
 });
 
 const SubtitleText = styled(Typography)({
-  fontSize: 'clamp(20px, 5vw, 30px)',
+  fontSize: 'clamp(20px, 3.5vw, 30px)',
 });
 
 const HistoryIntroCard = () => {
