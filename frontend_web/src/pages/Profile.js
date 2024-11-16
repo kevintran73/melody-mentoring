@@ -66,7 +66,7 @@ const Profile = () => {
   return (
     <StyledContainer>
       <NavBar />
-      {accessToken !== null && !userId && (
+      {accessToken !== null && (
         <StyledCardsContainer>
           {/* Profile Card */}
           <Box flex={1}>
