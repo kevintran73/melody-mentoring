@@ -56,6 +56,7 @@ const SubtitleText = styled(Typography)({
 
 const HistoryCard = ({
   title,
+  dataCy,
   composer,
   difficulty,
   date,
@@ -69,7 +70,7 @@ const HistoryCard = ({
   };
 
   return (
-    <StyledContainer onClick={navTrackSummary}>
+    <StyledContainer onClick={navTrackSummary} data-cy={dataCy}>
       <Box
         display='flex'
         sx={{

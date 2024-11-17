@@ -401,7 +401,7 @@ def get_feedback_for_track_attempt(trackAttemptId):
     '''
 
     groqSays = generateGroqResponse(prompt, model)
-    updateAchievements(trackAttemptId, metrics)
+    # updateAchievements(trackAttemptId, metrics)
 
     return jsonify({
         'pitch': metrics[0],

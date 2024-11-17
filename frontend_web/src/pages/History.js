@@ -123,7 +123,7 @@ const History = () => {
           filteredTracks.map((songDetail, i) => (
             <HistoryCard
               key={i}
-              data-cy={`history-card-${i}`}
+              dataCy={`history-card-${i}`}
               title={songDetail['songTitle']}
               composer={songDetail['songComposer']}
               difficulty={songDetail['songDifficulty']}

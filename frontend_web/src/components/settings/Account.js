@@ -71,7 +71,9 @@ const Account = () => {
     <>
       <HeaderBlock>
         <SectionHeader>Account</SectionHeader>
-        <SectionDesc>Manage your account information and update personal details</SectionDesc>
+        <SectionDesc>
+          Manage your account information and update personal details
+        </SectionDesc>
       </HeaderBlock>
 
       <DividerLine />
@@ -81,7 +83,7 @@ const Account = () => {
           <SectionHeader>Sign out</SectionHeader>
           <SectionDesc>Sign out for this browser</SectionDesc>
         </HeaderBlock>
-        <StyledLogoutButton onClick={handleLogout} />
+        <StyledLogoutButton onClick={handleLogout} data-cy='logout-button' />
       </SectionBlock>
 
       <DividerLine />

@@ -100,7 +100,9 @@ const Register = () => {
           role: role,
         });
 
-        navigate('/verification', { state: { username: username, role: role } }); // if signup is succesful, redirct to email verification page
+        navigate('/verification', {
+          state: { username: username, role: role },
+        }); // if signup is succesful, redirct to email verification page
       } catch (err) {
         showErrorMessage(err.response.data.error);
       }
@@ -146,6 +148,7 @@ const Register = () => {
         <div>
           <label>Are you a tutor? </label>
           <input
+            id='tutor-check'
             type='checkbox'
             checked={isChecked}
             onChange={(e) => setIsChecked(e.target.checked)}

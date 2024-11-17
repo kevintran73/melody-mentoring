@@ -15,11 +15,14 @@ const Request = () => {
 
   const fetchStudents = async () => {
     try {
-      const response = await axios.get(`http://localhost:5001/profile/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:5001/profile/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
       const data = response.data;
 
       let res = data.students.map((id) =>
@@ -51,9 +54,8 @@ const Request = () => {
         return { id, username, profile_picture };
       });
       setRequests(studentDetails);
-
     } catch (err) {
-      showErrorMessage(err.response.data.error)
+      showErrorMessage(err.response.data.error);
     }
   };
 
@@ -82,12 +84,12 @@ const Request = () => {
         }
       );
       if (bool === true) {
-        showSuccessMessage('Accepted student request')
+        showSuccessMessage('Accepted student request');
       }
 
       fetchStudents(); // call again
     } catch (err) {
-      showErrorMessage(err.response.data.error)
+      showErrorMessage(err.response.data.error);
     }
   };
 
@@ -111,6 +113,7 @@ const Request = () => {
               <div className='flex items-center px-10'>
                 <DoneIcon
                   className='cursor-pointer text-green-600'
+                  data-cy={`student-confirm-${student.username}`}
                   onClick={() => handleClick(student.id, true)}
                 />
                 <ClearIcon
@@ -121,7 +124,7 @@ const Request = () => {
             </div>
           ))}
         </div>
-          
+
         <div>
           <h1 className='text-3xl font-medium mb-10'>My Students</h1>
           {allStudents.map((student) => (

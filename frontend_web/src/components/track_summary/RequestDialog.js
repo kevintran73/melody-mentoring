@@ -54,7 +54,7 @@ function SimpleDialog({ onClose, selectedValue, open, tutorRecs }) {
     >
       <DialogTitle>Select a Tutor</DialogTitle>
       <Divider sx={{ width: '100%' }} />
-      <List sx={{ pt: 0 }}>
+      <List sx={{ pt: 0 }} data-cy='request-dialog-list'>
         {tutorRecs.map((tutor) => (
           <ListItem disableGutters key={tutor['tutorId']}>
             <ListItemButton onClick={() => handleListItemClick(tutor)}>
@@ -197,7 +197,11 @@ const RequestDialog = () => {
           <StyledButton onClick={handleDeny}>Deny</StyledButton>
         </Box>
       ) : (
-        <StyledButton variant='outlined' onClick={handleClickOpen}>
+        <StyledButton
+          variant='outlined'
+          onClick={handleClickOpen}
+          data-cy='request-review-button'
+        >
           Request a Review
         </StyledButton>
       )}

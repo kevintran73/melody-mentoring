@@ -35,7 +35,7 @@ const RequestButton = () => {
     return navigate('/students');
   };
   return (
-    <IconContainer onClick={navCatalogue}>
+    <IconContainer onClick={navCatalogue} data-cy='students-button'>
       <StyledMusic colour={colour} />
       <IconCaption colour={colour}>Students</IconCaption>
     </IconContainer>
