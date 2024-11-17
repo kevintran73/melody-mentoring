@@ -23,7 +23,7 @@ const StyledCard = styled(Card)(() => ({
 const TutorsCard = ({ profileInfo }) => {
   return (
     <StyledCard>
-      <Typography fontSize='3.6vw' textAlign='center'>
+      <Typography fontSize='max(30px,3.6vw)' textAlign='center'>
         Tutors
       </Typography>
 

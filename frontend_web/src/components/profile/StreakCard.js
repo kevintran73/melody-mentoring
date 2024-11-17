@@ -39,7 +39,7 @@ const StreakCard = ({ userInfo }) => {
         sx={{
           fontSize: '1.6rem',
           '@media (max-width: 1000px)': {
-            fontSize: '2.5vw',
+            fontSize: 'max(13px, 2.5vw)',
           },
         }}
         variant='primary'

@@ -46,6 +46,7 @@ const StyledButton = styled(Button)({
   },
   '@media (max-width: 1000px)': {
     fontSize: '2.5vw',
+    width: '100%',
   },
 });
 
@@ -77,7 +78,14 @@ const ProfileText = ({ username, email, instrument, level, role }) => {
   }
 
   return (
-    <Box padding='20px'>
+    <Box
+      sx={{
+        padding: '20px',
+        '@media (max-width: 1000px)': {
+          padding: '0px',
+        },
+      }}
+    >
       <Typography
         component='div'
         sx={{
@@ -246,7 +254,7 @@ const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
           instrument={instrument}
           level={level}
           role={role}
-        ></ProfileText>
+        />
 
         {/* If waiting on profile pic confirmation, show confirm and deny buttons */}
         {isConfirming ? (

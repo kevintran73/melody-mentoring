@@ -53,7 +53,7 @@ const Image = ({ img }) => {
         padding: '10px',
 
         '@media (max-width: 1000px)': {
-          width: '10vw',
+          width: 'max(40px, 10vw)',
         },
       }}
     />
@@ -124,7 +124,14 @@ const RankIcons = ({ rankInfo }) => {
       gap='10px'
     >
       {rankImages[currentRank] && <Image img={rankImages[currentRank]} />}
-      <ArrowForwardIcon sx={{ fontSize: '60px' }}></ArrowForwardIcon>
+      <ArrowForwardIcon
+        sx={{
+          fontSize: '7vw',
+          '@media (max-width: 1000px)': {
+            fontSize: '5vw',
+          },
+        }}
+      ></ArrowForwardIcon>
       {rankImages[nextRank] && <Image img={rankImages[nextRank]} />}
     </Box>
   );
@@ -150,7 +157,7 @@ const AchievementGrid = ({ userInfo }) => {
           sx={{
             fontSize: '1.3rem',
             '@media (max-width: 1000px)': {
-              fontSize: '2vw',
+              fontSize: 'max(13px, 2vw)',
             },
           }}
         >
@@ -169,7 +176,7 @@ const AchievementGrid = ({ userInfo }) => {
             sx={{
               fontSize: '1.3rem',
               '@media (max-width: 1000px)': {
-                fontSize: '2vw',
+                fontSize: 'max(13px, 2vw)',
               },
             }}
           >
@@ -189,7 +196,7 @@ const AchievementGrid = ({ userInfo }) => {
             sx={{
               fontSize: '1.3rem',
               '@media (max-width: 1000px)': {
-                fontSize: '2vw',
+                fontSize: 'max(13px, 2vw)',
               },
             }}
           >

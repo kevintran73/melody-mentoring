@@ -7,17 +7,16 @@ import AchievementGrid from './AchievementGrid';
 import StreakCard from './StreakCard';
 
 const StyledAchievements = styled(Box)(() => ({
-  width: '90%',
+  width: '100%',
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'space-evenly',
   gap: '20px',
-
   '@media (max-width: 1000px)': {
     flexDirection: 'row',
-    gap: '25px',
+    gap: '5px',
   },
 }));
 
@@ -39,7 +38,7 @@ const StyledCard = styled(Card)(() => ({
 const AchievementCard = ({ profileInfo }) => {
   return (
     <StyledCard>
-      <Typography fontSize='3.6vw'> Achievements </Typography>
+      <Typography fontSize='max(30px,3.6vw)'> Achievements </Typography>
       <StyledAchievements>
         {profileInfo['current_streak'] && (
           <StreakCard userInfo={profileInfo}></StreakCard>

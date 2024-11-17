@@ -28,7 +28,7 @@ const StyledCardsContainer = styled(Box)(() => ({
 
   '@media (max-width: 1000px)': {
     flexDirection: 'column',
-    margin: '2vw 10vw',
+    margin: '2vw 0vw',
   },
 }));
 

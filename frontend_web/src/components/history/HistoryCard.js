@@ -27,14 +27,31 @@ const StyledContainer = styled(Box)({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
+  '@media (max-width: 620px)': {
+    flexDirection: 'column',
+    maxHeight: '100%',
+  },
 });
 
 const TitleText = styled(Typography)({
   fontSize: '1.75rem',
+  '@media (max-width: 620px)': {
+    fontSize: '1.6rem',
+  },
+  '@media (max-width: 450px)': {
+    fontSize: '1.2rem',
+  },
 });
 
 const SubtitleText = styled(Typography)({
   fontSize: '1.2rem',
+
+  '@media (max-width: 620px)': {
+    fontSize: '1.2rem',
+  },
+  '@media (max-width: 450px)': {
+    fontSize: '0.8rem',
+  },
 });
 
 const HistoryCard = ({
@@ -53,7 +70,17 @@ const HistoryCard = ({
 
   return (
     <StyledContainer onClick={navTrackSummary}>
-      <Box display='flex'>
+      <Box
+        display='flex'
+        sx={{
+          '@media (max-width: 620px)': {
+            flexDirection: 'column',
+            height: '100%',
+            alignItems: 'center',
+            textAlign: 'center',
+          },
+        }}
+      >
         <Box sx={{ marginRight: '10px' }}>
           <Img alt='playlist-card' src={thumbnail ? thumbnail : defaultImg} />
         </Box>
