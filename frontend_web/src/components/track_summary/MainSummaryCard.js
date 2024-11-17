@@ -63,24 +63,24 @@ const MainSummaryCard = ({
     <StyledMainSummary>
       <Box flex='4' height='100%'>
         <StyledMainSummaryCard boxShadow={4}>
-          <Typography
-            sx={{
-              fontSize: '1.5vw',
-              overflowY: 'auto',
+          {summaryParagraphs ? (
+            <Typography
+              sx={{
+                fontSize: '1.5vw',
+                overflowY: 'auto',
 
-              '@media (max-width: 1000px)': {
-                fontSize: '1.2rem',
-              },
-            }}
-          >
-            {summaryParagraphs ? (
-              summaryParagraphs[0]
-            ) : (
-              <LoadingOverlayMain overflow='hidden'>
-                <CircularProgress size='20vh' />
-              </LoadingOverlayMain>
-            )}
-          </Typography>
+                '@media (max-width: 1000px)': {
+                  fontSize: '1.2rem',
+                },
+              }}
+            >
+              {summaryParagraphs[0]}
+            </Typography>
+          ) : (
+            <LoadingOverlayMain overflow='hidden'>
+              <CircularProgress size='20vh' />
+            </LoadingOverlayMain>
+          )}
         </StyledMainSummaryCard>
       </Box>
 
