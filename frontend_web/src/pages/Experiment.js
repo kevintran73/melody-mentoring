@@ -97,10 +97,23 @@ const Experiment = () => {
     setOsmdLoaded(true);
   };
 
+  // Check for a webcam
+  const [hasWebcam, setHasWebcam] = React.useState(false);
+  React.useEffect(() => {
+    const checkForWebcam = async () => {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter((device) => device.kind === 'videoinput');
+      setHasWebcam(videoDevices.length > 0);
+    };
+
+    checkForWebcam();
+  }, []);
+
   // Audio recording hooks
   const { status, startRecording, stopRecording, mediaBlobUrl, clearBlobUrl } =
     useReactMediaRecorder({
-      video: false,
+      video: hasWebcam,
+      audio: true,
     });
 
   // After countdown is initiated
@@ -130,12 +143,12 @@ const Experiment = () => {
   }, [status]);
 
   // Get the sheet music
-  const { accessToken, userId } = React.useContext(TokenContext);
+  const { accessToken, userId, role } = React.useContext(TokenContext);
   const params = useParams();
   const [sheetFile, setSheetFile] = React.useState('');
   React.useEffect(() => {
-    // Navigate to login page if invalid token
-    if (accessToken === null) {
+    // Validate user token and role
+    if (accessToken === null || role === 'tutor') {
       return navigate('/login');
     }
 
@@ -164,7 +177,7 @@ const Experiment = () => {
           return navigate('/catalogue');
         }
       } catch (err) {
-        showErrorMessage(err.data.response.error);
+        showErrorMessage(err.response.data.error);
 
         // Navigate to catalogue if invalid song id or any other issues with retrieving sheet
         return navigate('/catalogue');
@@ -172,7 +185,7 @@ const Experiment = () => {
     };
 
     getSheet();
-  }, [accessToken, params, navigate]);
+  }, [accessToken, role, params, navigate]);
 
   // Check if mobile resolution for sheet music
   const isSmallScreen = useMediaQuery('(max-width: 500px)');
@@ -236,8 +249,6 @@ const Experiment = () => {
       showErrorMessage(err.response.data.error);
       return;
     }
-
-    return navigate('/history');
   };
 
   // Exit experiment
@@ -248,7 +259,7 @@ const Experiment = () => {
     setExperimentStarted(false);
 
     // Navigate back to the experiment's song page
-    return navigate('/catalogue');
+    return navigate(`/pre-experiment/${params.songId}`);
   };
 
   // Display all page elements only if sheet file has been retrieved
@@ -298,6 +309,7 @@ const Experiment = () => {
             retryAttempt={retryAttempt}
             onExit={onExit}
             finishAttempt={finishAttempt}
+            hasWebcam={hasWebcam}
           />
         </>
       )}

@@ -1,8 +1,7 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
+import { styled } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import LinearProgress from '@mui/material/LinearProgress';
+import * as React from 'react';
 import streaksIcon from '../../assets/streaks_icon.png';
 
 const Image = ({ img }) => {
@@ -12,43 +11,43 @@ const Image = ({ img }) => {
       src={img}
       alt='test'
       sx={{
-        width: '8vw',
+        width: '10vw',
         objectFit: 'cover',
       }}
     />
-  )
-}
+  );
+};
+
+const StyledCard = styled(Box)(() => ({
+  display: 'flex',
+  width: '100%',
+  height: '100%',
+  padding: '15px',
+  textAlign: 'center',
+  alignItems: 'center',
+  justifyContent: 'center',
+
+  borderRadius: '16px',
+  flexDirection: 'column',
+}));
 
 const StreakCard = ({ userInfo }) => {
   return (
-      <Box
-        display='flex'
-        flexDirection='column'
-        spacing={2}
+    <StyledCard boxShadow={3}>
+      <Image img={streaksIcon} />
+      <Typography
         sx={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '75%',
+          fontSize: '1.6rem',
+          '@media (max-width: 1000px)': {
+            fontSize: 'max(13px, 2.5vw)',
+          },
         }}
+        variant='primary'
       >
-        <Box 
-          sx={{
-            width: '100%',
-            objectFit: 'cover',
-            padding: '10px',
-            textAlign: 'center', 
-            boxShadow: 3,
-            borderRadius: '16px',
-            // margin: '10px',
-          }}  
-        >
-            <Box display='flex' flexDirection='column' justifyContent='center' alignItems='center' margin='0px 10px 10px 10px'>
-              <Image img={streaksIcon} />
-              <Typography fontSize={'1.5rem'} variant='primary'>You've been on a streak of {userInfo['current_streak']} days!</Typography>
-            </Box>
-        </Box>
-      </Box>
+        You've been on a streak of {userInfo['current_streak']} days!
+      </Typography>
+    </StyledCard>
   );
-}
+};
 
 export default StreakCard;

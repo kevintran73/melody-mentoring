@@ -67,8 +67,13 @@ const StyledButton = styled(Button)({
 const LoginSub = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const { login } = React.useContext(TokenContext);
+  const { accessToken, login } = React.useContext(TokenContext);
   const navigate = useNavigate();
+
+  // Navigate to default page if active token
+  if (accessToken !== null) {
+    return <Navigate to='/catalogue' />;
+  }
 
   // Handles the login
   const handleLogin = async (event) => {
@@ -89,20 +94,19 @@ const LoginSub = () => {
 
         const userDetailsResponse = await axios.get(`http://localhost:5001/profile/${user_id}`, {
           headers: {
-            Authorization: `Bearer ${access_token}`,  // Attach token to the headers
+            Authorization: `Bearer ${access_token}`, // Attach token to the headers
           },
         });
-        
-        const role = userDetailsResponse.data.role
+
+        const role = userDetailsResponse.data.role;
 
         login(access_token, id_token, refresh_token, user_id, role);
-        
+
         if (role === 'student') {
           navigate('/catalogue'); // redirect to catalogue page for student login
         } else {
           navigate('/dashboard'); // redirect to dashboard for tutor login
         }
-
       } catch (err) {
         showErrorMessage(err.response.data.error);
       }

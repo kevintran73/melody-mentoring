@@ -58,7 +58,7 @@ const App = () => {
     setIdToken(idToken);
     setRefreshToken(refreshToken);
     setUserId(userId);
-    setRole(role)
+    setRole(role);
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('idToken', idToken);
     localStorage.setItem('refreshToken', refreshToken);
@@ -71,15 +71,19 @@ const App = () => {
     setAccessToken(null);
     setIdToken(null);
     setRefreshToken(null);
-    setUserId(userId);
+    setUserId(null);
+    setRole(null);
     localStorage.removeItem('accessToken');
     localStorage.removeItem('idToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userId');
+    localStorage.removeItem('role');
   };
 
   return (
-    <TokenContext.Provider value={{ accessToken, idToken, refreshToken, userId, role, login, logout }}>
+    <TokenContext.Provider
+      value={{ accessToken, idToken, refreshToken, userId, role, login, logout }}
+    >
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Navigate to='/login' />} />
