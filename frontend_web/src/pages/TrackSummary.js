@@ -65,7 +65,8 @@ const TrackSummary = () => {
   const [songDetails, setSongDetails] = useState(null);
   const [reviews, setReviews] = useState(null);
   const [recording, setRecording] = useState('');
-  const { accessToken, userId } = React.useContext(TokenContext);
+  const [isAudio, setIsAudio] = useState(true);
+  const { accessToken, userId, role } = React.useContext(TokenContext);
 
   const navigate = useNavigate();
 
@@ -78,8 +79,8 @@ const TrackSummary = () => {
   };
 
   useEffect(() => {
-    // Navigate to login if invalid token or user id
-    if (accessToken === null || !userId) {
+    // Navigate to login if invalid token or role
+    if (accessToken === null || role === 'tutor') {
       return navigate('/login');
     }
 
@@ -115,14 +116,11 @@ const TrackSummary = () => {
     // Fetch track details
     const fetchTrackDetails = async (attemptId) => {
       try {
-        const response = await axios.get(
-          `http://localhost:5001/track-attempt/${attemptId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+        const response = await axios.get(`http://localhost:5001/track-attempt/${attemptId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
         fetchSongDetails(response.data);
         // console.log(response.data.reviews);
         // fetchReviewDetails(response.data.reviews);
@@ -195,14 +193,17 @@ const TrackSummary = () => {
     const fetchRecording = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/files/user/audio/${params.trackAttemptId}`,
+          `http://localhost:5001/files/user/${params.trackAttemptId}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
           }
         );
-        setRecording(response.data.url);
+        setRecording(
+          response.data.audioUrl === undefined ? response.data.videoUrl : response.data.audioUrl
+        );
+        setIsAudio(response.data.audioUrl !== undefined);
       } catch (error) {
         console.error('Error fetching recording:', error);
       }
@@ -213,7 +214,7 @@ const TrackSummary = () => {
     return () => {
       controller.abort();
     };
-  }, [accessToken, params.trackAttemptId, navigate]);
+  }, [accessToken, userId, params.trackAttemptId, role, navigate]);
 
   // Split summary into paragraphs for displaying
   useEffect(() => {
@@ -244,24 +245,17 @@ const TrackSummary = () => {
         summaryParagraphs={summaryParagraphs}
         songDetails={songDetails}
         recording={recording}
+        isAudio={isAudio}
         sendSummaryFromChild={sendSummaryFromChild}
       />
 
       {/* Section for statistics */}
-      <StatisticsSection
-        summary={summary}
-        summaryParagraphs={summaryParagraphs}
-      />
+      <StatisticsSection summary={summary} summaryParagraphs={summaryParagraphs} />
 
       {/* Section for tutor reviews */}
       <Box margin='10px 40px'>
         <Box display='flex'>
-          <Typography
-            align='left'
-            variant='h4'
-            margin='30px'
-            marginRight='20px'
-          >
+          <Typography align='left' variant='h4' margin='30px' marginRight='20px'>
             Tutor Reviews
           </Typography>
         </Box>
@@ -281,11 +275,7 @@ const TrackSummary = () => {
               ))}
               <Box>
                 <StyledReviewBox sx={{ margin: '10px' }}>
-                  <ReviewCard
-                    tutor={'John'}
-                    feedback={'Nice post!'}
-                    rating={'4'}
-                  />
+                  <ReviewCard tutor={'John'} feedback={'Nice post!'} rating={'4'} />
                 </StyledReviewBox>
               </Box>
             </Box>

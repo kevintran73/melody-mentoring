@@ -60,6 +60,7 @@ const MainSummaryCard = ({
   summaryParagraphs,
   songDetails,
   recording,
+  isAudio,
   sendSummaryFromChild,
 }) => {
   return (
@@ -139,7 +140,7 @@ const MainSummaryCard = ({
             },
           }}
         >
-          <StyledAudio controls src={recording} />
+          {isAudio ? <StyledAudio controls src={recording} /> : <video controls src={recording} />}
           <Divider sx={{ width: '100%', my: 2 }} />
           <RefreshModelComponent sendSummaryFromChild={sendSummaryFromChild} />
           <Divider sx={{ width: '100%', my: 2 }} />
