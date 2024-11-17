@@ -1,9 +1,12 @@
 import 'cypress-file-upload';
 
 context('UserFlow Test', () => {
+  let studentEmail = 'cibalo7059@gianes.com';
+  let tutorEmail = 'tayera3936@inikale.com';
+  let password = 'TestTestTest22!!';
+
   beforeEach(() => {
     cy.visit('http://localhost:3000/');
-    cy.fixture('Ode_to_Joy_Thumbnail.png').as('thumbnail');
   });
 
   // it('createUser', () => {
@@ -34,8 +37,8 @@ context('UserFlow Test', () => {
 
   // it('createExperiment', () => {
   //   cy.contains('Login').click();
-  //   cy.get('#login-email').type('cibalo7059@gianes.com');
-  //   cy.get('#login-password').type('TestTestTest22!!');
+  // cy.get('#login-email').type(studentEmail);
+  // cy.get('#login-password').type(password);
   //   cy.get('#login-go').click();
 
   //   cy.get('[data-cy="create_button"]').click();
@@ -70,22 +73,87 @@ context('UserFlow Test', () => {
   //   cy.get('#submit-new-experiment-button').click();
   // });
 
-  it('uploadTrackAttempt', () => {
+  // it('uploadTrackAttempt', () => {
+  //   cy.contains('Login').click();
+  // cy.get('#login-email').type(studentEmail);
+  // cy.get('#login-password').type(password);
+  //   cy.get('#login-go').click();
+
+  //   cy.wait(2500);
+
+  //   cy.get(`[data-cy="Ode to Joy (Test)"]`).first().click();
+
+  //   cy.contains('Upload a recording').click();
+
+  //   cy.get('[data-cy="upload-audio-recording-button"]').attachFile(
+  //     'Ode_to_Joy_Easy.wav'
+  //   );
+
+  //   cy.get('#upload-recording-go').click({ force: true });
+  // });
+
+  // it('uploadProfilePic', () => {
+  //   cy.contains('Login').click();
+  // cy.get('#login-email').type(studentEmail);
+  // cy.get('#login-password').type(password);
+  //   cy.get('#login-go').click();
+
+  //   cy.get('[data-cy="profile_button"]').click();
+
+  //   cy.wait(2000);
+
+  //   cy.get('[data-cy="upload-profile-picture-button"]').attachFile(
+  //     'Test_Profile_Pic.png'
+  //   );
+
+  //   cy.wait(100);
+
+  //   cy.contains('Confirm').click();
+
+  //   cy.reload();
+
+  //   cy.wait(2000);
+
+  //   cy.get('[data-cy="upload-profile-picture-button"]').attachFile(
+  //     'Default_Profile_Pic.png'
+  //   );
+
+  //   cy.wait(100);
+
+  //   cy.contains('Confirm').click();
+  // });
+
+  // it('findAndAcceptATutor', () => {
+  //   cy.contains('Login').click();
+  //   cy.get('#login-email').type(studentEmail);
+  //   cy.get('#login-password').type(password);
+  //   cy.get('#login-go').click();
+
+  //   cy.get('[data-cy="profile_button"]').click();
+
+  //   cy.wait(2000);
+
+  //   cy.contains('Find a Tutor').click();
+
+  //   cy.get('[data-cy="tutor-dialog-list"] li')
+  //     .contains('TeacherVictor')
+  //     .click();
+  // });
+
+  it('reviewTrackSummary', () => {
     cy.contains('Login').click();
-    cy.get('#login-email').type('cibalo7059@gianes.com');
-    cy.get('#login-password').type('TestTestTest22!!');
+    cy.get('#login-email').type(studentEmail);
+    cy.get('#login-password').type(password);
     cy.get('#login-go').click();
 
-    cy.wait(2500);
+    cy.get('[data-cy="history_button"]').click();
 
-    cy.get(`[data-cy="Ode to Joy (Test)"]`).first().click();
+    cy.wait(10000);
 
-    cy.contains('Upload a recording').click();
-
-    cy.get('[data-cy="upload-audio-recording-button"]').attachFile(
-      'Ode_to_Joy_Easy.wav'
-    );
-
-    cy.get('#upload-recording-go').click({ force: true });
+    // cy.get('[data-cy^="history-card-"]').first().click();
+    cy.get('[data-cy="history-card-1"]').should('exist').first().click();
+    // cy.get('[data-cy]').then((elements) => {
+    //   console.log(elements);
+    // });
   });
 });

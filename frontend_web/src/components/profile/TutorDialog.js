@@ -55,7 +55,7 @@ function SimpleDialog({ onClose, selectedValue, open, tutorRecs }) {
     >
       <DialogTitle>Select a Tutor</DialogTitle>
       <Divider sx={{ width: '100%' }} />
-      <List sx={{ pt: 0 }}>
+      <List sx={{ pt: 0 }} data-cy='tutor-dialog-list'>
         {tutorRecs.map((tutor) => (
           <ListItem disableGutters key={tutor['tutorId']}>
             <ListItemButton onClick={() => handleListItemClick(tutor)}>
