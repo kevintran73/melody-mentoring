@@ -1,9 +1,8 @@
-import React from 'react';
-import { Gauge } from '@mui/x-charts/Gauge';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-
 import { styled } from '@mui/system';
+import { Gauge } from '@mui/x-charts/Gauge';
+import React from 'react';
 
 const StyledCard = styled(Card)(() => ({
   borderWidth: '2px',

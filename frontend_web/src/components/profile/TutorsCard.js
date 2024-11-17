@@ -1,10 +1,10 @@
-import React from 'react';
-import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
-import TutorSearchCard from './TutorSearchCard';
-import TutorList from './TutorList';
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import { styled } from '@mui/system';
+import React from 'react';
+import TutorList from './TutorList';
+import TutorSearchCard from './TutorSearchCard';
 
 const StyledCard = styled(Card)(() => ({
   display: 'flex',
@@ -26,6 +26,8 @@ const TutorsCard = ({ profileInfo }) => {
       <Typography fontSize='3.6vw' textAlign='center'>
         Tutors
       </Typography>
+
+      {/* List of all tutors assigned to student */}
       <Box
         flex='6'
         width='100%'
@@ -35,6 +37,8 @@ const TutorsCard = ({ profileInfo }) => {
       >
         <TutorList tutorIds={profileInfo['tutors']} />
       </Box>
+
+      {/* Card for adding more tutors */}
       <Box
         display='flex'
         flex='1'

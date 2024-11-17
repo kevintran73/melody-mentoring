@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import TutorInfoCard from './TutorInfoCard';
-import defaultImg from '../../assets/default-img.png';
+import { styled } from '@mui/material/styles';
+import axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
 import TokenContext from '../../context/TokenContext';
+import TutorInfoCard from './TutorInfoCard';
 
 const StyledCard = styled(Card)(() => ({
   width: '100%',

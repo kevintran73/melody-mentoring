@@ -43,7 +43,7 @@ const TrackSummary = ({ sendSummaryFromChild }) => {
     sendSummaryFromChild(data);
   };
 
-  // Refresh summary text when button selected
+  // Refresh summary text when button is pressed
   const refreshSummary = async (model) => {
     try {
       const response = await axios.get(

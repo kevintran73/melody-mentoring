@@ -248,7 +248,7 @@ const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
           role={role}
         ></ProfileText>
 
-        {/* If waiting on profile pic confirmation show confirm and deny buttons */}
+        {/* If waiting on profile pic confirmation, show confirm and deny buttons */}
         {isConfirming ? (
           <Box
             display='flex'
@@ -264,7 +264,6 @@ const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
         ) : (
           <StyledButton
             component='label'
-            // role={undefined}
             variant='contained'
             tabIndex={-1}
             startIcon={<CloudUploadIcon />}

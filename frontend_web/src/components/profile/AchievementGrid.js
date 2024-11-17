@@ -7,6 +7,20 @@ import bronzeImage from '../../assets/ranks_0000_bronze.png';
 import silverImage from '../../assets/ranks_0001_silver.png';
 import goldImage from '../../assets/ranks_0002_gold.png';
 import diamondImage from '../../assets/ranks_0003_diamond.png';
+import { styled } from '@mui/material';
+
+const StyledContainer = styled(Box)(() => ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  height: '100%',
+  padding: '10px',
+  textAlign: 'center',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '16px',
+  margin: '10px',
+}));
 
 const Progress = ({ value, minValue, maxValue }) => {
   const percentage = ((value - minValue) / (maxValue - minValue)) * 100;
@@ -57,6 +71,7 @@ function checkRank(userInfo, easyDone, mediumDone, hardDone) {
     hardMax: 0,
   };
 
+  // Goes through all achievements to find out what rank the student is
   for (const achievement of userInfo['achievements']) {
     if (
       easyDone >= achievement['easy_required'] &&
@@ -130,19 +145,7 @@ const AchievementGrid = ({ userInfo }) => {
   const rankInfo = checkRank(userInfo, easyDone, mediumDone, hardDone);
 
   return (
-    <Box
-      display='flex'
-      flexDirection='column'
-      width='100%'
-      height='100%'
-      padding='10px'
-      textAlign='center'
-      alignItems='center'
-      justifyContent='center'
-      boxShadow={3}
-      borderRadius='16px'
-      margin='10px'
-    >
+    <StyledContainer boxShadow={3}>
       <RankIcons rankInfo={rankInfo}></RankIcons>
       <Box margin='0px 10px 10px 10px' width='90%'>
         <Typography
@@ -156,8 +159,8 @@ const AchievementGrid = ({ userInfo }) => {
           Easy Attempts
         </Typography>
         <Progress
-          value={rankInfo['easyMin']}
-          minValue={0}
+          value={easyDone}
+          minValue={rankInfo['easyMin']}
           maxValue={rankInfo['easyMax']}
         />
       </Box>
@@ -175,8 +178,8 @@ const AchievementGrid = ({ userInfo }) => {
             Medium Attempts
           </Typography>
           <Progress
-            value={rankInfo['mediumMin']}
-            minValue={0}
+            value={mediumDone}
+            minValue={rankInfo['mediumMin']}
             maxValue={rankInfo['mediumMax']}
           />
         </Box>
@@ -195,13 +198,13 @@ const AchievementGrid = ({ userInfo }) => {
             Hard Attempts
           </Typography>
           <Progress
-            value={rankInfo['hardMin']}
-            minValue={0}
+            value={hardDone}
+            minValue={rankInfo['hardMin']}
             maxValue={rankInfo['hardMax']}
           />
         </Box>
       )}
-    </Box>
+    </StyledContainer>
   );
 };
 

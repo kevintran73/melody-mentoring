@@ -2,10 +2,9 @@ import { Box, CircularProgress, Divider, Typography } from '@mui/material';
 import Card from '@mui/material/Card';
 import { styled } from '@mui/system';
 import React from 'react';
-
-import Thumbnail from './Thumbnail';
 import RefreshModelComponent from './RefreshModelComponent';
 import RequestDialog from './RequestDialog';
+import Thumbnail from './Thumbnail';
 
 /**
  * Main summary card component with thumbnail
@@ -61,6 +60,7 @@ const MainSummaryCard = ({
 }) => {
   return (
     <StyledMainSummary>
+      {/* Main summary for track attempt */}
       <Box flex='4' height='100%'>
         <StyledMainSummaryCard boxShadow={4}>
           {summaryParagraphs ? (
@@ -95,6 +95,7 @@ const MainSummaryCard = ({
           justifyContent: 'space-between',
         }}
       >
+        {/* Song details card */}
         <Box flex='1'>
           {songDetails ? (
             <Thumbnail
@@ -110,6 +111,9 @@ const MainSummaryCard = ({
             </LoadingOverlayMain>
           )}
         </Box>
+
+        {/* Section for audio, changing AI models and 
+          requesting reviews from tutors */}
         <Box
           flex='1'
           width='100%'

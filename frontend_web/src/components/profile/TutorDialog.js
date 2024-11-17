@@ -18,23 +18,7 @@ import Box from '@mui/material/Box';
 import TokenContext from '../../context/TokenContext';
 import axios from 'axios';
 import { showErrorMessage } from '../../helpers';
-
 import { styled } from '@mui/system';
-
-const exampleTutorNames = [
-  'Jim Adams1',
-  'John Cassyworth1',
-  'Amy Chi1',
-  'Lucas Lars1',
-  'Jim Adams',
-  'John Cassyworth',
-  'Amy Chi',
-  'Lucas Lars',
-  'Jim Adams2',
-  'John Cassyworth2',
-  'Amy Chi2',
-  'Lucas Lars2',
-];
 
 const StyledButton = styled(Button)({
   width: '100%',
@@ -51,8 +35,6 @@ const StyledButton = styled(Button)({
 });
 
 function SimpleDialog({ onClose, selectedValue, open, tutorRecs }) {
-  // const { onClose, selectedValue, open, tutorRecs } = props;
-
   const handleClose = () => {
     onClose(selectedValue);
   };
@@ -104,6 +86,7 @@ const TutorDialog = () => {
   const { accessToken, userId } = React.useContext(TokenContext);
 
   useEffect(() => {
+    // Fetch all tutor recommendations for the student
     const fetchTutorRecs = async () => {
       try {
         const response = await axios.get(
@@ -115,12 +98,12 @@ const TutorDialog = () => {
           }
         );
         fetchTutorNames(response.data.tutors);
-        console.log(response.data.tutors);
       } catch (error) {
         console.error('Error fetching tutor recommendation details:', error);
       }
     };
 
+    // Fetch the names of all recommended tutors
     const fetchTutorNames = async (tutorIds) => {
       const allTutorNames = [];
 
@@ -145,7 +128,6 @@ const TutorDialog = () => {
         }
       }
       setTutorRecs(allTutorNames);
-      console.log(allTutorNames);
     };
 
     fetchTutorRecs();
@@ -158,7 +140,6 @@ const TutorDialog = () => {
   const handleClose = (value) => {
     setOpen(false);
     setSelectedTutor(value);
-    console.log(value);
   };
 
   const handleDeny = (value) => {

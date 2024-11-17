@@ -1,17 +1,14 @@
 import { Box, CircularProgress, Typography } from '@mui/material';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/system';
 import React from 'react';
 import ScrollContainer from 'react-indiana-drag-scroll';
-
 import BarChartCard from './BarChartCard';
 import PieChartCard from './PieChartCard';
 import SubAdviceCard from './SubAdviceCard';
 
 /**
- * Track Summary page
+ * Statistics section for pitch, rhythm, intonation and dynamics
  */
 
 const StyledAdviceBox = styled(Card)(() => ({
@@ -40,6 +37,38 @@ const LoadingOverlay = styled('div')({
   justifyContent: 'center',
   zIndex: 999,
 });
+
+const BarSection = ({ title, summary, id, index, summaryParagraphs }) => {
+  return (
+    <Box>
+      <Typography align='left' variant='h4' margin='10px' marginRight='20px'>
+        {title}
+      </Typography>
+      <StyledAdviceBox sx={{ width: '900px' }}>
+        {summary ? (
+          <>
+            <Box flex={2}>
+              <BarChartCard val1={summary[id]} />
+            </Box>
+            <Box flex={54}>
+              <SubAdviceCard
+                details={
+                  summaryParagraphs ? summaryParagraphs[index] : 'Loading'
+                }
+              />
+            </Box>
+          </>
+        ) : (
+          <Box alignItems='center' justifyContent='center'>
+            <LoadingOverlay>
+              <CircularProgress size='20vh' />
+            </LoadingOverlay>
+          </Box>
+        )}
+      </StyledAdviceBox>
+    </Box>
+  );
+};
 
 const PieSection = ({ title, summary, id, index, summaryParagraphs }) => {
   return (
@@ -82,39 +111,15 @@ const StatisticsSection = ({ summary, summaryParagraphs }) => {
         margin='10px 40px'
       >
         {/* Rhythm section */}
-        <Box>
-          <Typography
-            align='left'
-            variant='h4'
-            margin='10px'
-            marginRight='20px'
-          >
-            Rhythm
-          </Typography>
-          <StyledAdviceBox sx={{ width: '900px' }}>
-            {summary ? (
-              <>
-                <Box flex={2}>
-                  <BarChartCard val1={summary['rhythm']} />
-                </Box>
-                <Box flex={54}>
-                  <SubAdviceCard
-                    details={
-                      summaryParagraphs ? summaryParagraphs[1] : 'Loading'
-                    }
-                  />
-                </Box>
-              </>
-            ) : (
-              <Box alignItems='center' justifyContent='center'>
-                <LoadingOverlay>
-                  <CircularProgress size='20vh' />
-                </LoadingOverlay>
-              </Box>
-            )}
-          </StyledAdviceBox>
-        </Box>
+        <BarSection
+          title='Rhythm'
+          summary={summary}
+          id={'rhythm'}
+          index={1}
+          summaryParagraphs={summaryParagraphs}
+        ></BarSection>
 
+        {/* Pitch section */}
         <PieSection
           title='Pitch'
           summary={summary}
@@ -123,6 +128,7 @@ const StatisticsSection = ({ summary, summaryParagraphs }) => {
           summaryParagraphs={summaryParagraphs}
         />
 
+        {/* Intonation section */}
         <PieSection
           title='Intonation'
           summary={summary}
@@ -131,6 +137,7 @@ const StatisticsSection = ({ summary, summaryParagraphs }) => {
           summaryParagraphs={summaryParagraphs}
         />
 
+        {/* Dynamics section */}
         <PieSection
           title='Dynamics'
           summary={summary}

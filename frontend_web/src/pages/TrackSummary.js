@@ -7,15 +7,11 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import ScrollContainer from 'react-indiana-drag-scroll';
 import { useNavigate, useParams } from 'react-router-dom';
-import TokenContext from '../context/TokenContext';
-
 import NavBar from '../components/nav_bar/NavBar';
 import MainSummaryCard from '../components/track_summary/MainSummaryCard';
-import RefreshModelComponent from '../components/track_summary/RefreshModelComponent';
-import RequestDialog from '../components/track_summary/RequestDialog';
 import ReviewCard from '../components/track_summary/ReviewCard';
 import StatisticsSection from '../components/track_summary/StatisticsSection';
-import Thumbnail from '../components/track_summary/Thumbnail';
+import TokenContext from '../context/TokenContext';
 
 /**
  * Track Summary page
@@ -213,6 +209,7 @@ const TrackSummary = () => {
     };
   }, [accessToken]);
 
+  // Split summary into paragraphs for displaying
   useEffect(() => {
     if (summary) {
       const summaryParagraphs = summary['groqSays'].split('\n\n');
@@ -236,6 +233,7 @@ const TrackSummary = () => {
         </StyledButton>
       </Box>
 
+      {/* Section for main summary, song detail card and additional actions */}
       <MainSummaryCard
         summaryParagraphs={summaryParagraphs}
         songDetails={songDetails}

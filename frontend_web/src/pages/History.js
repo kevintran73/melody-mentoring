@@ -1,13 +1,13 @@
-import { CircularProgress, TextField, Typography } from '@mui/material';
+import { CircularProgress, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HistoryCard from '../components/history/HistoryCard';
 import HistoryIntroCard from '../components/history/HistoryIntroCard';
 import NavBar from '../components/nav_bar/NavBar';
 import TokenContext from '../context/TokenContext';
-import { useNavigate, Navigate } from 'react-router-dom';
 
 /**
  * History page
@@ -109,6 +109,7 @@ const History = () => {
         flexDirection='column'
         marginX='10vw'
       >
+        {/* Searchbar for filtering track attempts */}
         <StyledSearchBar
           id='outlined-basic'
           label='Search'

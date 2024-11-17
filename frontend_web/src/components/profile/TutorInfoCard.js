@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import * as React from 'react';
 import defaultImg from '../../assets/default-img.png';
 
 const Img = styled('img')({
@@ -21,7 +21,7 @@ const StyledContainer = styled(Box)({
   gap: '5px',
 });
 
-const TutorInfoCard = ({ img, name, details }) => {
+const TutorInfoCard = ({ img, name }) => {
   return (
     <StyledContainer>
       <Box display='flex' alignItems='center'>

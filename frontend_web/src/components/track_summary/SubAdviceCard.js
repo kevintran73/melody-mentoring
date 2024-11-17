@@ -1,10 +1,8 @@
-import React from 'react';
-
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
-
 import { styled } from '@mui/system';
+import React from 'react';
 
 const StyledCard = styled(Card)(() => ({
   borderWidth: '2px',

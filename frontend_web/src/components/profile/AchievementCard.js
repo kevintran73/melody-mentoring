@@ -1,10 +1,10 @@
-import React from 'react';
-import Box from '@mui/material/Box';
-import AchievementGrid from './AchievementGrid';
 import { Typography } from '@mui/material';
-import StreakCard from './StreakCard';
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import { styled } from '@mui/system';
+import React from 'react';
+import AchievementGrid from './AchievementGrid';
+import StreakCard from './StreakCard';
 
 const StyledAchievements = styled(Box)(() => ({
   width: '90%',
@@ -31,7 +31,6 @@ const StyledCard = styled(Card)(() => ({
   height: '100%',
   borderRadius: '16px',
   padding: '12px',
-  // gap: '20px',
 }));
 
 /**

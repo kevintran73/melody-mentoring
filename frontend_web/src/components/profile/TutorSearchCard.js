@@ -1,12 +1,7 @@
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
+import React from 'react';
 import TutorDialog from './TutorDialog';
-
 import { styled } from '@mui/system';
 
 const StyledCard = styled(Box)(() => ({
