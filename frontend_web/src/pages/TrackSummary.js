@@ -12,6 +12,7 @@ import MainSummaryCard from '../components/track_summary/MainSummaryCard';
 import ReviewCard from '../components/track_summary/ReviewCard';
 import StatisticsSection from '../components/track_summary/StatisticsSection';
 import TokenContext from '../context/TokenContext';
+import { showErrorMessage } from '../helpers';
 
 /**
  * Track Summary page
@@ -99,11 +100,14 @@ const TrackSummary = () => {
         );
         setSummary(response.data);
         fetchTrackDetails(params.trackAttemptId);
-      } catch (error) {
-        if (axios.isCancel(error)) {
-          console.log('Fetch cancelled:', error.message);
+      } catch (err) {
+        if (axios.isCancel(err)) {
+          console.log('Fetch cancelled:', err.message);
         } else {
-          console.error('Error fetching feedback details:', error);
+          // If file doesn't exist
+          showErrorMessage(err.response.data.error);
+
+          return navigate('/history');
         }
       }
     };
@@ -207,7 +211,7 @@ const TrackSummary = () => {
     return () => {
       controller.abort();
     };
-  }, [accessToken]);
+  }, [accessToken, params.trackAttemptId, navigate]);
 
   // Split summary into paragraphs for displaying
   useEffect(() => {
