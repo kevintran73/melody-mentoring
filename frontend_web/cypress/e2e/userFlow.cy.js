@@ -46,7 +46,7 @@ context('UserFlow Test', () => {
 
   //   cy.fixture('Ode_to_Joy_Easy.mxl', 'binary').then((fileContent) => {
   //     const fileName = 'Ode_to_Joy_Easy.mxl';
-  //     const mimeType = 'application/vnd.recordare.musicxml'; // Use the correct MIME type for .mxl files
+  //     const mimeType = 'application/vnd.recordare.musicxml';
 
   //     cy.get('[data-cy="upload-sheet-button"]').attachFile({
   //       fileContent,
@@ -83,11 +83,9 @@ context('UserFlow Test', () => {
     cy.contains('Upload a recording').click();
 
     cy.get('[data-cy="upload-audio-recording-button"]').attachFile(
-      'Ode_to_Joy_Easy.mp3'
+      'Ode_to_Joy_Easy.wav'
     );
 
     cy.get('#upload-recording-go').click({ force: true });
-
-    // cy.contains('Go to experiment').click();
   });
 });
