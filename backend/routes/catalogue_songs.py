@@ -67,7 +67,7 @@ def get_music_basket_list():
             'error': 'Songs cannot be found'
         }), 500
 
-@catalogue_songs_bp.route('/catalague/user-catalogue/<userId>', methods=['GET'])
+@catalogue_songs_bp.route('/catalogue/user-catalogue/<userId>', methods=['GET'])
 @token_required
 def get_user_catalogue(userId):
     try:
