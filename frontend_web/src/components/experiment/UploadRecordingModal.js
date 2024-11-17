@@ -44,6 +44,11 @@ const StyledButton = styled(Button)({
   },
 });
 
+const StyledSubmit = styled(Button)({
+  marginTop: '0.5rem',
+  fontSize: '1rem',
+});
+
 // Modal to upload a recording directly
 const UploadRecordingModal = ({ navigate, userId, songId, accessToken }) => {
   const [open, setOpen] = React.useState(false);
@@ -54,13 +59,19 @@ const UploadRecordingModal = ({ navigate, userId, songId, accessToken }) => {
     setOpen(false);
   };
 
-  const [songRecording, setSongRecording] = React.useState(null);
+  const allowedAudio = ['audio/wav', 'audio/mp3', 'audio/webm'];
+  const allowedVideo = ['video/mp4', 'video/x-matroska'];
+
+  const [recording, setRecording] = React.useState(null);
   const uploadRecording = async (event) => {
     event.preventDefault();
 
     // Validate .wav file type
-    if (!(songRecording && songRecording.type === 'audio/wav')) {
-      showErrorMessage('Song recording file type must be a .wav');
+    if (
+      !recording ||
+      (!allowedAudio.includes(recording.type) && !allowedVideo.includes(recording.type))
+    ) {
+      showErrorMessage('Song recording file type must be a .wav, .mp3, .webm, .mp4 or .mkv');
       return;
     }
 
@@ -78,15 +89,19 @@ const UploadRecordingModal = ({ navigate, userId, songId, accessToken }) => {
         }
       );
 
-      await uploadFileToS3(response.data.audioUploader, songRecording);
-      showSuccessMessage('Success! Your recording was successfully uploaded.');
+      if (allowedAudio.includes(recording.type)) {
+        await uploadFileToS3(response.data.audioUploader, recording);
+      } else {
+        await uploadFileToS3(response.data.videoUploader, recording);
+      }
+      showSuccessMessage('Success! Your recording was uploaded.');
 
       return navigate('/history');
     } catch (err) {
       showErrorMessage(err.response.data.error);
     }
 
-    setSongRecording(null);
+    setRecording(null);
     setOpen(false);
   };
 
@@ -107,23 +122,23 @@ const UploadRecordingModal = ({ navigate, userId, songId, accessToken }) => {
               Upload a song recording
             </Typography>
             <InputFileUpload
-              innerText='Add a recording'
-              id='upload-recording-button'
+              innerText='Add a song recording (audio [.mp3, .wav, .webm] or video [.mp4, .mkv])'
+              id='upload-audio-recording-button'
               width='100%'
               fontSize='0.9rem'
-              accept='audio/wav'
+              accept='audio/wav, audio/mp3, audio/webm, video/mp4, video/x-matroska'
               backgroundColor='#1b998b'
               hoverColor='#1fad9e'
-              onChangeEvent={(p) => setSongRecording(p.target.files[0])}
+              onChangeEvent={(p) => setRecording(p.target.files[0])}
             />
-            <Button
+            <StyledSubmit
               type='submit'
               onClick={uploadRecording}
               variant='contained'
               id='upload-recording-go'
             >
               Upload
-            </Button>
+            </StyledSubmit>
           </StyledForm>
         </Box>
       </Modal>

@@ -22,6 +22,7 @@ import Thumbnail from '../components/track_summary/Thumbnail';
 import BarChartCard from '../components/track_summary/BarChartCard';
 import ReviewCard from '../components/track_summary/ReviewCard';
 import RequestDialog from '../components/track_summary/RequestDialog';
+import { showErrorMessage } from '../helpers';
 
 /**
  * Track Summary page
@@ -161,11 +162,14 @@ const TrackSummary = () => {
         );
         setSummary(response.data);
         fetchTrackDetails(params.trackAttemptId);
-      } catch (error) {
-        if (axios.isCancel(error)) {
-          console.log('Fetch cancelled:', error.message);
+      } catch (err) {
+        if (axios.isCancel(err)) {
+          console.log('Fetch cancelled:', err.message);
         } else {
-          console.error('Error fetching feedback details:', error);
+          // If file doesn't exist
+          showErrorMessage(err.response.data.error);
+
+          return navigate('/history');
         }
       }
     };
@@ -244,7 +248,7 @@ const TrackSummary = () => {
     return () => {
       controller.abort();
     };
-  }, [accessToken]);
+  }, [accessToken, params.trackAttemptId, navigate]);
 
   useEffect(() => {
     if (summary) {

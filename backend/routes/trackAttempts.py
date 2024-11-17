@@ -373,7 +373,14 @@ def get_feedback_for_track_attempt(trackAttemptId):
         return jsonify({'error': 'Track attempt not found'}), 404
 
     trackAttemptData = response['Item']
-    metrics = generateMetricsForSubmission(trackAttemptData['id'], trackAttemptData['songDetails']['id'])
+    
+    metrics = None
+    try:
+        metrics = generateMetricsForSubmission(trackAttemptData['id'], trackAttemptData['songDetails']['id'])
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'NoSuchKey':
+            return jsonify({'error': 'Attempt hasn\'t been uploaded to s3 yet'}), 404
+
     prompt = f'''
         I want to generate a feedback report for a user playing the piano, do not format your response in a way that addresses my prompt in any way.
         Their attempt of the song has been measured with the following metrics where a value of 1 is perfect:
