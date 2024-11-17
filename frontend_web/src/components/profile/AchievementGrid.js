@@ -36,7 +36,6 @@ const Image = ({ img }) => {
       alt='test'
       sx={{
         width: '7vw',
-        objectFit: 'cover',
         padding: '10px',
 
         '@media (max-width: 1000px)': {
@@ -136,7 +135,6 @@ const AchievementGrid = ({ userInfo }) => {
       flexDirection='column'
       width='100%'
       height='100%'
-      objectFit='cover'
       padding='10px'
       textAlign='center'
       alignItems='center'

@@ -19,11 +19,13 @@ const StyledCard = styled(Card)(() => ({
   borderRadius: '16px',
 }));
 
-const TutorList = ({ tutorIds = [] }) => {
+const TutorList = ({ tutorIds }) => {
   const [tutorsInfo, setTutorsInfo] = useState([]);
   const { accessToken } = useContext(TokenContext);
 
   useEffect(() => {
+    if (!tutorIds || tutorIds.length === 0) return;
+
     const fetchTutorDetails = async () => {
       const allTutorDetails = [];
 
@@ -43,7 +45,6 @@ const TutorList = ({ tutorIds = [] }) => {
         }
       }
       setTutorsInfo(allTutorDetails);
-      // console.log(allTutorDetails)
     };
 
     fetchTutorDetails();
