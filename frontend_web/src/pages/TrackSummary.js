@@ -63,7 +63,7 @@ const TrackSummary = () => {
   const [summaryParagraphs, setSummaryParagraphs] = useState(null);
   const [summary, setSummary] = useState(null);
   const [songDetails, setSongDetails] = useState(null);
-  const [reviews, setReviews] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [recording, setRecording] = useState('');
   const { accessToken, userId } = React.useContext(TokenContext);
 
@@ -124,9 +124,6 @@ const TrackSummary = () => {
           }
         );
         fetchSongDetails(response.data);
-        // console.log(response.data.reviews);
-        // fetchReviewDetails(response.data.reviews);
-        setReviews(response.data.reviews);
       } catch (error) {
         console.error('Error fetching track details:', error);
       }
@@ -163,7 +160,7 @@ const TrackSummary = () => {
     };
 
     // Fetch the review data of the track attempt
-    const fetchReviews = async (reviewData) => {
+    const fetchReviews = async () => {
       try {
         const response = await axios.get(
           `http://localhost:5001/review/${params.trackAttemptId}`,
@@ -173,7 +170,7 @@ const TrackSummary = () => {
             },
           }
         );
-        console.log(response.data);
+        setReviews(response.data.reviews);
       } catch (error) {
         console.error('Error fetching review details:', error);
       }
