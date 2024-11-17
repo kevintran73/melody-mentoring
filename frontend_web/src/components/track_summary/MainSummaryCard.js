@@ -23,7 +23,11 @@ const StyledMainSummary = styled(Card)(() => ({
   boxShadow: 5,
   '@media (max-width: 1000px)': {
     flexDirection: 'column',
-    height: '700px',
+    height: '100%',
+  },
+  '@media (max-width: 600px)': {
+    flexDirection: 'column',
+    height: '100%',
   },
 }));
 
@@ -66,7 +70,7 @@ const MainSummaryCard = ({
           {summaryParagraphs ? (
             <Typography
               sx={{
-                fontSize: '1.5vw',
+                fontSize: '1.4rem',
                 overflowY: 'auto',
 
                 '@media (max-width: 1000px)': {
@@ -93,6 +97,10 @@ const MainSummaryCard = ({
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
+          '@media (max-width: 600px)': {
+            flexDirection: 'column',
+            padding: '0px',
+          },
         }}
       >
         {/* Song details card */}
@@ -116,18 +124,18 @@ const MainSummaryCard = ({
           requesting reviews from tutors */}
         <Box
           flex='1'
-          width='100%'
+          width='100vw'
           height='100%'
           display='flex'
           flexDirection='column'
           justifyContent='space-evenly'
           alignItems='center'
-          margin='20px'
           textAlign='center'
+          margin='20px'
           sx={{
             width: '100%',
             '@media (max-width: 1000px)': {
-              width: '25vw',
+              width: '100%',
             },
           }}
         >
