@@ -69,6 +69,41 @@ def get_presigned_url_user_experiment_audio(trackAttemptId):
             'error': str(e)
         }), 500
 
+# Gets either the audio or video from a users previous experiment on a song
+@files_bp.route('/files/user/<trackAttemptId>', methods=['GET'])
+@token_required
+def get_presigned_url_user_experiment(trackAttemptId):
+    '''GET route to access the video or audio of a users experiment
+    Route parameters must be of the following format:
+    {
+        trackAttemptId: str                 # id of the the track attempt
+    }
+    Gets the url for the video or audio of a users attempt to play a song
+    '''
+    try:
+        videoUrl = urlFromBucketObj(os.getenv('S3_BUCKET_USER_VIDEO'), trackAttemptId)
+
+        if videoUrl:
+            return jsonify({
+                'videoUrl': videoUrl
+            }), 200
+
+        audioUrl = urlFromBucketObj(os.getenv('S3_BUCKET_USER_AUDIO'), trackAttemptId)
+
+        if audioUrl:
+            return jsonify({
+                'audioUrl': audioUrl
+            }), 200
+        
+        return jsonify({
+            'error': 'track attempt not found'
+        }), 404
+
+    except Exception as e:
+        return jsonify({
+            'error': str(e)
+        }), 500
+
 # Route that will help to get the video from a users previous experiment on a song
 @files_bp.route('/files/user/video/<trackAttemptId>', methods=['GET'])
 @token_required

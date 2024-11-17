@@ -11,6 +11,7 @@ const Review = () => {
   const [review, setReview] = useState('');
   const { trackAttemptId } = useParams();
   const [recording, setRecording] = useState();
+  const [isAudio, setIsAudio] = useState(true);
   const [rating, setRating] = useState(5);
   const { accessToken, userId, role } = useContext(TokenContext);
   const navigate = useNavigate();
@@ -27,15 +28,16 @@ const Review = () => {
 
     const fetchRecording = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5001/files/user/audio/${trackAttemptId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
+        const response = await axios.get(`http://localhost:5001/files/user/${trackAttemptId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        setRecording(
+          response.data.audioUrl === undefined ? response.data.videoUrl : response.data.audioUrl
         );
-        setRecording(response.data.url);
+        setIsAudio(response.data.audioUrl !== undefined);
       } catch (err) {
         showErrorMessage(err.response.data.error);
       }
@@ -48,7 +50,6 @@ const Review = () => {
     if (review === '') {
       showErrorMessage('Try again');
     } else {
-
       showUploadingMessage('Uploading review ...');
       try {
         const sendReview = {
@@ -69,7 +70,7 @@ const Review = () => {
         );
 
         showSuccessMessage('Success! Your review was successfully uploaded.');
-        return navigate('/dashboard')
+        return navigate('/dashboard');
       } catch (err) {
         showErrorMessage(err.response.data.error);
       }
@@ -83,27 +84,34 @@ const Review = () => {
         <h1 className='text-3xl font-medium'>Review Track Attempt</h1>
 
         <div className='p-8 text-xl mt-10 border shadow-xl rounded-lg md:w-[50%]'>
-          <h1><span className='font-semibold'>Song: </span><span className=''>{title}</span> by {artist}</h1>
-          <h1><span className='font-semibold'>Student: </span> {student}</h1>
+          <h1>
+            <span className='font-semibold'>Song: </span>
+            <span className=''>{title}</span> by {artist}
+          </h1>
+          <h1>
+            <span className='font-semibold'>Student: </span> {student}
+          </h1>
 
           <div className='my-10'>
             <h1 className='my-4 text-gray-600 font-medium'>Play Track Attempt </h1>
-            <audio controls src={recording}></audio>
+            {isAudio ? (
+              <audio controls src={recording}></audio>
+            ) : (
+              <video controls src={recording}></video>
+            )}
           </div>
 
           <div className='flex flex-col items-start gap-4'>
-          <TextField
-            label='Enter your review'
-            fullWidth
-            onChange={(e) => setReview(e.target.value)}
-          />
-          <Button onClick={handleClick} variant='contained' endIcon={<SendIcon />}>
-            Send Review
-          </Button>
+            <TextField
+              label='Enter your review'
+              fullWidth
+              onChange={(e) => setReview(e.target.value)}
+            />
+            <Button onClick={handleClick} variant='contained' endIcon={<SendIcon />}>
+              Send Review
+            </Button>
+          </div>
         </div>
-
-        </div>
-            
       </div>
     </>
   );
