@@ -70,22 +70,41 @@ const Profile = () => {
     <StyledContainer>
       <NavBar />
       <StyledCardsContainer>
-        <Box flex={1}>
-          <ProfileCard
-            username={profileInfo['username']}
-            profilePic={profileInfo['profile_picture']}
-            email={profileInfo['email']}
-            instrument={profileInfo['instrument']}
-            level={profileInfo['level']}
-            role={profileInfo['role']}
-          />
-        </Box>
-        <Box flex={1}>
-          <AchievementCard profileInfo={profileInfo} />
-        </Box>
-        <Box flex={1}>
-          <TutorsCard profileInfo={profileInfo} />
-        </Box>
+        {profileInfo['role'] === 'student' ? (
+          <>
+            <Box flex={1}>
+              <ProfileCard
+                username={profileInfo['username']}
+                profilePic={profileInfo['profile_picture']}
+                email={profileInfo['email']}
+                instrument={profileInfo['instrument']}
+                level={profileInfo['level']}
+                role={profileInfo['role']}
+              />
+            </Box>
+            <Box flex={1}>
+              <AchievementCard profileInfo={profileInfo} />
+            </Box>
+            <Box flex={1}>
+              <TutorsCard profileInfo={profileInfo} />
+            </Box>
+          </>
+        ) : (
+          <>
+            <Box flex={1} />
+            <Box flex={1}>
+              <ProfileCard
+                username={profileInfo['username']}
+                profilePic={profileInfo['profile_picture']}
+                email={profileInfo['email']}
+                instrument={profileInfo['instrument']}
+                level={profileInfo['level']}
+                role={profileInfo['role']}
+              />
+            </Box>
+            <Box flex={1} />
+          </>
+        )}
       </StyledCardsContainer>
     </StyledContainer>
   );

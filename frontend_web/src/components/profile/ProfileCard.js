@@ -207,7 +207,7 @@ const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
 
   return (
     <StyledCard variant='outlined'>
-      {/* If waiting on profile pic confirmation show the picture */}
+      {/* If waiting on profile pic confirmation, show the picture */}
       {profileImage ? (
         isConfirming ? (
           <Box
@@ -215,8 +215,7 @@ const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
             src={uploadedImage ? uploadedImage : defaultImg}
             sx={{
               width: '70%',
-              objectFit: 'cover',
-
+              borderRadius: '30px',
               '@media (max-width: 1000px)': {
                 width: '40%',
               },
@@ -228,8 +227,7 @@ const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
             src={profileImage ? profileImage : defaultImg}
             sx={{
               width: '70%',
-              objectFit: 'cover',
-
+              borderRadius: '30px',
               '@media (max-width: 1000px)': {
                 width: '40%',
               },
@@ -271,7 +269,7 @@ const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
             tabIndex={-1}
             startIcon={<CloudUploadIcon />}
           >
-            Upload files
+            Upload Profile Picture
             <VisuallyHiddenInput type='file' onChange={handleChange} multiple />
           </StyledButton>
         )}
