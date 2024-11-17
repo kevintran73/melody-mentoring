@@ -153,9 +153,6 @@ const TutorDialog = () => {
         tutorId: selectedTutor['tutorId'],
       };
 
-      console.log(selectedTutor);
-      console.log(requestTutorInfo);
-
       const response = await axios.post(
         `http://localhost:5001/tutor/request/${userId}/${selectedTutor['tutorId']}`,
         { ...requestTutorInfo },

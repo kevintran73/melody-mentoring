@@ -89,7 +89,6 @@ function checkRank(userInfo, easyDone, mediumDone, hardDone) {
       break;
     }
   }
-  console.log(rankInfo);
 
   return rankInfo;
 }
@@ -132,7 +131,6 @@ const RankIcons = ({ rankInfo }) => {
 };
 
 const AchievementGrid = ({ userInfo }) => {
-  console.log(userInfo);
   const easyDone = userInfo['easy_completed'].length
     ? userInfo['easy_completed'].length
     : 0;
