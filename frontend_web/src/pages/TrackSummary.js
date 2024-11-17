@@ -124,7 +124,8 @@ const TrackSummary = () => {
           }
         );
         fetchSongDetails(response.data);
-        fetchReviewDetails(response.data.reviews);
+        // console.log(response.data.reviews);
+        // fetchReviewDetails(response.data.reviews);
         setReviews(response.data.reviews);
       } catch (error) {
         console.error('Error fetching track details:', error);
@@ -162,32 +163,33 @@ const TrackSummary = () => {
     };
 
     // Fetch the review data of the track attempt
-    const fetchReviewDetails = async (reviewData) => {
-      const allReviewDetails = [];
+    // const fetchReviewDetails = async (reviewData) => {
+    //   const allReviewDetails = [];
+    //   console.log(reviewData);
 
-      for (const review of reviewData) {
-        try {
-          const response = await axios.get(
-            `http://localhost:5001/profile/${review.tutor}`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
-          );
+    //   for (const review of reviewData) {
+    //     try {
+    //       const response = await axios.get(
+    //         `http://localhost:5001/review/${review}`,
+    //         {
+    //           headers: {
+    //             Authorization: `Bearer ${accessToken}`,
+    //           },
+    //         }
+    //       );
 
-          const newReviewDetail = {
-            ...review,
-            tutorName: response.data.username,
-          };
-
-          allReviewDetails.push(newReviewDetail);
-        } catch (error) {
-          console.error('Error fetching review details:', error);
-        }
-      }
-      setReviews(allReviewDetails);
-    };
+    //       const newReviewDetail = {
+    //         ...review,
+    //         tutorName: response.data.username,
+    //       };
+    //       console.log(newReviewDetail);
+    //       allReviewDetails.push(newReviewDetail);
+    //     } catch (error) {
+    //       console.error('Error fetching review details:', error);
+    //     }
+    //   }
+    //   setReviews(allReviewDetails);
+    // };
 
     // Fetch recording audio of the track attempt
     const fetchRecording = async () => {
@@ -267,8 +269,8 @@ const TrackSummary = () => {
           <ScrollContainer>
             <Box display='flex' flexDirection='row' gap='10px'>
               {reviews.map((review, i) => (
-                <Box>
-                  <StyledReviewBox sx={{ margin: '10px' }} key={i}>
+                <Box key={i}>
+                  <StyledReviewBox sx={{ margin: '10px' }}>
                     <ReviewCard
                       tutor={review.tutorName}
                       feedback={review.feedback}

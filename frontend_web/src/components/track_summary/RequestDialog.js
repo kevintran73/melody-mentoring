@@ -42,8 +42,6 @@ function SimpleDialog({ onClose, selectedValue, open, tutorRecs }) {
     onClose(value);
   };
 
-  console.log(tutorRecs);
-
   return (
     <Dialog
       onClose={handleClose}
@@ -87,7 +85,6 @@ const RequestDialog = () => {
   const [tutors, setTutors] = useState([]);
   const { accessToken, userId } = React.useContext(TokenContext);
   const navigate = useNavigate();
-  console.log(params.trackAttemptId);
 
   useEffect(() => {
     // Navigate to login if invalid token or user id
