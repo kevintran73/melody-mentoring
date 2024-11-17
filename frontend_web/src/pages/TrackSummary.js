@@ -81,13 +81,13 @@ const TrackSummary = () => {
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
     // Navigate to login if invalid token or user id
     if (accessToken === null || !userId) {
       return navigate('/login');
     }
+
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     // Fetch summary info
     const fetchSummary = async () => {
