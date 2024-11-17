@@ -68,7 +68,7 @@ const TrackSummary = () => {
   const [songDetails, setSongDetails] = useState(null);
   const [reviews, setReviews] = useState(null);
   const [recording, setRecording] = useState('');
-  const { accessToken } = React.useContext(TokenContext);
+  const { accessToken, userId } = React.useContext(TokenContext);
 
   const navigate = useNavigate();
 
@@ -83,6 +83,11 @@ const TrackSummary = () => {
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
+
+    // Navigate to login if invalid token or user id
+    if (accessToken === null || !userId) {
+      return navigate('/login');
+    }
 
     // Fetch summary info
     const fetchSummary = async () => {

@@ -10,6 +10,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
+import Divider from '@mui/material/Divider';
 import PersonIcon from '@mui/icons-material/Person';
 import AddIcon from '@mui/icons-material/Add';
 import Typography from '@mui/material/Typography';
@@ -49,8 +50,17 @@ function SimpleDialog({ onClose, selectedValue, open, tutorRecs }) {
   console.log(tutorRecs);
 
   return (
-    <Dialog onClose={handleClose} open={open} fullWidth={'30vw'}>
+    <Dialog
+      onClose={handleClose}
+      open={open}
+      PaperProps={{
+        sx: {
+          width: '50vw',
+        },
+      }}
+    >
       <DialogTitle>Select a Tutor</DialogTitle>
+      <Divider sx={{ width: '100%' }} />
       <List sx={{ pt: 0 }}>
         {tutorRecs.map((tutor) => (
           <ListItem disableGutters key={tutor['tutorId']}>
@@ -81,9 +91,15 @@ const RequestDialog = () => {
   const [selectedTutor, setSelectedTutor] = useState('');
   const [tutors, setTutors] = useState([]);
   const { accessToken, userId } = React.useContext(TokenContext);
+  const navigate = useNavigate();
   console.log(params.trackAttemptId);
 
   useEffect(() => {
+    // Navigate to login if invalid token or user id
+    if (accessToken === null || !userId) {
+      return navigate('/login');
+    }
+
     const fetchProfile = async () => {
       try {
         const response = await axios.get(
