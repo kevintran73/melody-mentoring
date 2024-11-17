@@ -1,17 +1,14 @@
-import React from 'react';
-
-import { styled } from '@mui/system';
-
 import Box from '@mui/material/Box';
+import { styled } from '@mui/system';
+import React from 'react';
+import TokenContext from '../../context/TokenContext';
 import CatalogueButton from './CatalogueButton';
-import NotificationsButton from './NotificationsButton';
-import ProfileButton from './ProfileButton';
 import CreateButton from './CreateButton';
 import HistoryButton from './HistoryButton';
+import ProfileButton from './ProfileButton';
+import RequestButton from './RequestButton';
 import SettingsButton from './SettingsButton';
 import StudentsButton from './StudentButton';
-import TokenContext from '../../context/TokenContext';
-import RequestButton from './RequestButton';
 
 const StyledHeader = styled('header')(({ isDisabled }) => ({
   display: 'flex',
@@ -56,24 +53,26 @@ const RightContainer = styled('div')({
 });
 
 const NavBar = ({ isDisabled = false, ...props }) => {
-
   const { role } = React.useContext(TokenContext);
 
   return (
     <StyledHeader isDisabled={isDisabled} {...props}>
-      {/* <NotificationsButton /> */}
-      <Box width='100px'/>
+      <Box width='100px' />
 
       <MiddleContainer>
         <CreateButton />
-        {role === 'student' && <>
-          <CatalogueButton />
-          <HistoryButton />
-        </>}
-        {role === 'tutor' && <>
-          <StudentsButton />
-          <RequestButton />
-        </>}
+        {role === 'student' && (
+          <>
+            <CatalogueButton />
+            <HistoryButton />
+          </>
+        )}
+        {role === 'tutor' && (
+          <>
+            <StudentsButton />
+            <RequestButton />
+          </>
+        )}
       </MiddleContainer>
 
       <RightContainer>
