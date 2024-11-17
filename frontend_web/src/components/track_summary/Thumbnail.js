@@ -16,22 +16,24 @@ const Thumbnail = ({ title, thumbnail, composer, difficulty, date }) => {
     <Card
       sx={{
         padding: 1,
+        height: '100%',
         maxHeight: '400px',
         width: '100%',
+        minWidth: '150px',
         flexGrow: 1,
         margin: '10px 0',
         boxShadow: 2,
         borderRadius: '16px',
+        textAlign: 'center',
       }}
     >
       <Box>
         <Box
           sx={{
-            marginRight: '10px',
-            display:'flex',
+            display: 'flex',
             flexDirection: 'column',
-            justifyContent:'center',
-            alignItems:'center',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
           <Img alt='playlist-card' src={thumbnail ? thumbnail : defaultImg} />
@@ -39,19 +41,13 @@ const Thumbnail = ({ title, thumbnail, composer, difficulty, date }) => {
           <Typography fontSize='1.6rem' component='div'>
             {title}
           </Typography>
-          <Typography fontSize='1.1rem'>
-            {composer}
-          </Typography>
-          <Typography fontSize='1.1rem'>
-            Difficulty: {difficulty}
-          </Typography>
-          <Typography fontSize='1.1rem'>
-            {date}
-          </Typography>
+          <Typography fontSize='1.1rem'>{composer}</Typography>
+          <Typography fontSize='1.1rem'>Difficulty: {difficulty}</Typography>
+          <Typography fontSize='1.1rem'>{date}</Typography>
         </Box>
       </Box>
     </Card>
   );
-}
+};
 
 export default Thumbnail;
