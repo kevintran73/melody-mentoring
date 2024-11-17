@@ -20,7 +20,15 @@ const StyledCard = styled(Card)(() => ({
   cursor: 'pointer',
 }));
 
-const SongCard = ({ title, thumbnail, composer, difficulty, privacy, genreTags, songId }) => {
+const SongCard = ({
+  title,
+  thumbnail,
+  composer,
+  difficulty,
+  privacy,
+  genreTags,
+  songId,
+}) => {
   const navigate = useNavigate();
 
   const navExperiment = () => {
@@ -28,7 +36,7 @@ const SongCard = ({ title, thumbnail, composer, difficulty, privacy, genreTags, 
   };
 
   return (
-    <StyledCard variant='outlined' onClick={navExperiment}>
+    <StyledCard variant='outlined' onClick={navExperiment} data-cy={title}>
       <CardMedia
         component='img'
         height='150'

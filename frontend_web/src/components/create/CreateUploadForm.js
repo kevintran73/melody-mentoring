@@ -133,7 +133,7 @@ const CreateUploadForm = ({
           <InputFileUpload
             innerText='Upload a thumbnail'
             id='upload-thumbnail-button'
-            data-cy='upload-thumbnail-button'
+            dataCy='upload-thumbnail-button'
             width='240px'
             fontSize='1.1rem'
             accept='image/*'
@@ -145,7 +145,7 @@ const CreateUploadForm = ({
           <InputFileUpload
             innerText='Upload a thumbnail'
             id='upload-thumbnail-button'
-            data-cy='upload-thumbnail-button'
+            dataCy='upload-thumbnail-button'
             width='65%'
             fontSize='1.1rem'
             accept='image/*'
@@ -230,7 +230,7 @@ const CreateUploadForm = ({
         <InputFileUpload
           innerText='Upload sheet music (.mxl or .musicxml)'
           id='upload-sheet-button'
-          data-cy='upload-sheet-button'
+          dataCy='upload-sheet-button'
           fontSize='1rem'
           accept='.mxl, .musicxml'
           backgroundColor='#1b998b'

@@ -3,6 +3,7 @@ import 'cypress-file-upload';
 context('UserFlow Test', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/');
+    cy.fixture('Ode_to_Joy_Thumbnail.png').as('thumbnail');
   });
 
   // it('createUser', () => {
@@ -31,39 +32,62 @@ context('UserFlow Test', () => {
   //   });
   // });
 
-  it('createExperiment', () => {
+  // it('createExperiment', () => {
+  //   cy.contains('Login').click();
+  //   cy.get('#login-email').type('cibalo7059@gianes.com');
+  //   cy.get('#login-password').type('TestTestTest22!!');
+  //   cy.get('#login-go').click();
+
+  //   cy.get('[data-cy="create_button"]').click();
+
+  //   cy.get('[data-cy="upload-thumbnail-button"]').attachFile(
+  //     'Ode_to_Joy_Thumbnail.png'
+  //   );
+
+  //   cy.fixture('Ode_to_Joy_Easy.mxl', 'binary').then((fileContent) => {
+  //     const fileName = 'Ode_to_Joy_Easy.mxl';
+  //     const mimeType = 'application/vnd.recordare.musicxml'; // Use the correct MIME type for .mxl files
+
+  //     cy.get('[data-cy="upload-sheet-button"]').attachFile({
+  //       fileContent,
+  //       fileName,
+  //       mimeType,
+  //       encoding: 'binary',
+  //     });
+  //   });
+
+  //   cy.get('#song-name-field').type(`S-${new Date().toISOString()}`);
+  //   cy.get('#artist-field').type('Ludwig van Beethoven');
+
+  //   cy.get('#select-instrument').click();
+  //   cy.get('[data-cy="piano"]').click();
+
+  //   cy.get('#difficulty-field').type('2');
+
+  //   cy.get('#select-genre').click();
+  //   cy.get('[data-cy="classical"]').click();
+
+  //   cy.get('#submit-new-experiment-button').click();
+  // });
+
+  it('uploadTrackAttempt', () => {
     cy.contains('Login').click();
     cy.get('#login-email').type('cibalo7059@gianes.com');
     cy.get('#login-password').type('TestTestTest22!!');
     cy.get('#login-go').click();
 
-    cy.get('[data-cy="create_button"]').click();
+    cy.wait(2500);
 
-    // cy.get('#song-name-field').type('Ode to Joy (Easy)');
-    // cy.get('#artist-field').type('Ludwig van Beethoven');
+    cy.get(`[data-cy="Ode to Joy (Test)"]`).first().click();
 
-    // cy.get('#select-instrument').click();
-    // cy.get('[data-cy="piano"]').click();
+    cy.contains('Upload a recording').click();
 
-    // cy.get('#difficulty-field').type('2');
+    cy.get('[data-cy="upload-audio-recording-button"]').attachFile(
+      'Ode_to_Joy_Easy.mp3'
+    );
 
-    // cy.get('#select-genre').click();
-    // cy.get('[data-cy="classical"]').click();
+    cy.get('#upload-recording-go').click({ force: true });
 
-    // cy.get('#upload-thumbnail-button')
-    //   .invoke('show')
-    //   .attachFile('Ode_to_Joy_Thumbnail.png');
-
-    cy.get('[data-cy="upload-thumbnail-button"]').click();
-
-    // cy.get('[data-cy="upload-thumbnail-button"]')
-    //   .invoke('show')
-    //   .attachFile('Ode_to_Joy_Thumbnail.png');
-    // cy.get('input[type="file"]').attachFile('Ode_to_Joy_Thumbnail.png');
-
-    // cy.get('#upload-sheet-button').click();
-    // cy.get('input[type="file"]').attachFile('Ode_to_Joy_Easy.mxl');
-
-    // cy.get('#submit-new-experiment-button').click();
+    // cy.contains('Go to experiment').click();
   });
 });
