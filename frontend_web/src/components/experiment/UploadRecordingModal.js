@@ -89,7 +89,7 @@ const UploadRecordingModal = ({ navigate, userId, songId, accessToken }) => {
         }
       );
 
-      if (recording.type === 'audio/wav') {
+      if (allowedAudio.includes(recording.type)) {
         await uploadFileToS3(response.data.audioUploader, recording);
       } else {
         await uploadFileToS3(response.data.videoUploader, recording);
