@@ -40,7 +40,7 @@ const CreateButton = () => {
   };
 
   return (
-    <IconContainer onClick={navCreate}>
+    <IconContainer data-cy='create_button' onClick={navCreate}>
       <StyledCamera colour={colour} />
       <IconCaption colour={colour}>Create</IconCaption>
     </IconContainer>

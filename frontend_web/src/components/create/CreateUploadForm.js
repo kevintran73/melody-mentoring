@@ -73,7 +73,9 @@ const UploadForm = styled('form')({
   },
 });
 
-const ExperimentThumbnail = ({ ...props }) => <ResponsiveExperimentThumbnail {...props} />;
+const ExperimentThumbnail = ({ ...props }) => (
+  <ResponsiveExperimentThumbnail {...props} />
+);
 
 const StyledExperimentThumbnail = styled('div')`
   height: 300px;
@@ -81,7 +83,9 @@ const StyledExperimentThumbnail = styled('div')`
   object-fit: cover;
   background-color: #f2f2f2;
   background-image: ${(props) =>
-    props.thumbnail === defaultImage ? `url(${defaultImage})` : `url(${props.thumbnail})`};
+    props.thumbnail === defaultImage
+      ? `url(${defaultImage})`
+      : `url(${props.thumbnail})`};
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -119,12 +123,17 @@ const CreateUploadForm = ({
     <UploadForm onSubmit={handleSubmit} noValidate>
       <ImgContainer>
         <ExperimentThumbnail
-          thumbnail={thumbnail === defaultImage ? defaultImage : URL.createObjectURL(thumbnail)}
+          thumbnail={
+            thumbnail === defaultImage
+              ? defaultImage
+              : URL.createObjectURL(thumbnail)
+          }
         />
         {isSmallScreen ? (
           <InputFileUpload
             innerText='Upload a thumbnail'
             id='upload-thumbnail-button'
+            data-cy='upload-thumbnail-button'
             width='240px'
             fontSize='1.1rem'
             accept='image/*'
@@ -136,6 +145,7 @@ const CreateUploadForm = ({
           <InputFileUpload
             innerText='Upload a thumbnail'
             id='upload-thumbnail-button'
+            data-cy='upload-thumbnail-button'
             width='65%'
             fontSize='1.1rem'
             accept='image/*'
@@ -168,10 +178,18 @@ const CreateUploadForm = ({
             value={instrument}
             onChange={(i) => setInstrument(i.target.value)}
           >
-            <MenuItem value='piano'>Piano</MenuItem>
-            <MenuItem value='guitar'>Guitar</MenuItem>
-            <MenuItem value='violin'>Violin</MenuItem>
-            <MenuItem value='cello'>Cello</MenuItem>
+            <MenuItem value='piano' data-cy='piano'>
+              Piano
+            </MenuItem>
+            <MenuItem value='guitar' data-cy='guitar'>
+              Guitar
+            </MenuItem>
+            <MenuItem value='violin' data-cy='violin'>
+              Violin
+            </MenuItem>
+            <MenuItem value='cello' data-cy='cello'>
+              Cello
+            </MenuItem>
           </Select>
         </FormControl>
         <TextField
@@ -189,17 +207,30 @@ const CreateUploadForm = ({
             value={genreTag}
             onChange={(i) => setGenreTag(i.target.value)}
           >
-            <MenuItem value='rock'>Rock</MenuItem>
-            <MenuItem value='pop'>Pop</MenuItem>
-            <MenuItem value='jazz'>Jazz</MenuItem>
-            <MenuItem value='classical'>Classical</MenuItem>
-            <MenuItem value='score'>Score</MenuItem>
-            <MenuItem value='other'>Other</MenuItem>
+            <MenuItem value='rock' data-cy='rock'>
+              Rock
+            </MenuItem>
+            <MenuItem value='pop' data-cy='pop'>
+              Pop
+            </MenuItem>
+            <MenuItem value='jazz' data-cy='jazz'>
+              Jazz
+            </MenuItem>
+            <MenuItem value='classical' data-cy='classical'>
+              Classical
+            </MenuItem>
+            <MenuItem value='score' data-cy='score'>
+              Score
+            </MenuItem>
+            <MenuItem value='other' data-cy='other'>
+              Other
+            </MenuItem>
           </Select>
         </FormControl>
         <InputFileUpload
           innerText='Upload sheet music (.mxl or .musicxml)'
           id='upload-sheet-button'
+          data-cy='upload-sheet-button'
           fontSize='1rem'
           accept='.mxl, .musicxml'
           backgroundColor='#1b998b'
