@@ -65,8 +65,8 @@ const NavBar = ({ isDisabled = false, ...props }) => {
       <Box width='100px'/>
 
       <MiddleContainer>
-        <CreateButton />
         {role === 'student' && <>
+          <CreateButton />
           <CatalogueButton />
           <HistoryButton />
         </>}
