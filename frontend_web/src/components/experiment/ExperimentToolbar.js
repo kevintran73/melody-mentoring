@@ -24,6 +24,11 @@ const StyledAudio = styled('audio')({
   position: 'relative',
 });
 
+const StyledVideo = styled('video')({
+  width: '350px',
+  position: 'relative',
+});
+
 const ToolBarBlock = styled('div')({
   display: 'flex',
   flexDirection: 'column',
@@ -137,6 +142,7 @@ const ExperimentToolbar = ({
   retryAttempt,
   onExit,
   finishAttempt,
+  hasWebcam,
 }) => {
   const toggleMusicMute = () => {
     if (osmdRef.current) {
@@ -152,8 +158,11 @@ const ExperimentToolbar = ({
 
   return (
     <ToolBarBlock>
-      {experimentStarted && mediaBlobUrl && countdown === -1 && (
+      {!hasWebcam && experimentStarted && mediaBlobUrl && countdown === -1 && (
         <StyledAudio src={mediaBlobUrl} controls />
+      )}
+      {hasWebcam && experimentStarted && mediaBlobUrl && countdown === -1 && (
+        <StyledVideo src={mediaBlobUrl} controls />
       )}
       <ToolBar>
         <ToolBarLeftPill>

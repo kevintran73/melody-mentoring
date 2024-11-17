@@ -97,7 +97,7 @@ const Catalogue = () => {
     }
 
     const fetchSongData = async () => {
-      const response = await axios.get(`http://localhost:5001/catalague/user-catalogue/${userId}`, {
+      const response = await axios.get(`http://localhost:5001/catalogue/user-catalogue/${userId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
