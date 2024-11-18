@@ -12,7 +12,6 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Create from './pages/Create';
 import History from './pages/History';
-import Playlist from './pages/Playlist';
 import Verification from './pages/Verification';
 import Experiment from './pages/Experiment';
 import Review from './pages/Review';
@@ -82,7 +81,15 @@ const App = () => {
 
   return (
     <TokenContext.Provider
-      value={{ accessToken, idToken, refreshToken, userId, role, login, logout }}
+      value={{
+        accessToken,
+        idToken,
+        refreshToken,
+        userId,
+        role,
+        login,
+        logout,
+      }}
     >
       <BrowserRouter>
         <Routes>
@@ -97,8 +104,10 @@ const App = () => {
           <Route path='/history' element={<History />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/settings' element={<Settings />} />
-          <Route path='/playlist/:playlistType' element={<Playlist />} />
-          <Route path='/track-summary/:trackAttemptId' element={<TrackSummary />} />
+          <Route
+            path='/track-summary/:trackAttemptId'
+            element={<TrackSummary />}
+          />
           <Route path='/pre-experiment/:songId' element={<PreExperiment />} />
           <Route path='/experiment/:songId' element={<Experiment />} />
           <Route path='/review/:trackAttemptId' element={<Review />} />
