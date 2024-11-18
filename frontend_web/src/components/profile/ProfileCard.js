@@ -277,7 +277,12 @@ const SongCard = ({ username, profilePic, email, instrument, level, role }) => {
             startIcon={<CloudUploadIcon />}
           >
             Upload Profile Picture
-            <VisuallyHiddenInput type='file' onChange={handleChange} multiple />
+            <VisuallyHiddenInput
+              data-cy='upload-profile-picture-button'
+              type='file'
+              onChange={handleChange}
+              multiple
+            />
           </StyledButton>
         )}
       </Box>

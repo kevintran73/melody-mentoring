@@ -42,32 +42,27 @@ const StyledSearchBar = styled(TextField)({
 });
 
 const TopContainer = styled(Card)({
-  height: '24vw',
-  width: '60%',
+  height: 'auto',
+  width: '900px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   flexDirection: 'column',
-  padding: '20px',
+  padding: '40px 10px',
   position: 'relative',
-  left: '20%',
   margin: '20px 0px',
 });
 
 const PlaylistButton = styled(Button)({
-  // width: '100px',
   backgroundColor: '#020E37',
   color: 'white',
   fontSize: '1.6rem',
   margin: '10px 0px 5px 10px',
   textTransform: 'none',
+  cursor: 'default',
 });
 
-const PlaylistTitle = ({ title, navPlaylist }) => (
-  <PlaylistButton variant='secondary' onClick={navPlaylist}>
-    {title}
-  </PlaylistButton>
-);
+const PlaylistTitle = ({ title }) => <PlaylistButton variant='secondary'>{title}</PlaylistButton>;
 
 const StyledSearchForm = styled('div')({
   margin: '10px',
@@ -112,10 +107,6 @@ const Catalogue = () => {
 
     fetchSongData();
   }, [accessToken, userId, navigate, role]);
-
-  const navPlaylist = (playlistType) => {
-    return navigate(`/playlist/${playlistType}`);
-  };
 
   // On query change
   const onQueryChange = (q) => {
@@ -180,13 +171,26 @@ const Catalogue = () => {
       {searchResults.length === 0 && !isSearching ? (
         <>
           {/* Welcome container */}
-          <Box margin='60px 20px'>
+          <Box margin='60px 20px' display='flex' alignItems='center' justifyContent='center'>
             <TopContainer>
-              <Typography variant='h3'>Welcome back!</Typography>
+              <Typography variant='h3' textAlign='center'>
+                Welcome back!
+              </Typography>
               {recommendations.length > 0 && (
                 <>
-                  <Typography variant='h4'>Songs that might interest you:</Typography>
-                  <Box display='flex' gap='2vw'>
+                  <Typography variant='h4' textAlign='center'>
+                    Songs that might interest you:
+                  </Typography>
+                  <Box
+                    display='grid'
+                    gap='2vw'
+                    width='100%'
+                    alignItems='center'
+                    justifyContent='center'
+                    sx={{
+                      gridTemplateColumns: 'repeat(auto-fill, 198px)',
+                    }}
+                  >
                     {recommendations.map((song, i) => (
                       <RecommendationCard
                         key={`recommendation-card-${i}`}
@@ -205,10 +209,7 @@ const Catalogue = () => {
           {/* Playlist Favourited */}
           {favouritedSongs.length !== 0 && (
             <Box margin='10px'>
-              <PlaylistTitle
-                title='Your Favourited Songs >'
-                navPlaylist={() => navPlaylist('favourites')}
-              />
+              <PlaylistTitle title='Your Favourited Songs >' />
               <ScrollContainer>
                 <Box display='flex' flexDirection='row'>
                   {favouritedSongs.map((song, i) => (
@@ -233,10 +234,7 @@ const Catalogue = () => {
           {songs.filter((song) => song['private'] && song['uploaderId'] === userId).length !==
             0 && (
             <Box margin='10px'>
-              <PlaylistTitle
-                title='Your Uploaded Songs >'
-                navPlaylist={() => navPlaylist('uploaded')}
-              />
+              <PlaylistTitle title='Your Uploaded Songs >' />
               <ScrollContainer>
                 <Box display='flex' flexDirection='row'>
                   {songs
@@ -265,7 +263,7 @@ const Catalogue = () => {
               (!song['private'] || song['uploaderId'] === userId) && song.genreTags.includes('rock')
           ).length > 0 && (
             <Box margin='10px'>
-              <PlaylistTitle title='Rock Playlist >' navPlaylist={() => navPlaylist('rock')} />
+              <PlaylistTitle title='Rock Playlist >' />
               <ScrollContainer>
                 <Box display='flex' flexDirection='row'>
                   {songs
@@ -298,7 +296,7 @@ const Catalogue = () => {
               (!song['private'] || song['uploaderId'] === userId) && song.genreTags.includes('pop')
           ).length > 0 && (
             <Box margin='10px'>
-              <PlaylistTitle title='Pop Playlist >' navPlaylist={() => navPlaylist('pop')} />
+              <PlaylistTitle title='Pop Playlist >' />
               <ScrollContainer>
                 <Box display='flex' flexDirection='row'>
                   {songs
@@ -331,7 +329,7 @@ const Catalogue = () => {
               (!song['private'] || song['uploaderId'] === userId) && song.genreTags.includes('jazz')
           ).length > 0 && (
             <Box margin='10px'>
-              <PlaylistTitle title='Jazz Playlist >' navPlaylist={() => navPlaylist('jazz')} />
+              <PlaylistTitle title='Jazz Playlist >' />
               <ScrollContainer>
                 <Box display='flex' flexDirection='row'>
                   {songs
@@ -365,10 +363,7 @@ const Catalogue = () => {
               song.genreTags.includes('classical')
           ).length > 0 && (
             <Box margin='10px'>
-              <PlaylistTitle
-                title='Classical Playlist >'
-                navPlaylist={() => navPlaylist('classical')}
-              />
+              <PlaylistTitle title='Classical Playlist >' />
               <ScrollContainer>
                 <Box display='flex' flexDirection='row'>
                   {songs
@@ -402,7 +397,7 @@ const Catalogue = () => {
               song.genreTags.includes('score')
           ).length > 0 && (
             <Box margin='10px'>
-              <PlaylistTitle title='Score Playlist >' navPlaylist={() => navPlaylist('score')} />
+              <PlaylistTitle title='Score Playlist >' />
               <ScrollContainer>
                 <Box display='flex' flexDirection='row'>
                   {songs
@@ -436,7 +431,7 @@ const Catalogue = () => {
               song.genreTags.includes('other')
           ).length > 0 && (
             <Box margin='10px'>
-              <PlaylistTitle title='Other Playlist>' navPlaylist={() => navPlaylist('other')} />
+              <PlaylistTitle title='Other Playlist>' />
               <ScrollContainer>
                 <Box display='flex' flexDirection='row'>
                   {songs
@@ -465,10 +460,7 @@ const Catalogue = () => {
 
           {/* Playlist Public */}
           <Box margin='10px'>
-            <PlaylistTitle
-              title='Playlist (Public) Test >'
-              navPlaylist={() => navPlaylist('public')}
-            />
+            <PlaylistTitle title='Playlist (Public) Test >' />
             <ScrollContainer>
               <Box display='flex' flexDirection='row'>
                 {songs

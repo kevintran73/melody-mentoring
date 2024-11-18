@@ -35,7 +35,7 @@ const StudentsButton = () => {
     return navigate('/dashboard');
   };
   return (
-    <IconContainer onClick={navCatalogue}>
+    <IconContainer onClick={navCatalogue} data-cy='review-button'>
       <StyledMusic colour={colour} />
       <IconCaption colour={colour}>Review</IconCaption>
     </IconContainer>

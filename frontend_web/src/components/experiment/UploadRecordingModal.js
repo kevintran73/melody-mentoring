@@ -69,9 +69,12 @@ const UploadRecordingModal = ({ navigate, userId, songId, accessToken }) => {
     // Validate .wav file type
     if (
       !recording ||
-      (!allowedAudio.includes(recording.type) && !allowedVideo.includes(recording.type))
+      (!allowedAudio.includes(recording.type) &&
+        !allowedVideo.includes(recording.type))
     ) {
-      showErrorMessage('Song recording file type must be a .wav, .mp3, .webm, .mp4 or .mkv');
+      showErrorMessage(
+        'Song recording file type must be a .wav, .mp3, .webm, .mp4 or .mkv'
+      );
       return;
     }
 
@@ -124,6 +127,7 @@ const UploadRecordingModal = ({ navigate, userId, songId, accessToken }) => {
             <InputFileUpload
               innerText='Add a song recording (audio [.mp3, .wav, .webm] or video [.mp4, .mkv])'
               id='upload-audio-recording-button'
+              dataCy='upload-audio-recording-button'
               width='100%'
               fontSize='0.9rem'
               accept='audio/wav, audio/mp3, audio/webm, video/mp4, video/x-matroska'

@@ -2,7 +2,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import NavBar from '../components/nav_bar/NavBar';
 import { Button, TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import { showErrorMessage, showSuccessMessage, showUploadingMessage } from '../helpers';
+import {
+  showErrorMessage,
+  showSuccessMessage,
+  showUploadingMessage,
+} from '../helpers';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import TokenContext from '../context/TokenContext';
@@ -28,14 +32,19 @@ const Review = () => {
 
     const fetchRecording = async () => {
       try {
-        const response = await axios.get(`http://localhost:5001/files/user/${trackAttemptId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const response = await axios.get(
+          `http://localhost:5001/files/user/${trackAttemptId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
 
         setRecording(
-          response.data.audioUrl === undefined ? response.data.videoUrl : response.data.audioUrl
+          response.data.audioUrl === undefined
+            ? response.data.videoUrl
+            : response.data.audioUrl
         );
         setIsAudio(response.data.audioUrl !== undefined);
       } catch (err) {
@@ -93,7 +102,9 @@ const Review = () => {
           </h1>
 
           <div className='my-10'>
-            <h1 className='my-4 text-gray-600 font-medium'>Play Track Attempt </h1>
+            <h1 className='my-4 text-gray-600 font-medium'>
+              Play Track Attempt{' '}
+            </h1>
             {isAudio ? (
               <audio controls src={recording}></audio>
             ) : (
@@ -103,11 +114,16 @@ const Review = () => {
 
           <div className='flex flex-col items-start gap-4'>
             <TextField
+              data-cy='review-field'
               label='Enter your review'
               fullWidth
               onChange={(e) => setReview(e.target.value)}
             />
-            <Button onClick={handleClick} variant='contained' endIcon={<SendIcon />}>
+            <Button
+              onClick={handleClick}
+              variant='contained'
+              endIcon={<SendIcon />}
+            >
               Send Review
             </Button>
           </div>

@@ -113,7 +113,12 @@ const Login = () => {
       <LeftContainer>
         <StyledHeading1>Melody Mentoring</StyledHeading1>
         <StyledHeading2>Discover the Musician in You</StyledHeading2>
-        <StyledButton variant='contained' type='button' id='nav-login-main' onClick={navLogin}>
+        <StyledButton
+          variant='contained'
+          type='button'
+          id='nav-login-main'
+          onClick={navLogin}
+        >
           Login
         </StyledButton>
         <StyledDivider />
