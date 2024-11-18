@@ -12,6 +12,7 @@ class OpenSheetMusicDisplay extends Component {
     this.playing = false;
     this.synth = new Tone.PolySynth(Tone.Synth).toDestination();
     this.metronome = new Tone.MembraneSynth().toDestination();
+    this.muted = false;
   }
 
   setupOsmd() {
@@ -130,7 +131,7 @@ class OpenSheetMusicDisplay extends Component {
   // Begins playing the song with cursor
   async beginSong() {
     // Set up volume
-    if (localStorage.getItem('volume') !== null) {
+    if (localStorage.getItem('volume') !== null && !this.muted) {
       const volume = parseInt(localStorage.getItem('volume'));
       this.synth.volume.value = (6 * volume) / 10 - 60;
       this.metronome.volume.value = (6 * volume) / 10 - 60;
@@ -185,6 +186,7 @@ class OpenSheetMusicDisplay extends Component {
 
   turnOnMuteMusic = () => {
     this.synth.volume.value = -Infinity;
+    this.muted = true;
 
     if (this.props.onMuteToggle) {
       this.props.onMuteToggle(true);
@@ -192,7 +194,14 @@ class OpenSheetMusicDisplay extends Component {
   };
 
   turnOffMuteMusic = () => {
-    this.synth.volume.value = 0;
+    this.muted = false;
+    // Set up volume
+    if (localStorage.getItem('volume') !== null) {
+      const volume = parseInt(localStorage.getItem('volume'));
+      this.synth.volume.value = (6 * volume) / 10 - 60;
+    } else {
+      this.synth.volume.value = 0;
+    }
 
     if (this.props.onMuteToggle) {
       this.props.onMuteToggle(false);
@@ -217,7 +226,13 @@ class OpenSheetMusicDisplay extends Component {
 
   toggleMetronome = () => {
     if (this.isMetronomeMuted()) {
-      this.metronome.volume.value = 0;
+      // Set up volume
+      if (localStorage.getItem('volume') !== null) {
+        const volume = parseInt(localStorage.getItem('volume'));
+        this.metronome.volume.value = (6 * volume) / 10 - 60;
+      } else {
+        this.metronome.volume.value = 0;
+      }
     } else {
       this.metronome.volume.value = -Infinity;
     }

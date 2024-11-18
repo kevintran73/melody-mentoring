@@ -50,7 +50,11 @@ const SliderBlock = styled('div')({
 });
 
 const ContinuousSlider = () => {
-  const [value, setValue] = React.useState(100);
+  let volume = 100;
+  if (localStorage.getItem('volume') !== null) {
+    volume = parseInt(localStorage.getItem('volume'));
+  }
+  const [value, setValue] = React.useState(volume);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
