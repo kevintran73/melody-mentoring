@@ -50,7 +50,7 @@ const RegisterForm = styled('form')({
   },
 
   '@media (max-height: 650px)': {
-    gap: '25px',
+    gap: '20px',
   },
 });
 

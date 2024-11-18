@@ -42,15 +42,14 @@ const StyledSearchBar = styled(TextField)({
 });
 
 const TopContainer = styled(Card)({
-  height: '24vw',
-  width: '60%',
+  height: 'auto',
+  width: '900px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   flexDirection: 'column',
-  padding: '20px',
+  padding: '40px 10px',
   position: 'relative',
-  left: '20%',
   margin: '20px 0px',
 });
 
@@ -63,9 +62,7 @@ const PlaylistButton = styled(Button)({
   cursor: 'default',
 });
 
-const PlaylistTitle = ({ title }) => (
-  <PlaylistButton variant='secondary'>{title}</PlaylistButton>
-);
+const PlaylistTitle = ({ title }) => <PlaylistButton variant='secondary'>{title}</PlaylistButton>;
 
 const StyledSearchForm = styled('div')({
   margin: '10px',
@@ -95,21 +92,16 @@ const Catalogue = () => {
     }
 
     const fetchSongData = async () => {
-      const response = await axios.get(
-        `http://localhost:5001/catalogue/user-catalogue/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+      const response = await axios.get(`http://localhost:5001/catalogue/user-catalogue/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       setSongs(response.data);
 
       // Get random songs to recommend
-      const shuffledSongs = response.data
-        .slice()
-        .sort(() => 0.5 - Math.random());
+      const shuffledSongs = response.data.slice().sort(() => 0.5 - Math.random());
       setRecommendations(shuffledSongs.slice(0, 3));
     };
 
@@ -139,16 +131,13 @@ const Catalogue = () => {
       params.last_key = lastKey;
     }
     try {
-      const response = await axios.get(
-        `http://localhost:5001/catalogue/query`,
-        {
-          params,
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await axios.get(`http://localhost:5001/catalogue/query`, {
+        params,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
       setSearchResults((prev) => [...prev, ...response.data.songs]);
       setLastKey(response.data.last_key);
@@ -173,11 +162,7 @@ const Catalogue = () => {
             value={query}
             onChange={onQueryChange}
           />
-          <StyledButton
-            onClick={searchSongs}
-            variant='contained'
-            endIcon={<FilterAltIcon />}
-          >
+          <StyledButton onClick={searchSongs} variant='contained' endIcon={<FilterAltIcon />}>
             Filter
           </StyledButton>
         </StyledSearchForm>
@@ -186,15 +171,26 @@ const Catalogue = () => {
       {searchResults.length === 0 && !isSearching ? (
         <>
           {/* Welcome container */}
-          <Box margin='60px 20px'>
+          <Box margin='60px 20px' display='flex' alignItems='center' justifyContent='center'>
             <TopContainer>
-              <Typography variant='h3'>Welcome back!</Typography>
+              <Typography variant='h3' textAlign='center'>
+                Welcome back!
+              </Typography>
               {recommendations.length > 0 && (
                 <>
-                  <Typography variant='h4'>
+                  <Typography variant='h4' textAlign='center'>
                     Songs that might interest you:
                   </Typography>
-                  <Box display='flex' gap='2vw'>
+                  <Box
+                    display='grid'
+                    gap='2vw'
+                    width='100%'
+                    alignItems='center'
+                    justifyContent='center'
+                    sx={{
+                      gridTemplateColumns: 'repeat(auto-fill, 198px)',
+                    }}
+                  >
                     {recommendations.map((song, i) => (
                       <RecommendationCard
                         key={`recommendation-card-${i}`}
@@ -235,17 +231,14 @@ const Catalogue = () => {
           )}
 
           {/* Playlist Uploaded */}
-          {songs.filter(
-            (song) => song['private'] && song['uploaderId'] === userId
-          ).length !== 0 && (
+          {songs.filter((song) => song['private'] && song['uploaderId'] === userId).length !==
+            0 && (
             <Box margin='10px'>
               <PlaylistTitle title='Your Uploaded Songs >' />
               <ScrollContainer>
                 <Box display='flex' flexDirection='row'>
                   {songs
-                    .filter(
-                      (song) => song['private'] && song['uploaderId'] === userId
-                    )
+                    .filter((song) => song['private'] && song['uploaderId'] === userId)
                     .map((song, i) => (
                       <Box key={`box-uploaded-private-${song['title']}-${i}`}>
                         <SongCard
@@ -267,8 +260,7 @@ const Catalogue = () => {
           {/* Playlist Rock */}
           {songs.filter(
             (song) =>
-              (!song['private'] || song['uploaderId'] === userId) &&
-              song.genreTags.includes('rock')
+              (!song['private'] || song['uploaderId'] === userId) && song.genreTags.includes('rock')
           ).length > 0 && (
             <Box margin='10px'>
               <PlaylistTitle title='Rock Playlist >' />
@@ -301,8 +293,7 @@ const Catalogue = () => {
           {/* Playlist Pop */}
           {songs.filter(
             (song) =>
-              (!song['private'] || song['uploaderId'] === userId) &&
-              song.genreTags.includes('pop')
+              (!song['private'] || song['uploaderId'] === userId) && song.genreTags.includes('pop')
           ).length > 0 && (
             <Box margin='10px'>
               <PlaylistTitle title='Pop Playlist >' />
@@ -335,8 +326,7 @@ const Catalogue = () => {
           {/* Playlist Jazz */}
           {songs.filter(
             (song) =>
-              (!song['private'] || song['uploaderId'] === userId) &&
-              song.genreTags.includes('jazz')
+              (!song['private'] || song['uploaderId'] === userId) && song.genreTags.includes('jazz')
           ).length > 0 && (
             <Box margin='10px'>
               <PlaylistTitle title='Jazz Playlist >' />
