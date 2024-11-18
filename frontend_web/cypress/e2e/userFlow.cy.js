@@ -37,7 +37,9 @@ context('UserFlow Test', () => {
         cy.get('#login-go').click();
 
         // Logout
+        cy.wait(500);
         cy.get('[data-cy="settings-button"]').click();
+        cy.wait(500);
         cy.get('[data-cy="logout-button"]').click();
       });
     });
@@ -82,7 +84,9 @@ context('UserFlow Test', () => {
     cy.get('#submit-new-experiment-button').click();
 
     // Logout
+    cy.wait(500);
     cy.get('[data-cy="settings-button"]').click();
+    cy.wait(500);
     cy.get('[data-cy="logout-button"]').click();
   });
 
@@ -93,8 +97,14 @@ context('UserFlow Test', () => {
     cy.get('#login-password').type(password);
     cy.get('#login-go').click();
 
+    cy.wait(4000);
+
     // Go to example song
-    cy.get(`[data-cy="Ode to Joy (Test)"]`, { timeout: 20000 }).first().click();
+    // cy.get('[data-cy="song-card-Ode to Joy (Test)"]', { timeout: 20000 })
+    //   .first()
+    //   .click();
+
+    cy.contains('Ode to Joy (Test)').click();
 
     // Upload example song
     cy.contains('Upload a recording').click();
@@ -117,9 +127,8 @@ context('UserFlow Test', () => {
       .first()
       .click();
 
-    cy.wait(10000);
-
     // Logout
+    cy.wait(500);
     cy.get('[data-cy="settings-button"]').click();
     cy.get('[data-cy="logout-button"]').click();
   });
@@ -133,21 +142,25 @@ context('UserFlow Test', () => {
 
     // Upload first profile picture
     cy.get('[data-cy="profile_button"]').click();
+    cy.wait(1000);
     cy.get('[data-cy="upload-profile-picture-button"]', {
-      timeout: 2000,
+      timeout: 5000,
     }).attachFile('Test_Profile_Pic.png');
     cy.contains('Confirm', { timeout: 2000 }).click();
 
     cy.reload();
 
     // Upload default profile picture back
+    cy.wait(1000);
     cy.get('[data-cy="upload-profile-picture-button"]', {
       timeout: 2000,
     }).attachFile('Default_Profile_Pic.png');
     cy.contains('Confirm', { timeout: 2000 }).click();
 
     // Logout
+    cy.wait(500);
     cy.get('[data-cy="settings-button"]').click();
+    cy.wait(500);
     cy.get('[data-cy="logout-button"]').click();
   });
 
@@ -160,6 +173,7 @@ context('UserFlow Test', () => {
       // Register a new tutor
       const randomUsername = `Tut-${new Date().toISOString()}`;
       cy.get('#register-username').type(randomUsername);
+      cy.log(`Generated username: ${randomUsername}`);
       cy.get('#register-email').type(inbox.emailAddress);
       cy.get('#register-password').type('TestTestTest22!!');
       cy.get('#tutor-check').click();
@@ -174,24 +188,35 @@ context('UserFlow Test', () => {
         cy.get('button').contains('Verify').click();
 
         // Student sign in and request newly made tutor
+        cy.wait(10000);
         cy.get('#login-email').type(studentEmail);
         cy.get('#login-password').type(password);
         cy.get('#login-go').click();
 
         cy.get('[data-cy="profile_button"]').click();
-        cy.wait(2000);
+        cy.wait(10000);
 
         cy.contains('Find a Tutor').click();
+        cy.wait(20000);
+
+        cy.reload();
+        cy.wait(10000);
+        cy.contains('Find a Tutor').click();
+
+        cy.wait(5000);
         cy.get('[data-cy="tutor-dialog-list"] li')
           .contains(randomUsername)
           .click();
-        cy.contains('Confirm', { timeout: 2000 }).click();
+        cy.contains('Confirm', { timeout: 5000 }).click();
 
         // Logout
+        cy.wait(500);
         cy.get('[data-cy="settings-button"]').click();
+        cy.wait(500);
         cy.get('[data-cy="logout-button"]').click();
 
         // Log in as tutor and go to students page
+
         cy.contains('Login').click();
         cy.get('#login-email').type(inbox.emailAddress);
         cy.get('#login-password').type('TestTestTest22!!');
@@ -202,7 +227,9 @@ context('UserFlow Test', () => {
         cy.get(`[data-cy="student-confirm-${studentName}"]`).click();
 
         // Logout
+        cy.wait(500);
         cy.get('[data-cy="settings-button"]').click();
+        cy.wait(500);
         cy.get('[data-cy="logout-button"]').click();
       });
     });
@@ -223,7 +250,7 @@ context('UserFlow Test', () => {
       .first()
       .click();
 
-    cy.wait(20000);
+    cy.wait(5000);
 
     cy.get('[data-cy="request-review-button"]').click();
 
@@ -233,9 +260,10 @@ context('UserFlow Test', () => {
 
     cy.contains('Confirm').click();
 
-    cy.wait(1000);
-
+    // Logout
+    cy.wait(500);
     cy.get('[data-cy="settings-button"]').click();
+    cy.wait(500);
     cy.get('[data-cy="logout-button"]').click();
 
     // Send review on track attempt
@@ -256,7 +284,9 @@ context('UserFlow Test', () => {
     cy.contains('Send Review').click();
 
     // Logout
+    cy.wait(500);
     cy.get('[data-cy="settings-button"]').click();
+    cy.wait(500);
     cy.get('[data-cy="logout-button"]').click();
 
     // Log back into student to view new review
@@ -275,7 +305,9 @@ context('UserFlow Test', () => {
       .click();
 
     // Logout
+    cy.wait(500);
     cy.get('[data-cy="settings-button"]').click();
+    cy.wait(500);
     cy.get('[data-cy="logout-button"]').click();
   });
 });

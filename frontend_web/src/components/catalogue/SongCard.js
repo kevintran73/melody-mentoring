@@ -44,7 +44,11 @@ const SongCard = ({ title, thumbnail, composer, difficulty, songId }) => {
   };
 
   return (
-    <StyledCard variant='outlined' onClick={navExperiment}>
+    <StyledCard
+      variant='outlined'
+      onClick={navExperiment}
+      data-cy={`song-card-${title}`}
+    >
       <SongThumbnail thumbnail={thumbnail ? thumbnail : defaultImg} alt='img' />
       <Box padding='2px' textAlign='center'>
         <Typography fontSize='1rem' component='div'>
