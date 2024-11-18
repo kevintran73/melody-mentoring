@@ -39,6 +39,7 @@ context('UserFlow Test', () => {
         // Logout
         cy.wait(500);
         cy.get('[data-cy="settings-button"]').click();
+        cy.wait(500);
         cy.get('[data-cy="logout-button"]').click();
       });
     });
@@ -85,6 +86,7 @@ context('UserFlow Test', () => {
     // Logout
     cy.wait(500);
     cy.get('[data-cy="settings-button"]').click();
+    cy.wait(500);
     cy.get('[data-cy="logout-button"]').click();
   });
 
@@ -158,6 +160,7 @@ context('UserFlow Test', () => {
     // Logout
     cy.wait(500);
     cy.get('[data-cy="settings-button"]').click();
+    cy.wait(500);
     cy.get('[data-cy="logout-button"]').click();
   });
 
@@ -209,6 +212,7 @@ context('UserFlow Test', () => {
         // Logout
         cy.wait(500);
         cy.get('[data-cy="settings-button"]').click();
+        cy.wait(500);
         cy.get('[data-cy="logout-button"]').click();
 
         // Log in as tutor and go to students page
@@ -225,6 +229,7 @@ context('UserFlow Test', () => {
         // Logout
         cy.wait(500);
         cy.get('[data-cy="settings-button"]').click();
+        cy.wait(500);
         cy.get('[data-cy="logout-button"]').click();
       });
     });
@@ -258,6 +263,7 @@ context('UserFlow Test', () => {
     // Logout
     cy.wait(500);
     cy.get('[data-cy="settings-button"]').click();
+    cy.wait(500);
     cy.get('[data-cy="logout-button"]').click();
 
     // Send review on track attempt
@@ -280,6 +286,7 @@ context('UserFlow Test', () => {
     // Logout
     cy.wait(500);
     cy.get('[data-cy="settings-button"]').click();
+    cy.wait(500);
     cy.get('[data-cy="logout-button"]').click();
 
     // Log back into student to view new review
@@ -300,6 +307,7 @@ context('UserFlow Test', () => {
     // Logout
     cy.wait(500);
     cy.get('[data-cy="settings-button"]').click();
+    cy.wait(500);
     cy.get('[data-cy="logout-button"]').click();
   });
 });
