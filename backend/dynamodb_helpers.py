@@ -118,13 +118,13 @@ def listOfPlaylists():
         return basket
     return {'playlists': list(map(convertGenresToList, baskets))}
 
-def getTrackAttempyDetails(trackAttemptID):
+def getTrackAttemptDetails(trackAttemptID):
     table = db.Table(os.getenv('DYNAMODB_TABLE_TRACK_ATTEMPTS'))
 
     attempt = table.get_item(Key={'id': trackAttemptID})
 
     if 'Item' not in attempt:
-            return jsonify({'error': 'song not found'}), 404
+            return jsonify({'error': 'trackAttempt not found'}), 404
 
     attemptData = attempt['Item']
 
@@ -156,7 +156,7 @@ def updateAchievements(trackAttemptId, metrics):
     if (metrics[0] + metrics[1] + metrics[2])/3 < 0.8:
         return False
 
-    Attemptdetails = getTrackAttempyDetails(trackAttemptId)
+    Attemptdetails = getTrackAttemptDetails(trackAttemptId)
     userId = Attemptdetails['userId']
     songId = Attemptdetails['songId']
 

@@ -19,7 +19,7 @@ from groq import Groq
 
 import Levenshtein as lev
 
-from dynamodb_helpers import updateAchievements, getTrackAttempyDetails, getSongDetails, getUserDetails
+from dynamodb_helpers import updateAchievements, getTrackAttemptDetails, getSongDetails, getUserDetails
 
 load_dotenv()
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
@@ -431,7 +431,10 @@ def get_details_for_track_attempt(trackAttemptId):
 
     }
     '''
-    details = getTrackAttempyDetails(trackAttemptId)
+    details = getTrackAttemptDetails(trackAttemptId)
+
+    if isinstance(details, tuple) and len(details) == 2:
+        return details
 
     return jsonify(details), 200
 
@@ -462,7 +465,7 @@ def get_user_history(userId):
         trackAttempts = userDetails['track_attempts']
         trackAttemptDetails = []
         for trackAttempt in trackAttempts:
-            trackAttemptData = getTrackAttempyDetails(trackAttempt)
+            trackAttemptData = getTrackAttemptDetails(trackAttempt)
             songData = trackAttemptData['songDetails']
             obj = {
                 "songTitle": songData['title'],

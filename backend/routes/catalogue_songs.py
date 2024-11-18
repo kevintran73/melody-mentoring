@@ -19,7 +19,7 @@ def get_song_details(songId):
         songId: str                 # id of the song you need the details for
     }
 
-    Pulls the information from dynamodb and returns all the information for the fronte end to access
+    Pulls the information from dynamodb and returns all the information for the frontend to access
     The set is changed to a list to allow jsonifying
     '''
     try:

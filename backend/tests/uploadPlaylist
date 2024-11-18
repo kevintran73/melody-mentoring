@@ -1,0 +1,61 @@
+import boto3
+
+import uuid
+from pprint import pprint
+from datetime import datetime
+
+import os
+from dotenv import load_dotenv
+from flask import jsonify
+
+load_dotenv()
+aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+
+db = boto3.resource(
+    service_name='dynamodb',
+    region_name='ap-southeast-2',
+    aws_access_key_id=aws_access_key_id,
+    aws_secret_access_key=aws_secret_access_key
+)
+
+def appendStrToTableItemsAttribute(tableName: str, attr: str, itemId: str, strToAppend: str):
+    table = db.Table(tableName)
+    result = table.update_item(
+        Key={
+            'id': itemId
+        },
+        UpdateExpression=f'SET {attr} = list_append({attr}, :i)',
+        ExpressionAttributeValues={
+            ':i': [strToAppend]
+        },
+        ReturnValues="UPDATED_NEW"
+    )
+    if result['ResponseMetadata']['HTTPStatusCode'] == 200 and 'Attributes' in result:
+        return result['Attributes'][attr]
+
+def getSongDetails(songId):
+    songs = db.Table(os.getenv('DYNAMODB_TABLE_SONGS'))
+    response = songs.get_item(Key={'id': songId})
+
+    if 'Item' not in response:
+        return jsonify({'error': 'User not found'}), 404
+
+    song_data = response['Item']
+
+    return song_data
+
+trackAttempId = str(uuid.uuid4())
+isoDate = datetime.now().isoformat()
+table = db.Table('TrackAttempts')
+res = table.put_item(
+    Item={
+        'id': "TESTMP4",
+        'userId': "32048ea3-bf6b-45f1-b2ba-013d77097e99",
+        'songDetails': getSongDetails("e0786db6-267f-45ef-b136-afe51abea2ea"),
+        'isoUploadTime': isoDate,
+        'reviews': [],
+    }
+)
+
+appendStrToTableItemsAttribute(os.getenv('DYNAMODB_TABLE_USERS'), 'track_attempts', "32048ea3-bf6b-45f1-b2ba-013d77097e99", trackAttempId)
