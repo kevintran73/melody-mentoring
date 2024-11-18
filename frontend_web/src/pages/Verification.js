@@ -59,7 +59,9 @@ const Verification = () => {
   return (
     <div className=' h-screen flex justify-center items-center'>
       <div className='w-[50%] flex flex-col'>
-        <h1 className='font-bold text-3xl text-center'>Verify your email address</h1>
+        <h1 className='font-bold text-3xl text-center'>
+          Verify your email address
+        </h1>
         <p className='my-2'>Check your email inbox for a 6-digit code</p>
 
         <div className='my-8'>
@@ -67,13 +69,17 @@ const Verification = () => {
           <input
             className='w-full border rounded-md px-3 py-2'
             placeholder='Enter code'
+            data-cy='codeInput'
             onChange={(e) => setCode(e.target.value)}
           />
         </div>
 
         <p className='my-8'>
           Didn't receive an email?{' '}
-          <span onClick={handleResend} className='underline text-blue-600 hover:cursor-pointer'>
+          <span
+            onClick={handleResend}
+            className='underline text-blue-600 hover:cursor-pointer'
+          >
             Send a new code
           </span>
         </p>

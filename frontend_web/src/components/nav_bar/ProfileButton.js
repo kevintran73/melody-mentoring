@@ -26,7 +26,13 @@ const ProfileButton = () => {
     return navigate('/profile');
   };
 
-  return <StyledPerson colour={colour} onClick={navProfile} />;
+  return (
+    <StyledPerson
+      data-cy='profile_button'
+      colour={colour}
+      onClick={navProfile}
+    />
+  );
 };
 
 export default ProfileButton;

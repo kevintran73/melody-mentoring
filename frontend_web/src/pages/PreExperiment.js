@@ -38,7 +38,7 @@ const PageBlock = styled('div')({
     display: 'block',
   },
 
-  '@media (max-height: 800px)': {
+  '@media (max-height: 700px)': {
     display: 'block',
   },
 });
@@ -59,7 +59,7 @@ const PageContainer = styled('div')({
     gap: '0',
   },
 
-  '@media (max-height: 800px)': {
+  '@media (max-height: 700px)': {
     flexDirection: 'column',
     gap: '0',
   },
@@ -94,6 +94,11 @@ const ResponseSongThumbnail = styled(StyledSongThumbnail)({
     width: '400px',
     height: '400px',
   },
+
+  '@media (max-width: 450px)': {
+    width: '250px',
+    height: '250px',
+  },
 });
 
 const SongInfoMain = styled('div')({
@@ -115,10 +120,24 @@ const SongInfoSecondary = styled('div')({
 const StyledHeader1 = styled('h1')({
   fontSize: '3rem',
   fontWeight: 'bold',
+  maxWidth: '370px',
+  width: '100%',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+
+  '@media (max-width: 500px)': {
+    whiteSpace: 'wrap',
+  },
 });
 
 const StyledHeader2 = styled('h2')({
   fontSize: '1.75rem',
+  maxWidth: '370px',
+  width: '100%',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
 });
 
 const StyledText1 = styled('p')({

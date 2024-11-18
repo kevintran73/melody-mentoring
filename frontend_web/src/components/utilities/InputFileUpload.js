@@ -29,10 +29,12 @@ const InputFileUpload = ({
   accept,
   backgroundColor,
   hoverColor,
+  dataCy,
 }) => {
   return (
     <StyledButton
-      id='upload-file'
+      id='input-button'
+      // data-cy={dataCy}
       component='label'
       role={undefined}
       variant='contained'
@@ -47,7 +49,13 @@ const InputFileUpload = ({
       }}
     >
       {innerText}
-      <VisuallyHiddenInput type='file' accept={accept} multiple={false} onChange={onChangeEvent} />
+      <VisuallyHiddenInput
+        data-cy={dataCy}
+        type='file'
+        accept={accept}
+        multiple={false}
+        onChange={onChangeEvent}
+      />
     </StyledButton>
   );
 };
