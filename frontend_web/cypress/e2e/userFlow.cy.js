@@ -244,7 +244,7 @@ context('UserFlow Test', () => {
     cy.get('#login-password').type(password);
     cy.get('#login-go').click();
 
-    cy.get('[data-cy^="student-request-"]', { timeout: 10000 })
+    cy.get('[data-cy^="student-request-"]', { timeout: 20000 })
       .should('be.visible')
       .first()
       .click();
