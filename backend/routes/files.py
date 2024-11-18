@@ -3,7 +3,7 @@ import boto3
 import os
 from .auth import token_required
 from s3_bucket_helpers import createUploadHelper, urlFromBucketObj, uploadFileToBucket
-from dynamodb_helpers import addSongtoSongs, addAttemptToTrackAttempt, getTrackAttempyDetails
+from dynamodb_helpers import addSongtoSongs, addAttemptToTrackAttempt, getTrackAttemptDetails
 from botocore.exceptions import ClientError
 
 s3 = boto3.client('s3', region_name='ap-southeast-2')

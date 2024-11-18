@@ -41,10 +41,12 @@ def token_required(f):
             userIdFromRequest = None
 
         if userIdFromRequest:
-            print(userIdFromRequest)
-            users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
-            response = users.get_item(Key={'id': userIdFromRequest})
-            user_data = response['Item']
+            try:
+                users = dynamodb.Table(os.getenv('DYNAMODB_TABLE_USERS'))
+                response = users.get_item(Key={'id': userIdFromRequest})
+                user_data = response['Item']
+            except Exception as e:
+                return jsonify({'error': 'User doesnt exist'}), 404
 
             if user['Username'].lower() != user_data['username'].lower():
                 return jsonify({'error': 'Unauthorized access to this user\'s data'}), 403
