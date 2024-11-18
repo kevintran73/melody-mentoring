@@ -231,7 +231,7 @@ context('UserFlow Test', () => {
   });
 
   // In a track attempt page, request a review and tutor accepts it, then view attempt in track summary page
-  it.only('requestReviewForTrackSummary', () => {
+  it('requestReviewForTrackSummary', () => {
     cy.contains('Login').click();
     cy.get('#login-email').type(studentEmail);
     cy.get('#login-password').type(password);
