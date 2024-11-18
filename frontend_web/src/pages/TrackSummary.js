@@ -63,7 +63,7 @@ const TrackSummary = () => {
   const [summaryParagraphs, setSummaryParagraphs] = useState(null);
   const [summary, setSummary] = useState(null);
   const [songDetails, setSongDetails] = useState(null);
-  const [reviews, setReviews] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [recording, setRecording] = useState('');
   const [isAudio, setIsAudio] = useState(true);
   const { accessToken, userId, role } = React.useContext(TokenContext);
@@ -116,15 +116,15 @@ const TrackSummary = () => {
     // Fetch track details
     const fetchTrackDetails = async (attemptId) => {
       try {
-        const response = await axios.get(`http://localhost:5001/track-attempt/${attemptId}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const response = await axios.get(
+          `http://localhost:5001/track-attempt/${attemptId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
         fetchSongDetails(response.data);
-        // console.log(response.data.reviews);
-        // fetchReviewDetails(response.data.reviews);
-        setReviews(response.data.reviews);
       } catch (error) {
         console.error('Error fetching track details:', error);
       }
@@ -161,33 +161,50 @@ const TrackSummary = () => {
     };
 
     // Fetch the review data of the track attempt
-    // const fetchReviewDetails = async (reviewData) => {
-    //   const allReviewDetails = [];
-    //   console.log(reviewData);
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/review/${params.trackAttemptId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        console.log(response.data.reviews);
+        fetchTutorName(response.data.reviews);
+      } catch (error) {
+        console.error('Error fetching review details:', error);
+      }
+    };
 
-    //   for (const review of reviewData) {
-    //     try {
-    //       const response = await axios.get(
-    //         `http://localhost:5001/review/${review}`,
-    //         {
-    //           headers: {
-    //             Authorization: `Bearer ${accessToken}`,
-    //           },
-    //         }
-    //       );
+    // Fetch the tutor names of reviews
+    const fetchTutorName = async (reviews) => {
+      try {
+        const reviewsList = [];
 
-    //       const newReviewDetail = {
-    //         ...review,
-    //         tutorName: response.data.username,
-    //       };
-    //       console.log(newReviewDetail);
-    //       allReviewDetails.push(newReviewDetail);
-    //     } catch (error) {
-    //       console.error('Error fetching review details:', error);
-    //     }
-    //   }
-    //   setReviews(allReviewDetails);
-    // };
+        for (let review of reviews) {
+          const response = await axios.get(
+            `http://localhost:5001/profile/${review.tutor}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          const reviewInfo = {
+            feedback: review.feedback,
+            tutorName: response.data.username,
+          };
+          reviewsList.push(reviewInfo);
+        }
+
+        console.log(reviewsList);
+        setReviews(reviewsList);
+      } catch (error) {
+        console.error('Error fetching review details:', error);
+      }
+    };
 
     // Fetch recording audio of the track attempt
     const fetchRecording = async () => {
@@ -201,7 +218,9 @@ const TrackSummary = () => {
           }
         );
         setRecording(
-          response.data.audioUrl === undefined ? response.data.videoUrl : response.data.audioUrl
+          response.data.audioUrl === undefined
+            ? response.data.videoUrl
+            : response.data.audioUrl
         );
         setIsAudio(response.data.audioUrl !== undefined);
       } catch (error) {
@@ -209,6 +228,7 @@ const TrackSummary = () => {
       }
     };
 
+    fetchReviews();
     fetchRecording();
     fetchSummary();
     return () => {
@@ -250,12 +270,20 @@ const TrackSummary = () => {
       />
 
       {/* Section for statistics */}
-      <StatisticsSection summary={summary} summaryParagraphs={summaryParagraphs} />
+      <StatisticsSection
+        summary={summary}
+        summaryParagraphs={summaryParagraphs}
+      />
 
       {/* Section for tutor reviews */}
       <Box margin='10px 40px'>
         <Box display='flex'>
-          <Typography align='left' variant='h4' margin='30px' marginRight='20px'>
+          <Typography
+            align='left'
+            variant='h4'
+            margin='30px'
+            marginRight='20px'
+          >
             Tutor Reviews
           </Typography>
         </Box>
@@ -273,11 +301,6 @@ const TrackSummary = () => {
                   </StyledReviewBox>
                 </Box>
               ))}
-              <Box>
-                <StyledReviewBox sx={{ margin: '10px' }}>
-                  <ReviewCard tutor={'John'} feedback={'Nice post!'} rating={'4'} />
-                </StyledReviewBox>
-              </Box>
             </Box>
           </ScrollContainer>
         ) : (

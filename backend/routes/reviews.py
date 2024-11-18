@@ -153,6 +153,7 @@ def getReview(trackAttemptId):
     try:
         reviews_table = dynamodb.Table(os.getenv('DYNAMODB_TABLE_REVIEWS'))
         response = reviews_table.query(
+            IndexName='trackAttemptId-index',
             KeyConditionExpression=boto3.dynamodb.conditions.Key('trackAttemptId').eq(trackAttemptId)
         )
 
