@@ -2,7 +2,6 @@ import React from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import defaultImg from '../../assets/default-img.png';
 
@@ -20,15 +19,24 @@ const StyledCard = styled(Card)(() => ({
   cursor: 'pointer',
 }));
 
-const SongCard = ({
-  title,
-  thumbnail,
-  composer,
-  difficulty,
-  privacy,
-  genreTags,
-  songId,
-}) => {
+const SongThumbnail = ({ ...props }) => <StyledSongThumbnail {...props} />;
+
+const StyledSongThumbnail = styled('div')`
+  height: 124px;
+  width: 124px;
+  object-fit: cover;
+  background-color: #f2f2f2;
+  background-image: ${(props) =>
+    props.thumbnail === '' ? `url(${defaultImg})` : `url(${props.thumbnail})`};
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  flex: 0 0 auto;
+  border-radius: 20px;
+  margin-top: 0.25rem;
+`;
+
+const SongCard = ({ title, thumbnail, composer, difficulty, songId }) => {
   const navigate = useNavigate();
 
   const navExperiment = () => {
@@ -36,13 +44,8 @@ const SongCard = ({
   };
 
   return (
-    <StyledCard variant='outlined' onClick={navExperiment} data-cy={title}>
-      <CardMedia
-        component='img'
-        height='150'
-        image={thumbnail ? thumbnail : defaultImg}
-        alt='img'
-      />
+    <StyledCard variant='outlined' onClick={navExperiment}>
+      <SongThumbnail thumbnail={thumbnail ? thumbnail : defaultImg} alt='img' />
       <Box padding='2px' textAlign='center'>
         <Typography fontSize='1rem' component='div'>
           {title}
