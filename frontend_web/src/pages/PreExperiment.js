@@ -133,6 +133,11 @@ const StyledHeader1 = styled('h1')({
 
 const StyledHeader2 = styled('h2')({
   fontSize: '1.75rem',
+  maxWidth: '370px',
+  width: '100%',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
 });
 
 const StyledText1 = styled('p')({
