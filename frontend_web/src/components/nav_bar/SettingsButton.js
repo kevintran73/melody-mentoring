@@ -26,7 +26,13 @@ const SettingsButton = () => {
     return navigate('/settings');
   };
 
-  return <StyledSettings colour={colour} onClick={navSettings} />;
+  return (
+    <StyledSettings
+      colour={colour}
+      onClick={navSettings}
+      data-cy='settings-button'
+    />
+  );
 };
 
 export default SettingsButton;

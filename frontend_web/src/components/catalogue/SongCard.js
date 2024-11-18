@@ -36,7 +36,7 @@ const StyledSongThumbnail = styled('div')`
   margin-top: 0.25rem;
 `;
 
-const SongCard = ({ title, thumbnail, composer, difficulty, privacy, genreTags, songId }) => {
+const SongCard = ({ title, thumbnail, composer, difficulty, songId }) => {
   const navigate = useNavigate();
 
   const navExperiment = () => {

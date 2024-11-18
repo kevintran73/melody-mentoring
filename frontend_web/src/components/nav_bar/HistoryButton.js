@@ -40,7 +40,7 @@ const HistoryButton = () => {
   };
 
   return (
-    <IconContainer onClick={navCreate}>
+    <IconContainer onClick={navCreate} data-cy='history_button'>
       <StyledBook colour={colour} />
       <IconCaption colour={colour}>History</IconCaption>
     </IconContainer>
