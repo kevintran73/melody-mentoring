@@ -10,8 +10,8 @@ context('UserFlow Test', () => {
     cy.visit('http://localhost:3000/');
   });
 
-  // Create a new student user - IS SKIPPING - IS DONE
-  it.skip('registereUser', () => {
+  // Create a new student user - IS DONE
+  it('registereUser', () => {
     cy.createInbox().then((inbox) => {
       // Register account details
       cy.contains('Register').click();
@@ -43,8 +43,8 @@ context('UserFlow Test', () => {
     });
   });
 
-  // Create experiment - IS SKIPPING - IS DONE
-  it.skip('createExperiment', () => {
+  // Create experiment - IS DONE
+  it('createExperiment', () => {
     cy.contains('Login').click();
     cy.get('#login-email').type(studentEmail);
     cy.get('#login-password').type(password);
@@ -86,8 +86,8 @@ context('UserFlow Test', () => {
     cy.get('[data-cy="logout-button"]').click();
   });
 
-  // Upload track attempt and view - IS SKIPPED - IS DONE
-  it.skip('uploadTrackAttempt', () => {
+  // Upload track attempt and view - IS DONE
+  it('uploadTrackAttempt', () => {
     cy.contains('Login').click();
     cy.get('#login-email').type(studentEmail);
     cy.get('#login-password').type(password);
@@ -124,8 +124,8 @@ context('UserFlow Test', () => {
     cy.get('[data-cy="logout-button"]').click();
   });
 
-  // Upload profile pic then upload default one back - IS SKIPPED - IS DONE
-  it.skip('uploadProfilePic', () => {
+  // Upload profile pic then upload default one back - IS DONE
+  it('uploadProfilePic', () => {
     cy.contains('Login').click();
     cy.get('#login-email').type(studentEmail);
     cy.get('#login-password').type(password);
@@ -151,7 +151,7 @@ context('UserFlow Test', () => {
     cy.get('[data-cy="logout-button"]').click();
   });
 
-  // Request and accept a tutor - IS SKIPPED - IS DONE
+  // Request and accept a tutor - IS DONE
   it('findAndAcceptATutor', () => {
     cy.visit('http://localhost:3000/');
     cy.createInbox().then((inbox) => {
@@ -208,8 +208,8 @@ context('UserFlow Test', () => {
     });
   });
 
-  // In a track attempt page, request a review and tutor accepts it, then view attempt in track summary page - IS SKIPPED - IS DONE
-  it.skip('requestReviewForTrackSummary', () => {
+  // In a track attempt page, request a review and tutor accepts it, then view attempt in track summary page - IS DONE
+  it('requestReviewForTrackSummary', () => {
     cy.contains('Login').click();
     cy.get('#login-email').type(studentEmail);
     cy.get('#login-password').type(password);
