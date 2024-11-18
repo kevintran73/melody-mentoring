@@ -41,6 +41,7 @@ const StyledMainSummaryCard = styled(Box)(() => ({
   borderRadius: '16px',
   overflowY: 'auto',
   padding: '20px',
+  width: '80%',
 }));
 
 const LoadingOverlayMain = styled(Box)({
@@ -54,13 +55,13 @@ const LoadingOverlayMain = styled(Box)({
 });
 
 const StyledAudio = styled('audio')({
-  width: '50%',
+  width: '100%',
 });
 
 const StyledVideo = styled('video')({
   width: '50%',
 
-  '@media (max-width: 640px)': {
+  '@media (max-width: 1000px)': {
     width: '90%',
   },
 });
@@ -72,7 +73,7 @@ const MainSummaryCard = ({
   isAudio,
   sendSummaryFromChild,
 }) => {
-  const isSmallScreen = useMediaQuery('(max-width: 640px)');
+  const isSmallScreen = useMediaQuery('(max-width: 1000px)');
 
   return (
     <StyledMainSummary>
@@ -88,7 +89,7 @@ const MainSummaryCard = ({
           gap: '20px',
           alignItems: 'center',
           justifyContent: 'space-between',
-          '@media (max-width: 600px)': {
+          '@media (max-width: 1000px)': {
             flexDirection: 'column',
             padding: '0px',
           },
@@ -131,58 +132,72 @@ const MainSummaryCard = ({
             </LoadingOverlayMain>
           )}
         </Box>
+        {isAudio && (
+          <Box
+            flex='1'
+            display='flex'
+            flexDirection='column'
+            alignItems='center'
+          >
+            <StyledAudio controls src={recording} />
+            <Divider sx={{ width: '100%', my: 2 }} />
+            <RefreshModelComponent
+              sendSummaryFromChild={sendSummaryFromChild}
+            />
+            <Divider sx={{ width: '100%', my: 2 }} />
+            <RequestDialog />
+          </Box>
+        )}
       </Box>
-
-      <Box
-        flex='3'
-        sx={{
-          display: 'flex',
-          width: '100%',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          '@media (max-width: 600px)': {
-            flexDirection: 'column',
-          },
-        }}
-      >
-        {/* Section for audio, changing AI models and 
-          requesting reviews from tutors */}
+      {!isAudio && (
         <Box
-          flex='1'
-          width='100vw'
-          height='100%'
-          display='flex'
-          flexDirection='row'
-          gap='20px'
-          justifyContent='space-evenly'
-          alignItems='center'
-          textAlign='center'
-          margin='20px'
+          flex='3'
           sx={{
+            display: 'flex',
             width: '100%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
             '@media (max-width: 1000px)': {
-              width: '100%',
-            },
-            '@media (max-width: 640px)': {
               flexDirection: 'column',
-              gap: '0px',
             },
           }}
         >
-          {isAudio ? (
-            <StyledAudio controls src={recording} />
-          ) : (
-            <StyledVideo controls src={recording} />
-          )}
-          <div>
-            {isSmallScreen && <Divider sx={{ width: '100%', my: 2 }} />}
-            <RefreshModelComponent sendSummaryFromChild={sendSummaryFromChild} />
-            <Divider sx={{ width: '100%', my: 2 }} />
-            <RequestDialog />
-          </div>
+          {/* Section for audio, changing AI models and 
+          requesting reviews from tutors */}
+          <Box
+            flex='1'
+            width='100vw'
+            height='100%'
+            display='flex'
+            flexDirection='row'
+            gap='20px'
+            justifyContent='space-evenly'
+            alignItems='center'
+            textAlign='center'
+            margin='20px'
+            sx={{
+              width: '100%',
+              '@media (max-width: 1000px)': {
+                flexDirection: 'column',
+                gap: '0px',
+              },
+            }}
+          >
+            <>
+              <StyledVideo controls src={recording} />
+              <div>
+                {isSmallScreen && <Divider sx={{ width: '100%', my: 2 }} />}
+                <RefreshModelComponent
+                  sendSummaryFromChild={sendSummaryFromChild}
+                />
+                <Divider sx={{ width: '100%', my: 2 }} />
+                <RequestDialog />
+              </div>
+            </>
+          </Box>
         </Box>
-      </Box>
+      )}
     </StyledMainSummary>
   );
 };
