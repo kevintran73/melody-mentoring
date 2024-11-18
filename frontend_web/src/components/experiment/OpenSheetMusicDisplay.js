@@ -129,6 +129,13 @@ class OpenSheetMusicDisplay extends Component {
 
   // Begins playing the song with cursor
   async beginSong() {
+    // Set up volume
+    if (localStorage.getItem('volume') !== null) {
+      const volume = parseInt(localStorage.getItem('volume'));
+      this.synth.volume.value = (6 * volume) / 10 - 60;
+      this.metronome.volume.value = (6 * volume) / 10 - 60;
+    }
+
     this.playing = true;
 
     this.osmd.cursor.reset();
