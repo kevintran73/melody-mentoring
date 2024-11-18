@@ -3,6 +3,7 @@ import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
 import React from 'react';
+import Divider from '@mui/material/Divider';
 
 const StyledCard = styled(Card)(() => ({
   borderWidth: '2px',
@@ -14,10 +15,10 @@ const StyledCard = styled(Card)(() => ({
   alignItems: 'center',
   alignContent: 'space-evenly',
   textAlign: 'center',
-  backgroundColor: 'white',
+  width: '100%',
 }));
 
-const ReviewCard = ({ tutor, feedback, rating }) => {
+const ReviewCard = ({ tutor, feedback }) => {
   return (
     <StyledCard variant='outlined'>
       <Box
@@ -25,17 +26,30 @@ const ReviewCard = ({ tutor, feedback, rating }) => {
         display='flex'
         flexDirection='column'
         alignItems='center'
-        width='400px'
+        width='100%'
         height='100%'
-        gap='20px'
       >
-        <Typography fontSize='1.5rem' component='div'>
+        <Typography
+          fontSize='1.4rem'
+          component='div'
+          width='95%'
+          sx={{
+            wordWrap: 'break-word',
+          }}
+        >
           {tutor}
         </Typography>
-        <Typography fontSize='1.4rem' component='div'>
-          {rating} / 5
-        </Typography>
-        <Typography fontSize='1.05rem' component='div'>
+        <Divider sx={{ width: '100%', my: 2 }} />
+        <Typography
+          fontSize='1rem'
+          component='div'
+          width='95%'
+          height='100%'
+          sx={{
+            wordWrap: 'break-word',
+            overflowY: 'auto',
+          }}
+        >
           {feedback}
         </Typography>
       </Box>

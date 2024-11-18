@@ -170,7 +170,36 @@ const TrackSummary = () => {
             },
           }
         );
-        setReviews(response.data.reviews);
+        console.log(response.data.reviews);
+        fetchTutorName(response.data.reviews);
+      } catch (error) {
+        console.error('Error fetching review details:', error);
+      }
+    };
+
+    // Fetch the tutor names of reviews
+    const fetchTutorName = async (reviews) => {
+      try {
+        const reviewsList = [];
+
+        for (let review of reviews) {
+          const response = await axios.get(
+            `http://localhost:5001/profile/${review.tutor}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          const reviewInfo = {
+            feedback: review.feedback,
+            tutorName: response.data.username,
+          };
+          reviewsList.push(reviewInfo);
+        }
+
+        console.log(reviewsList);
+        setReviews(reviewsList);
       } catch (error) {
         console.error('Error fetching review details:', error);
       }
@@ -265,15 +294,6 @@ const TrackSummary = () => {
                   </StyledReviewBox>
                 </Box>
               ))}
-              <Box>
-                <StyledReviewBox sx={{ margin: '10px' }}>
-                  <ReviewCard
-                    tutor={'John'}
-                    feedback={'Nice post!'}
-                    rating={'4'}
-                  />
-                </StyledReviewBox>
-              </Box>
             </Box>
           </ScrollContainer>
         ) : (
