@@ -260,7 +260,9 @@ context('UserFlow Test', () => {
     cy.get('[data-cy="logout-button"]').click();
 
     // Log back into student to view new review
+    cy.wait(200);
     cy.contains('Login').click();
+    cy.wait(200);
     cy.get('#login-email').type(studentEmail);
     cy.get('#login-password').type(password);
     cy.get('#login-go').click();
