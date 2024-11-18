@@ -10,8 +10,8 @@ context('UserFlow Test', () => {
     cy.visit('http://localhost:3000/');
   });
 
-  // Create a new student user - IS DONE
-  it('registereUser', () => {
+  // Create a new student user
+  it('registerUser', () => {
     cy.createInbox().then((inbox) => {
       // Register account details
       cy.contains('Register').click();
@@ -43,7 +43,7 @@ context('UserFlow Test', () => {
     });
   });
 
-  // Create experiment - IS DONE
+  // Create experiment
   it('createExperiment', () => {
     cy.contains('Login').click();
     cy.get('#login-email').type(studentEmail);
@@ -86,7 +86,7 @@ context('UserFlow Test', () => {
     cy.get('[data-cy="logout-button"]').click();
   });
 
-  // Upload track attempt and view - IS DONE
+  // Upload track attempt and view
   it('uploadTrackAttempt', () => {
     cy.contains('Login').click();
     cy.get('#login-email').type(studentEmail);
@@ -124,7 +124,7 @@ context('UserFlow Test', () => {
     cy.get('[data-cy="logout-button"]').click();
   });
 
-  // Upload profile pic then upload default one back - IS DONE
+  // Upload profile pic then upload default one back
   it('uploadProfilePic', () => {
     cy.contains('Login').click();
     cy.get('#login-email').type(studentEmail);
@@ -151,7 +151,7 @@ context('UserFlow Test', () => {
     cy.get('[data-cy="logout-button"]').click();
   });
 
-  // Request and accept a tutor - IS DONE
+  // Request and accept a tutor
   it('findAndAcceptATutor', () => {
     cy.visit('http://localhost:3000/');
     cy.createInbox().then((inbox) => {
@@ -208,7 +208,7 @@ context('UserFlow Test', () => {
     });
   });
 
-  // In a track attempt page, request a review and tutor accepts it, then view attempt in track summary page - IS DONE
+  // In a track attempt page, request a review and tutor accepts it, then view attempt in track summary page
   it('requestReviewForTrackSummary', () => {
     cy.contains('Login').click();
     cy.get('#login-email').type(studentEmail);
