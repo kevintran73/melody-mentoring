@@ -1,7 +1,8 @@
 import unittest
 import requests
 
-class TutorAPITestCase(unittest.TestCase):
+class APITestCase(unittest.TestCase):
+
     BASE_URL = 'http://localhost:5001'
 
     def setUp(self):
