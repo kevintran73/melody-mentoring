@@ -15,6 +15,7 @@ const Review = () => {
   const [review, setReview] = useState('');
   const { trackAttemptId } = useParams();
   const [recording, setRecording] = useState();
+  const [isAudio, setIsAudio] = useState(true);
   const [rating, setRating] = useState(5);
   const { accessToken, userId, role } = useContext(TokenContext);
   const navigate = useNavigate();
@@ -32,14 +33,20 @@ const Review = () => {
     const fetchRecording = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5001/files/user/audio/${trackAttemptId}`,
+          `http://localhost:5001/files/user/${trackAttemptId}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
           }
         );
-        setRecording(response.data.url);
+
+        setRecording(
+          response.data.audioUrl === undefined
+            ? response.data.videoUrl
+            : response.data.audioUrl
+        );
+        setIsAudio(response.data.audioUrl !== undefined);
       } catch (err) {
         showErrorMessage(err.response.data.error);
       }
@@ -98,7 +105,11 @@ const Review = () => {
             <h1 className='my-4 text-gray-600 font-medium'>
               Play Track Attempt{' '}
             </h1>
-            <audio controls src={recording}></audio>
+            {isAudio ? (
+              <audio controls src={recording}></audio>
+            ) : (
+              <video controls src={recording}></video>
+            )}
           </div>
 
           <div className='flex flex-col items-start gap-4'>
